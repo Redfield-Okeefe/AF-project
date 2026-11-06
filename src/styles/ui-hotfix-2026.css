@@ -81,22 +81,24 @@ html[data-theme='dark'] .hero ~ .alt .card p{color:var(--mut)!important}
 @media(max-width:640px){.login.auth-login-page{min-height:calc(100dvh - 70px);padding:32px 14px}.login.auth-login-page .auth-login-card{padding:25px 20px}.portal-card{min-height:140px}.portal-txt{align-items:flex-start}.portal-ico{width:66px;height:66px;border-radius:18px}.portal-ico svg{width:29px;height:29px}.portal-card .portal-arr{display:none}}
 @media(prefers-reduced-motion:reduce){.journey-card,.portal-card,.auth-input-wrap,.auth-password-toggle{transition:none!important}.w .card .ic svg,.journey-icon svg,.portal-ico svg{transform:none!important}}
 
-/* Review pass 2 — strong section separation in dark mode, like the warm light section. */
+/* Review pass 3 — light numbers black, dark section flat black with no bright gradient. */
+html[data-theme='light'] .hero ~ .journey-section .journey-number{
+  color:#111111!important;
+  opacity:1!important;
+  text-shadow:none;
+}
 html[data-theme='dark'] .hero ~ .journey-section{
-  background:
-    radial-gradient(ellipse 780px 450px at 48% 4%,rgba(255,153,81,.22),transparent 70%),
-    radial-gradient(ellipse 680px 400px at 95% 92%,rgba(72,117,180,.19),transparent 75%),
-    linear-gradient(140deg,#192a40 0%,#203752 48%,#15283e 100%)!important;
-  border-top:1px solid #41536b;
-  border-bottom:1px solid #41536b;
+  background:#0c0e12!important;
+  border-top:1px solid #252d39;
+  border-bottom:1px solid #252d39;
 }
 html[data-theme='dark'] .hero ~ .journey-section .w{
   background:transparent!important;
 }
 html[data-theme='dark'] .hero ~ .journey-section .journey-number{
-  color:#fff!important;
-  opacity:.96!important;
-  text-shadow:0 3px 18px rgba(0,0,0,.18);
+  color:#ffffff!important;
+  opacity:1!important;
+  text-shadow:none;
 }
 /* Sidebar: keep only vertical scroll when needed; avoid horizontal scrolling from
    text, translated hover links, and child min-content dimensions. */
@@ -138,6 +140,6 @@ html[data-theme='dark'] .hero ~ .journey-section .journey-number{
 }
 @media(max-width:640px){
  html[data-theme='dark'] .hero ~ .journey-section{
-  background:radial-gradient(ellipse at 50% 0%,rgba(255,153,81,.19),transparent 70%),linear-gradient(180deg,#1b3049,#142a43)!important;
+  background:#0c0e12!important;
  }
 }
