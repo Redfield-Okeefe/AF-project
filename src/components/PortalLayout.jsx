@@ -30,11 +30,13 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
 
   useEffect(() => { setOpen(false) }, [pathname])
   useEffect(() => {
-    if (!ownerMode || !open) return
+    if (!open) return
     const onEscape = (event) => { if (event.key === 'Escape') setOpen(false) }
     document.addEventListener('keydown', onEscape)
-    return () => document.removeEventListener('keydown', onEscape)
-  }, [open, ownerMode])
+    const oldOverflow = document.body.style.overflow
+    if (window.matchMedia('(max-width: 900px)').matches) document.body.style.overflow = 'hidden'
+    return () => { document.removeEventListener('keydown', onEscape); document.body.style.overflow = oldOverflow }
+  }, [open])
 
   const current = menu.find((m) => pathname.endsWith(m.to)) || menu[0]
 
@@ -46,31 +48,31 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
   }
 
   return (
-    <div className={`dash${ownerMode ? ' owner-portal' : ''}`} data-theme={theme}>
+    <div className={`dash ${ownerMode ? 'owner-portal' : 'workspace-portal'}`} data-theme={theme}>
       <aside className={`sidebar${open ? ' open' : ''}`}>
-        <div className="logo"><BrandLogo />{SITE.name.slice(0, 5).toUpperCase()}<b>{SITE.name.slice(5).toUpperCase()}</b></div>
-        {ownerMode && <button type="button" className="owner-close-sidebar" onClick={() => setOpen(false)} aria-label="Tutup menu portal"><OwnerIcon name="close" size={19}/></button>}
+        <div className="logo"><BrandLogo /><span className="portal-brand-text">B.N.R <b>ACADEMY</b></span></div>
+        <button type="button" className="owner-close-sidebar" onClick={() => setOpen(false)} aria-label="Tutup menu portal"><OwnerIcon name="close" size={19}/></button>
         <div className="sidebar-role">{roleLabel} Workspace</div>
         <nav className="side-menu" aria-label={`Menu ${roleLabel}`}>
           {menu.map((m) => (
             <NavLink key={m.to} to={m.to} onClick={() => setOpen(false)} className={({ isActive }) => `item${isActive ? ' active' : ''}`}>
-              <span className="menu-icon">{ownerMode ? <OwnerIcon name={m.ownerIcon} size={19} /> : m.icon}</span><span className="menu-label">{m.label}</span>
+              <span className="menu-icon"><OwnerIcon name={m.ownerIcon || 'overview'} size={19} /></span><span className="menu-label">{m.label}</span>
               {m.badge > 0 && <em className="badge">{m.badge}</em>}
             </NavLink>
           ))}
         </nav>
         <div className="sidebar-bottom"><span className="sidebar-version">{SITE.name} Academy · Portal</span>
-        <button className="item logout" onClick={logout}><span className="menu-icon">{ownerMode ? <OwnerIcon name="logout" size={19} /> : "🚪"}</span><span className="menu-label">Keluar</span></button></div>
+        <button className="item logout" onClick={logout}><span className="menu-icon"><OwnerIcon name="logout" size={19} /></span><span className="menu-label">Keluar</span></button></div>
       </aside>
       <div className={`overlay${open ? ' show' : ''}`} onClick={() => setOpen(false)} aria-hidden="true" />
 
       <main className="main">
         <header className="topbar">
-          <button className="burger" aria-label="Buka menu portal" aria-expanded={open} onClick={() => setOpen(true)}>{ownerMode ? <OwnerIcon name="menu" /> : "☰"}</button>
+          <button className="burger" aria-label="Buka menu portal" aria-expanded={open} onClick={() => setOpen(true)}><OwnerIcon name="menu" /></button>
           <div>
             <h1>{current.title}</h1>
             <p className="mut">{current.sub}</p>
-            {ownerMode && <OwnerLiveClock />}
+            <OwnerLiveClock />
           </div>
           {ownerMode
             ? <OwnerHeaderActions setMode={setTheme} theme={theme} profil={profil} simpan={simpan} />

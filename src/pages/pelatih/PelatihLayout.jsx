@@ -4,12 +4,12 @@ import { ambilAkun, useDb } from '../../services/db.js'
 import { clearSession, getUser } from '../../utils/auth.js'
 
 const menu = [
-  { to: 'beranda', icon: '🏠', label: 'Beranda', title: 'Beranda', sub: 'Ringkasan kelas dan jadwal terdekat' },
-  { to: 'jadwal', icon: '📅', label: 'Jadwal', title: 'Jadwal', sub: 'Atur jadwal latihan dan pertandingan' },
-  { to: 'absensi', icon: '✅', label: 'Absensi', title: 'Absensi', sub: 'Catat kehadiran pemain tiap sesi' },
-  { to: 'penilaian', icon: '📈', label: 'Penilaian', title: 'Penilaian', sub: 'Nilai dan perkembangan pemain' },
-  { to: 'pengumuman', icon: '📢', label: 'Pengumuman', title: 'Pengumuman', sub: 'Kirim kabar ke pemain dan orang tua' },
-  { to: 'profil', icon: '👤', label: 'Profil', title: 'Profil Pelatih', sub: 'Data diri, foto, dan lisensi' },
+  { to: 'beranda', ownerIcon:'overview', icon: '🏠', label: 'Beranda', title: 'Beranda', sub: 'Ringkasan kelas dan jadwal terdekat' },
+  { to: 'jadwal', ownerIcon:'calendar', icon: '📅', label: 'Jadwal', title: 'Jadwal', sub: 'Atur jadwal latihan dan pertandingan' },
+  { to: 'absensi', ownerIcon:'check', icon: '✅', label: 'Absensi', title: 'Absensi', sub: 'Catat kehadiran pemain tiap sesi' },
+  { to: 'penilaian', ownerIcon:'trend', icon: '📈', label: 'Penilaian', title: 'Penilaian', sub: 'Nilai dan perkembangan pemain' },
+  { to: 'pengumuman', ownerIcon:'news', icon: '📢', label: 'Pengumuman', title: 'Pengumuman', sub: 'Kirim kabar ke pemain dan orang tua' },
+  { to: 'profil', ownerIcon:'user', icon: '👤', label: 'Profil', title: 'Profil Pelatih', sub: 'Data diri, foto, dan lisensi' },
 ]
 
 const PESAN = {

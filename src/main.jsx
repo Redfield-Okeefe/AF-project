@@ -10,6 +10,7 @@ import './styles/owner-portal.css'
 import './styles/owner-v7.css'
 import './styles/owner-v8.css'
 import './styles/theme-system.css'
+import './styles/ui-refinement-2026.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

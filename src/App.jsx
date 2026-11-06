@@ -16,6 +16,7 @@ import LoginPortal from './pages/LoginPortal.jsx'
 import RegisterAkun from './pages/RegisterAkun.jsx'
 import DashboardLayout from './pages/dashboard/DashboardLayout.jsx'
 import Biodata from './pages/dashboard/Biodata.jsx'
+import PemainRingkasan from './pages/dashboard/Ringkasan.jsx'
 import Jadwal from './pages/dashboard/Jadwal.jsx'
 import Pengumuman from './pages/dashboard/Pengumuman.jsx'
 import Bayar from './pages/dashboard/Bayar.jsx'
@@ -73,7 +74,8 @@ export default function App() {
         <Route path="login" element={<LoginPortal />} />
 
         <Route path="dashboard" element={<RoleRoute role="player"><DashboardLayout /></RoleRoute>}>
-          <Route index element={<Navigate to="biodata" replace />} />
+          <Route index element={<Navigate to="ringkasan" replace />} />
+          <Route path="ringkasan" element={<PemainRingkasan />} />
           <Route path="biodata" element={<Biodata />} />
           <Route path="jadwal" element={<Jadwal />} />
           <Route path="pengumuman" element={<Pengumuman />} />
