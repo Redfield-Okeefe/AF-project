@@ -26,7 +26,7 @@ export default function DashboardLayout() {
   return (
     <div className="dash">
       <aside className={`sidebar${open ? ' open' : ''}`}>
-        <div className="logo">⚽ {SITE.name.slice(0, 5).toUpperCase()}<b>{SITE.name.slice(5).toUpperCase()}</b></div>
+        <div className="logo">⚽ B.N.R <b>ACADEMY</b></div>
         <nav className="side-menu">
           {menu.map((m) => (
             <NavLink key={m.to} to={m.to} onClick={() => setOpen(false)} className={({ isActive }) => `item${isActive ? ' active' : ''}`}>

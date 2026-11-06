@@ -21,7 +21,7 @@ export default function LoginPortal() {
       <Link className="portal-back" to="/">← Beranda</Link>
       <div className="portal-in">
         <Reveal anim="down" className="portal-logo">
-          <BrandLogo className="logo-img big" />{SITE.name.slice(0, 5).toUpperCase()}<b>{SITE.name.slice(5).toUpperCase()}</b>
+          <BrandLogo className="logo-img big" />B.N.R <b>ACADEMY</b>
         </Reveal>
 
         <div className="portal-heading"><span className="portal-eyebrow">PORTAL AKADEMI</span><h1>Selamat datang kembali</h1><p>Pilih peran untuk masuk ke akun Anda.</p></div>
