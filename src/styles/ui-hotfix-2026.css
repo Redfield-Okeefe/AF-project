@@ -80,3 +80,64 @@ html[data-theme='dark'] .hero ~ .alt .card p{color:var(--mut)!important}
 .dash .side-menu .menu-icon svg{stroke-width:1.85}
 @media(max-width:640px){.login.auth-login-page{min-height:calc(100dvh - 70px);padding:32px 14px}.login.auth-login-page .auth-login-card{padding:25px 20px}.portal-card{min-height:140px}.portal-txt{align-items:flex-start}.portal-ico{width:66px;height:66px;border-radius:18px}.portal-ico svg{width:29px;height:29px}.portal-card .portal-arr{display:none}}
 @media(prefers-reduced-motion:reduce){.journey-card,.portal-card,.auth-input-wrap,.auth-password-toggle{transition:none!important}.w .card .ic svg,.journey-icon svg,.portal-ico svg{transform:none!important}}
+
+/* Review pass 2 — strong section separation in dark mode, like the warm light section. */
+html[data-theme='dark'] .hero ~ .journey-section{
+  background:
+    radial-gradient(ellipse 780px 450px at 48% 4%,rgba(255,153,81,.22),transparent 70%),
+    radial-gradient(ellipse 680px 400px at 95% 92%,rgba(72,117,180,.19),transparent 75%),
+    linear-gradient(140deg,#192a40 0%,#203752 48%,#15283e 100%)!important;
+  border-top:1px solid #41536b;
+  border-bottom:1px solid #41536b;
+}
+html[data-theme='dark'] .hero ~ .journey-section .w{
+  background:transparent!important;
+}
+html[data-theme='dark'] .hero ~ .journey-section .journey-number{
+  color:#fff!important;
+  opacity:.96!important;
+  text-shadow:0 3px 18px rgba(0,0,0,.18);
+}
+/* Sidebar: keep only vertical scroll when needed; avoid horizontal scrolling from
+   text, translated hover links, and child min-content dimensions. */
+.dash .sidebar{
+  box-sizing:border-box;
+  overflow-x:hidden!important;
+}
+.dash .sidebar .side-menu{
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden!important;
+  overflow-y:auto;
+  min-width:0;
+  max-width:100%;
+  width:100%;
+  scrollbar-width:thin;
+  scrollbar-color:color-mix(in srgb,var(--mut) 32%,transparent) transparent;
+}
+.dash .sidebar .side-menu .item{
+  box-sizing:border-box;
+  max-width:100%;
+  min-width:0;
+}
+.dash .sidebar .side-menu .item:hover{
+  transform:none!important;
+}
+.dash .sidebar .menu-label{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.dash .sidebar .logo,.dash .sidebar .sidebar-bottom{
+  min-width:0;
+  max-width:100%;
+}
+.dash .sidebar .portal-brand-text{
+  min-width:0;
+  white-space:nowrap;
+}
+@media(max-width:640px){
+ html[data-theme='dark'] .hero ~ .journey-section{
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,153,81,.19),transparent 70%),linear-gradient(180deg,#1b3049,#142a43)!important;
+ }
+}
