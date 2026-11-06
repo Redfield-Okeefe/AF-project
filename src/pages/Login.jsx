@@ -31,8 +31,6 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const preview = !import.meta.env.VITE_API_URL
-  const fillDemo = () => { setForm({ email: '12345@gmail.com', password: '12345678' }); setError('') }
 
   useEffect(() => { setError('') }, [peran])
   if (!cfg) return <Navigate to="/login" replace />
@@ -42,11 +40,16 @@ export default function Login() {
     setLoading(true)
     setError('')
     try {
-      const res = await loginUser({ ...form, peran: cfg.role })
+      // Ambil nilai nyata dari input, bukan hanya state: browser autofill bisa
+      // memperbarui DOM tanpa memicu onChange React.
+      const data = new FormData(e.currentTarget)
+      const email = String(data.get('email') || '').trim().toLowerCase()
+      const password = String(data.get('password') || '')
+      const res = await loginUser({ email, password, peran: cfg.role })
       const role = res.role === 'admin' ? 'owner' : res.role || 'player'
       // jangan biarkan akun peran lain masuk lewat pintu yang salah
       if (role !== cfg.role) throw new Error(`Akun ini terdaftar sebagai ${NAMA_ROLE[role]}. Pilih portal ${NAMA_ROLE[role]} untuk masuk.`)
-      setSession(res.token, role, res.user || { email: form.email.trim().toLowerCase(), nama: '' })
+      setSession(res.token, role, res.user || { email, nama: '' })
       nav(homeFor(role))
     } catch (err) {
       setError(err.message)
@@ -63,17 +66,11 @@ export default function Login() {
         <span className="auth-login-eyebrow">B.N.R FUTSAL ACADEMY · PORTAL {peran.toUpperCase()}</span>
         <h2>{cfg.judul}</h2>
         <p className="sub">{cfg.sub}</p>
-        {preview && <div className="auth-demo-box" role="note">
-          <div className="auth-demo-heading"><OwnerIcon name="sparkles" size={17}/> Akses demonstrasi</div>
-          <div className="auth-demo-details"><span>12345@gmail.com</span><span>12345678</span></div>
-          <button className="auth-demo-fill" type="button" onClick={fillDemo}>Isi akun demo <OwnerIcon name="arrow" size={15}/></button>
-          <small>Hanya untuk simulasi lokal dan GitHub Pages. Bukan akun produksi.</small>
-        </div>}
         <label className="auth-input-label" htmlFor="auth-email">Email</label>
-        <div className="auth-input-wrap"><OwnerIcon name="mail" size={20}/><input id="auth-email" type="email" required value={form.email} placeholder="nama@email.com" autoComplete="username"
+        <div className="auth-input-wrap"><OwnerIcon name="mail" size={20}/><input id="auth-email" name="email" type="email" required value={form.email} placeholder="nama@email.com" autoComplete="username"
           onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
         <label className="auth-input-label" htmlFor="auth-password">Password</label>
-        <div className="auth-input-wrap"><OwnerIcon name="lock" size={20}/><input id="auth-password" type={showPassword ? 'text' : 'password'} required value={form.password} placeholder="Masukkan password" autoComplete="current-password"
+        <div className="auth-input-wrap"><OwnerIcon name="lock" size={20}/><input id="auth-password" name="password" type={showPassword ? 'text' : 'password'} required value={form.password} placeholder="Masukkan password" autoComplete="current-password"
           onChange={(e) => setForm({ ...form, password: e.target.value })} /><button type="button" className="auth-password-toggle" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'} aria-pressed={showPassword}><OwnerIcon name={showPassword ? 'eye-off' : 'eye'} size={19}/></button></div>
         {error && <div className="alert err" role="alert">{error}</div>}
         <button className="btn big auth-login-submit" type="submit" disabled={loading}><OwnerIcon name="log-in" size={19}/>{loading ? 'Memproses...' : 'Masuk ke Portal'}</button>
