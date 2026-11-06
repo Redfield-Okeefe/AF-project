@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import BrandLogo from '../components/BrandLogo.jsx'
 import ThemeToggle from '../components/ThemeToggle.jsx'
+import OwnerIcon from '../components/OwnerIcon.jsx'
 import { SITE } from '../data/config.js'
 
 // Urutan kartu: kiri pemain, tengah owner, kanan pelatih
 const KARTU = [
-  { to: '/login/pemain', ikon: '⚽', judul: 'Pemain' },
-  { to: '/login/owner', ikon: '🏆', judul: 'Owner' },
-  { to: '/login/pelatih', ikon: '📋', judul: 'Pelatih' },
+  { to: '/login/pemain', ikon: 'ball', judul: 'Pemain', deskripsi: 'Jadwal dan aktivitas latihan' },
+  { to: '/login/owner', ikon: 'shield', judul: 'Owner', deskripsi: 'Kelola akademi dan laporan' },
+  { to: '/login/pelatih', ikon: 'whistle', judul: 'Pelatih', deskripsi: 'Kelas, absensi, dan penilaian' },
 ]
 
 export default function LoginPortal() {
@@ -28,12 +29,12 @@ export default function LoginPortal() {
         <div className="portal-cards">
           {KARTU.map((k, i) => (
             <Reveal key={k.to} as={Link} to={k.to} anim="up" delay={i * 100} className="portal-card">
-              <span className="portal-ico" aria-hidden="true">{k.ikon}</span>
+              <span className="portal-ico" aria-hidden="true"><OwnerIcon name={k.ikon} size={37} strokeWidth={1.65}/></span>
               <span className="portal-txt">
                 <b>{k.judul}</b>
-                
+                <small>{k.deskripsi}</small>
               </span>
-              <span className="portal-arr" aria-hidden="true">→</span>
+              <span className="portal-arr" aria-hidden="true"><OwnerIcon name="arrow" size={19}/></span>
             </Reveal>
           ))}
         </div>
