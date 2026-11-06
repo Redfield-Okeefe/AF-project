@@ -81,16 +81,16 @@ html[data-theme='dark'] .hero ~ .alt .card p{color:var(--mut)!important}
 @media(max-width:640px){.login.auth-login-page{min-height:calc(100dvh - 70px);padding:32px 14px}.login.auth-login-page .auth-login-card{padding:25px 20px}.portal-card{min-height:140px}.portal-txt{align-items:flex-start}.portal-ico{width:66px;height:66px;border-radius:18px}.portal-ico svg{width:29px;height:29px}.portal-card .portal-arr{display:none}}
 @media(prefers-reduced-motion:reduce){.journey-card,.portal-card,.auth-input-wrap,.auth-password-toggle{transition:none!important}.w .card .ic svg,.journey-icon svg,.portal-ico svg{transform:none!important}}
 
-/* Review pass 4 — preserve dark-mode flat fill, sampled from provided reference image (#15181e). */
+/* Review pass 5 — brighter navy blue section, coordinated with dark theme, flat fill (#253f5c). */
 html[data-theme='light'] .hero ~ .journey-section .journey-number{
   color:#111111!important;
   opacity:1!important;
   text-shadow:none;
 }
 html[data-theme='dark'] .hero ~ .journey-section{
-  background:#15181e!important;
-  border-top:1px solid #252d39;
-  border-bottom:1px solid #252d39;
+  background:#253f5c!important;
+  border-top:1px solid #395673;
+  border-bottom:1px solid #395673;
 }
 html[data-theme='dark'] .hero ~ .journey-section .w{
   background:transparent!important;
@@ -140,6 +140,6 @@ html[data-theme='dark'] .hero ~ .journey-section .journey-number{
 }
 @media(max-width:640px){
  html[data-theme='dark'] .hero ~ .journey-section{
-  background:#15181e!important;
+  background:#253f5c!important;
  }
 }
