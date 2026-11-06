@@ -1,0 +1,42 @@
+/* Global theme system: persists across public pages and all authenticated portals. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg:#f7f5f1; --bg2:#eeeae3; --card:#ffffff; --tx:#292b35; --mut:#747784;
+  --ac:#e96a24; --ac2:#2563eb; --bd:#e2ddd5; --ok:#15803d; --warn:#b45309; --info:#2563eb;
+  --theme-shadow:0 8px 28px rgba(40,32,20,.07);
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg:#0c0e12; --bg2:#15181e; --card:#1c2027; --tx:#f3f4f6; --mut:#a2a7b1;
+  --ac:#ff873f; --ac2:#78aaff; --bd:#303640; --ok:#4ade80; --warn:#fbbf24; --info:#60a5fa;
+  --theme-shadow:0 8px 28px rgba(0,0,0,.22);
+}
+html, body { background:var(--bg); color:var(--tx); transition:background-color .22s ease,color .22s ease; }
+body { background:var(--bg)!important; color:var(--tx); }
+:root[data-theme='dark'] .nav { background:rgba(12,14,18,.92)!important; color:var(--tx); border-color:var(--bd); }
+:root[data-theme='light'] .nav { background:rgba(255,255,255,.94)!important; color:var(--tx); border-color:var(--bd); }
+:root[data-theme='dark'] .nav .menu a { color:var(--mut); }
+:root[data-theme='dark'] .nav .menu a:hover,:root[data-theme='dark'] .nav .menu a.on { background:var(--card);color:var(--tx); }
+:root[data-theme='light'] .nav .menu a:hover,:root[data-theme='light'] .nav .menu a.on { background:var(--bg2);color:var(--tx); }
+:root[data-theme='dark'] .hero { background:radial-gradient(700px 360px at 85% 0,rgba(59,130,255,.16),transparent),radial-gradient(500px 320px at 0 100%,rgba(242,106,33,.10),transparent),var(--bg)!important; color:var(--tx); }
+:root[data-theme='light'] .hero { background:radial-gradient(ellipse at 74% 16%,#ffba8440,transparent 48%),linear-gradient(125deg,#fff 10%,#fff5eb 100%)!important;color:var(--tx); }
+:root[data-theme='dark'] .dash { background:var(--bg)!important;color:var(--tx); }
+:root[data-theme='dark'] .dash .sidebar,:root[data-theme='dark'] .dash .topbar { background:var(--bg2)!important;border-color:var(--bd);color:var(--tx); }
+:root[data-theme='dark'] .dash .card,:root[data-theme='dark'] .dash .sec,:root[data-theme='dark'] .dash .table-wrap,:root[data-theme='dark'] .dash .owner-kpi { background:var(--card);border-color:var(--bd);color:var(--tx); }
+:root[data-theme='dark'] input,:root[data-theme='dark'] select,:root[data-theme='dark'] textarea { background:var(--bg2);color:var(--tx);border-color:var(--bd); }
+:root[data-theme='dark'] .portal,:root[data-theme='dark'] .login { background:var(--bg)!important;color:var(--tx); }
+:root[data-theme='dark'] .portal-card,:root[data-theme='dark'] .login .card { background:var(--card)!important;border-color:var(--bd);color:var(--tx); }
+:root[data-theme='light'] .portal,:root[data-theme='light'] .login { background:var(--bg)!important;color:var(--tx); }
+:root[data-theme='light'] .portal-card,:root[data-theme='light'] .login .card { background:var(--card);border-color:var(--bd);color:var(--tx); }
+:root[data-theme='dark'] .page,:root[data-theme='dark'] footer,:root[data-theme='dark'] .footer { background:var(--bg);color:var(--tx); }
+:root[data-theme='light'] .page,:root[data-theme='light'] footer,:root[data-theme='light'] .footer { background:var(--bg);color:var(--tx); }
+.theme-toggle { width:44px;height:44px;display:inline-grid;place-items:center;flex:none;padding:0;border:1px solid var(--bd);border-radius:50%;background:var(--card);color:var(--tx);cursor:pointer;box-shadow:var(--theme-shadow);transition:transform .22s ease,background .22s ease,border-color .22s ease; }
+.theme-toggle:hover { transform:rotate(-10deg) scale(1.04);border-color:var(--ac); }
+.theme-toggle:focus-visible { outline:3px solid color-mix(in srgb,var(--ac) 45%,transparent);outline-offset:3px; }
+.theme-toggle-orb { width:100%;height:100%;display:grid;place-items:center;border-radius:50%;background:color-mix(in srgb,var(--tx) 7%,transparent); }
+.theme-toggle svg { width:23px;height:23px; }
+.nav-theme-toggle { width:38px;height:38px; }
+.portal-header-actions { display:flex;align-items:center;gap:12px; }
+.portal-theme-toggle,.login-theme-toggle { position:fixed;top:20px;right:22px;z-index:30; }
+@media(max-width:760px) { .nav-right { gap:8px; } .nav-theme-toggle { width:36px;height:36px; } .portal-theme-toggle,.login-theme-toggle {top:14px;right:14px;} }
+@media(prefers-reduced-motion:reduce) { html,body,.theme-toggle {transition:none!important;} }

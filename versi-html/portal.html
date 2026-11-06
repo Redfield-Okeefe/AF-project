@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal Akademi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F1F4F2;--card:#fff;--ink:#14213D;--mut:#5B6678;--line:#DCE2DE;--grass:#2E7D4F;--grass-d:#256640;--amber:#E9A100;--red:#C8453B;--side:#14213D;--sideink:#E6ECF5;color-scheme:light}
+:root{--grass-d:#256640}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1620;--card:#172232;--ink:#E6ECF5;--mut:#9AA7BA;--line:#27364B;--grass:#3FA06A;--grass-d:#348a5a;--side:#0A1119;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 Barlow,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,h3{font-family:'Barlow Condensed',sans-serif;margin:0;letter-spacing:.2px}
+h1{font-size:34px}h2{font-size:26px;margin-bottom:14px}h3{font-size:20px;margin-bottom:8px}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--card)}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--grass);outline-offset:1px}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:10px}
+label>*{margin-top:4px}
+.btn{background:var(--grass);color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--grass-d)}
+.btn.s{padding:5px 10px;font-size:13px}
+.btn.o{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.r{background:var(--red)}
+.auth{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.hero{background:var(--side);color:var(--sideink);padding:48px;display:flex;flex-direction:column;justify-content:flex-end;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 60px,transparent 60px 120px)}
+.hero h1{font-size:56px;line-height:1;max-width:420px}
+.hero p{max-width:380px;color:#A9B7CC}
+.box{padding:48px;max-width:460px;margin:auto;width:100%}
+.tabs{display:flex;gap:4px;margin:16px 0}
+.tabs button{flex:1;padding:8px;border:0;border-bottom:3px solid var(--line);background:none;cursor:pointer;font-weight:600;color:var(--mut)}
+.tabs button.on{border-color:var(--grass);color:var(--ink)}
+.msg{padding:9px 12px;border-radius:6px;margin-bottom:12px;font-size:14px;background:#fdecea;color:#8f2a22}
+.msg.ok{background:#e4f4ea;color:#1d5a37}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--side);color:var(--sideink);padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+aside h3{padding:0 10px 4px;font-size:22px}
+aside small{padding:0 10px 18px;color:#A9B7CC;display:block}
+aside button.nav{background:none;border:0;color:inherit;text-align:left;padding:10px;border-radius:6px;cursor:pointer;font-weight:500}
+aside button.nav:hover{background:rgba(255,255,255,.07)}
+aside button.nav.on{background:var(--grass);color:#fff}
+aside .out{margin-top:auto}
+main{padding:30px;max-width:1000px;width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--grass);border-radius:8px;padding:14px}
+.stat b{display:block;font:700 30px 'Barlow Condensed',sans-serif}
+.stat span{color:var(--mut);font-size:13px}
+.stat.a{border-left-color:var(--amber)}.stat.r{border-left-color:var(--red)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th,.tbl td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl th{font-size:13px;color:var(--mut);font-weight:600}
+.wrap{overflow-x:auto}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:#e4f4ea;color:#1d5a37}
+.tag.w{background:#fff1cf;color:#7a5600}.tag.d{background:#fdecea;color:#8f2a22}
+.seg{display:inline-flex;gap:3px}
+.seg button{width:34px;height:32px;border:1px solid var(--line);background:var(--card);border-radius:5px;cursor:pointer;font-weight:600}
+.seg button.on{background:var(--grass);color:#fff;border-color:var(--grass)}
+.seg button.on.I,.seg button.on.S{background:var(--amber);border-color:var(--amber);color:#14213D}
+.seg button.on.A{background:var(--red);border-color:var(--red)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%;background:var(--grass)}
+.item{padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;justify-content:space-between;align-items:flex-start}
+.item:last-child{border:0}
+.item img{max-width:100%;border-radius:6px;margin-top:8px;max-height:260px}
+.mut{color:var(--mut);font-size:13px}.empty{color:var(--mut);padding:14px 0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:6px;z-index:9}
+@media(max-width:780px){
+.auth{grid-template-columns:1fr}.hero{padding:28px;min-height:200px}.hero h1{font-size:38px}.box{padding:28px}
+.app{grid-template-columns:1fr}
+aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:12px}
+aside h3,aside small{width:100%;padding:0}aside small{padding-bottom:6px}
+aside .out{margin:0 0 0 auto}main{padding:18px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* ===== Data (localStorage). Ganti bagian load/save bila nanti pakai backend ===== */
+const K='akademi_portal_v1';
+let D=JSON.parse(localStorage.getItem(K)||'null')||{users:[{id:'u0',role:'owner',name:'Owner Akademi',email:'owner@akademi.com',pass:'owner123',status:'aktif'}],players:[],att:{},scores:[],events:[],anns:[],tx:[],news:[]};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(D))}catch(e){toast('Penyimpanan penuh. Hapus berita lama atau pakai foto lebih kecil.')}};
+let me=D.users.find(u=>u.id===sessionStorage.getItem('akd_me'))||null,page='',tab='in',err='',st={date:'',pid:'',flt:'semua'};
+const $=id=>document.getElementById(id), v=id=>($(id)||{}).value||'';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const today=()=>new Date().toISOString().slice(0,10);
+const fd=d=>d?new Date(d+'T00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}):'-';
+const pname=id=>(D.players.find(p=>p.id===id)||{name:'(dihapus)'}).name;
+const active=()=>D.players.filter(p=>p.status==='aktif');
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}
+
+/* ===== Auth ===== */
+function doLogin(){
+  const u=D.users.find(x=>x.email===v('em').trim().toLowerCase()&&x.pass===v('pw'));
+  if(!u)return fail('Email atau kata sandi salah.');
+  if(u.status==='menunggu')return fail('Akun Anda belum disetujui owner. Coba lagi setelah disetujui.');
+  if(u.status==='ditolak')return fail('Pendaftaran Anda ditolak. Hubungi owner akademi.');
+  me=u;sessionStorage.setItem('akd_me',u.id);page=u.role==='owner'?'dash':'abs';err='';render();
+}
+function doReg(){
+  const n=v('rn').trim(),e=v('re').trim().toLowerCase(),p=v('rp');
+  if(!n||!e||p.length<6)return fail('Isi nama, email, dan kata sandi minimal 6 karakter.');
+  if(D.users.some(x=>x.email===e))return fail('Email sudah terdaftar.');
+  D.users.push({id:uid(),role:'coach',name:n,email:e,pass:p,phone:v('rh'),license:v('rl'),status:'menunggu',date:today()});
+  save();tab='in';err='ok:Pendaftaran terkirim. Tunggu persetujuan owner sebelum masuk.';render();
+}
+function fail(m){err=m;render()}
+function logout(){sessionStorage.removeItem('akd_me');me=null;err='';tab='in';render()}
+function go(p){page=p;render()}
+
+/* ===== Tampilan ===== */
+function authView(){
+  const m=err?`<div class="msg ${err.startsWith('ok:')?'ok':''}">${esc(err.replace(/^ok:/,''))}</div>`:'';
+  return `<div class="auth"><section class="hero"><h1>Portal akademi sepak bola</h1><p>Pelatih mengelola latihan dan perkembangan pemain. Owner mengelola pelatih, keuangan, dan kabar akademi.</p></section>
+  <section class="box"><h2>${tab==='in'?'Masuk':'Daftar sebagai pelatih'}</h2>
+  <div class="tabs"><button class="${tab==='in'?'on':''}" onclick="tab='in';err='';render()">Masuk</button><button class="${tab==='reg'?'on':''}" onclick="tab='reg';err='';render()">Daftar pelatih</button></div>${m}
+  ${tab==='in'?`<label>Email<input id="em" type="email" autocomplete="username"></label><label>Kata sandi<input id="pw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></label><button class="btn" onclick="doLogin()">Masuk</button>`
+  :`<label>Nama lengkap<input id="rn"></label><label>Email<input id="re" type="email"></label><label>No. HP<input id="rh"></label><label>Lisensi kepelatihan (opsional)<input id="rl" placeholder="Contoh: D, C AFC"></label><label>Kata sandi<input id="rp" type="password"></label><button class="btn" onclick="doReg()">Kirim pendaftaran</button><p class="mut">Akun aktif setelah disetujui owner.</p>`}
+  </section></div>`;
+}
+const NAV={owner:[['dash','Ringkasan'],['keu','Keuangan'],['pelatih','Pelatih'],['pemain','Pemain'],['berita','Berita']],coach:[['abs','Absensi'],['nilai','Penilaian'],['jadwal','Jadwal'],['info','Pengumuman']]};
+function shell(body){
+  return `<div class="app"><aside><h3>Akademi</h3><small>${esc(me.name)} · ${me.role==='owner'?'Owner':'Pelatih'}</small>
+  ${NAV[me.role].map(([k,l])=>`<button class="nav ${page===k?'on':''}" onclick="go('${k}')">${l}</button>`).join('')}
+  <button class="nav out" onclick="logout()">Keluar</button></aside><main>${body}</main></div>`;
+}
+function render(){
+  if(!me){$('root').innerHTML=authView();return}
+  const V={dash,keu,pelatih,pemain,berita,abs,nilai,jadwal,info};
+  $('root').innerHTML=shell(V[page]());
+}
+
+/* ===== Owner ===== */
+function dash(){
+  const month=today().slice(0,7), paid=D.tx.filter(t=>t.type==='iuran'&&t.status==='lunas'&&t.date.startsWith(month)).reduce((a,t)=>a+ +t.amount,0);
+  const out=D.tx.filter(t=>t.type==='keluar'&&t.date.startsWith(month)).reduce((a,t)=>a+ +t.amount,0);
+  const due=D.tx.filter(t=>t.type==='iuran'&&t.status==='belum').reduce((a,t)=>a+ +t.amount,0);
+  const rec=Object.values(D.att).flatMap(d=>Object.values(d)), hadir=rec.length?Math.round(rec.filter(x=>x==='H').length/rec.length*100):0;
+  const wait=D.users.filter(u=>u.status==='menunggu').length, reg=D.players.filter(p=>p.status==='pendaftar').length;
+  return `<h2>Ringkasan akademi</h2><div class="grid">
+  <div class="stat"><b>${active().length}</b><span>Pemain aktif</span></div>
+  <div class="stat a"><b>${reg}</b><span>Pendaftar baru</span></div>
+  <div class="stat"><b>${D.users.filter(u=>u.role==='coach'&&u.status==='aktif').length}</b><span>Pelatih aktif</span></div>
+  <div class="stat a"><b>${wait}</b><span>Pelatih menunggu persetujuan</span></div>
+  <div class="stat"><b>${hadir}%</b><span>Rata-rata kehadiran</span></div>
+  <div class="stat"><b>${rp(paid)}</b><span>Iuran masuk bulan ini</span></div>
+  <div class="stat r"><b>${rp(due)}</b><span>Tunggakan iuran</span></div>
+  <div class="stat"><b>${rp(paid-out)}</b><span>Saldo bulan ini</span></div></div>
+  <div class="card"><h3>Berita terbaru</h3>${D.news.slice(0,3).map(n=>`<div class="item"><div><b>${esc(n.title)}</b><div class="mut">${fd(n.date)}</div></div></div>`).join('')||'<div class="empty">Belum ada berita. Buka menu Berita untuk menulis yang pertama.</div>'}</div>`;
+}
+function keu(){
+  const rows=[...D.tx].sort((a,b)=>b.date.localeCompare(a.date));
+  return `<h2>Keuangan dan pembayaran</h2><div class="card"><h3>Catat transaksi</h3><div class="row">
+  <label>Jenis<select id="tj" onchange="$('tp').disabled=this.value!=='iuran'"><option value="iuran">Iuran pemain</option><option value="keluar">Pengeluaran</option></select></label>
+  <label>Pemain<select id="tp">${active().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></label>
+  <label>Keterangan<input id="tk" placeholder="Iuran Oktober / sewa lapangan"></label>
+  <label>Jumlah (Rp)<input id="ta" type="number" min="0"></label>
+  <label>Status<select id="ts"><option value="lunas">Lunas</option><option value="belum">Belum bayar</option></select></label>
+  <label>Tanggal<input id="td" type="date" value="${today()}"></label></div><button class="btn" onclick="addTx()">Simpan transaksi</button></div>
+  <div class="card wrap"><table class="tbl"><tr><th>Tanggal</th><th>Keterangan</th><th>Jumlah</th><th>Status</th><th></th></tr>
+  ${rows.map(t=>`<tr><td>${fd(t.date)}</td><td>${t.type==='iuran'?esc(pname(t.pid))+' · ':''}${esc(t.desc)}</td><td>${t.type==='keluar'?'−':''}${rp(t.amount)}</td>
+  <td>${t.type==='keluar'?'<span class="tag d">Keluar</span>':`<span class="tag ${t.status==='lunas'?'':'w'}">${t.status==='lunas'?'Lunas':'Belum bayar'}</span>`}</td>
+  <td>${t.type==='iuran'?`<button class="btn s o" onclick="togTx('${t.id}')">${t.status==='lunas'?'Tandai belum':'Tandai lunas'}</button> `:''}<button class="btn s r" onclick="delTx('${t.id}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">Belum ada transaksi.</td></tr>'}</table></div>`;
+}
+function addTx(){
+  const type=v('tj'),amt=+v('ta');
+  if(!amt)return toast('Isi jumlah transaksi.');
+  if(type==='iuran'&&!v('tp'))return toast('Pilih pemain terlebih dahulu.');
+  D.tx.push({id:uid(),type,pid:type==='iuran'?v('tp'):'',desc:v('tk')||(type==='iuran'?'Iuran':'Pengeluaran'),amount:amt,status:v('ts'),date:v('td')||today()});
+  save();render();toast('Transaksi disimpan');
+}
+const togTx=id=>{const t=D.tx.find(x=>x.id===id);t.status=t.status==='lunas'?'belum':'lunas';save();render()};
+const delTx=id=>{if(confirm('Hapus transaksi ini?')){D.tx=D.tx.filter(x=>x.id!==id);save();render()}};
+
+function pelatih(){
+  const L=D.users.filter(u=>u.role==='coach'), tg=s=>s==='aktif'?'':s==='menunggu'?' w':' d';
+  return `<h2>Kelola pelatih dan akun</h2><div class="card wrap"><table class="tbl"><tr><th>Nama</th><th>Kontak</th><th>Lisensi</th><th>Status</th><th></th></tr>
+  ${L.map(u=>`<tr><td>${esc(u.name)}<div class="mut">Daftar ${fd(u.date)}</div></td><td>${esc(u.email)}<div class="mut">${esc(u.phone)}</div></td><td>${esc(u.license)||'-'}</td><td><span class="tag${tg(u.status)}">${u.status}</span></td>
+  <td>${u.status!=='aktif'?`<button class="btn s" onclick="setU('${u.id}','aktif')">Setujui</button> `:''}${u.status==='menunggu'?`<button class="btn s o" onclick="setU('${u.id}','ditolak')">Tolak</button> `:''}${u.status==='aktif'?`<button class="btn s o" onclick="setU('${u.id}','ditolak')">Nonaktifkan</button> `:''}<button class="btn s r" onclick="delU('${u.id}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">Belum ada pelatih yang mendaftar.</td></tr>'}</table></div>`;
+}
+const setU=(id,s)=>{D.users.find(u=>u.id===id).status=s;save();render()};
+const delU=id=>{if(confirm('Hapus akun pelatih ini?')){D.users=D.users.filter(u=>u.id!==id);save();render()}};
+
+function pemain(){
+  const L=D.players.filter(p=>st.flt==='semua'||p.status===st.flt);
+  return `<h2>Data pendaftar dan pemain</h2><div class="card"><h3>Tambah pemain</h3><div class="row">
+  <label>Nama pemain<input id="pn"></label><label>Tanggal lahir<input id="pb" type="date"></label>
+  <label>Kelompok umur<select id="pg">${['U-9','U-11','U-13','U-15','U-17'].map(g=>`<option>${g}</option>`).join('')}</select></label>
+  <label>Nama orang tua<input id="po"></label><label>No. HP orang tua<input id="ph"></label>
+  <label>Status<select id="ps"><option value="aktif">Aktif</option><option value="pendaftar">Pendaftar baru</option></select></label></div>
+  <button class="btn" onclick="addP()">Simpan pemain</button></div>
+  <div class="card"><label style="max-width:200px">Tampilkan<select onchange="st.flt=this.value;render()">${['semua','aktif','pendaftar'].map(o=>`<option ${st.flt===o?'selected':''}>${o}</option>`).join('')}</select></label>
+  <div class="wrap"><table class="tbl"><tr><th>Nama</th><th>Umur</th><th>Orang tua</th><th>Status</th><th></th></tr>
+  ${L.map(p=>`<tr><td>${esc(p.name)}<div class="mut">${fd(p.birth)}</div></td><td>${esc(p.group)}</td><td>${esc(p.parent)}<div class="mut">${esc(p.phone)}</div></td><td><span class="tag ${p.status==='aktif'?'':'w'}">${p.status}</span></td>
+  <td>${p.status==='pendaftar'?`<button class="btn s" onclick="accP('${p.id}')">Terima</button> `:''}<button class="btn s r" onclick="delP('${p.id}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">Belum ada data.</td></tr>'}</table></div></div>`;
+}
+function addP(){
+  if(!v('pn').trim())return toast('Isi nama pemain.');
+  D.players.push({id:uid(),name:v('pn').trim(),birth:v('pb'),group:v('pg'),parent:v('po'),phone:v('ph'),status:v('ps'),date:today()});save();render();toast('Pemain disimpan');
+}
+const accP=id=>{D.players.find(p=>p.id===id).status='aktif';save();render()};
+const delP=id=>{if(confirm('Hapus pemain ini?')){D.players=D.players.filter(p=>p.id!==id);save();render()}};
+
+function berita(){
+  return `<h2>Berita akademi</h2><div class="card"><h3>Tulis berita</h3><label>Judul<input id="bt"></label><label>Isi berita<textarea id="bb" rows="4"></textarea></label>
+  <label>Foto (opsional)<input id="bf" type="file" accept="image/*"></label><button class="btn" onclick="addNews()">Terbitkan berita</button></div>
+  <div class="card">${D.news.map(n=>`<div class="item"><div><b>${esc(n.title)}</b><div class="mut">${fd(n.date)}</div><p>${esc(n.body).replace(/\n/g,'<br>')}</p>${n.img?`<img src="${n.img}" alt="">`:''}</div><button class="btn s r" onclick="delNews('${n.id}')">Hapus</button></div>`).join('')||'<div class="empty">Belum ada berita.</div>'}</div>`;
+}
+function addNews(){
+  const t=v('bt').trim(),b=v('bb').trim(),f=$('bf').files[0];
+  if(!t||(!b&&!f))return toast('Isi judul, lalu teks atau foto.');
+  const push=img=>{D.news.unshift({id:uid(),title:t,body:b,img:img||'',date:today()});save();render();toast('Berita terbit')};
+  if(!f)return push();
+  const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,900/im.width),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);push(c.toDataURL('image/jpeg',.78))};im.src=r.result};r.readAsDataURL(f);
+}
+const delNews=id=>{if(confirm('Hapus berita ini?')){D.news=D.news.filter(n=>n.id!==id);save();render()}};
+
+/* ===== Pelatih ===== */
+function abs(){
+  const d=st.date||today(), rec=D.att[d]||{}, P=active();
+  return `<h2>Absensi latihan</h2><div class="card"><label style="max-width:220px">Tanggal latihan<input type="date" value="${d}" onchange="st.date=this.value;render()"></label>
+  ${P.map(p=>`<div class="item" style="align-items:center"><div>${esc(p.name)}<div class="mut">${esc(p.group)}</div></div><div class="seg">${['H','I','S','A'].map(c=>`<button class="${c} ${rec[p.id]===c?'on':''}" title="${{H:'Hadir',I:'Izin',S:'Sakit',A:'Alpa'}[c]}" onclick="setAtt('${d}','${p.id}','${c}')">${c}</button>`).join('')}</div></div>`).join('')||'<div class="empty">Belum ada pemain aktif. Owner perlu menambahkan pemain terlebih dahulu.</div>'}
+  <p class="mut">H hadir · I izin · S sakit · A alpa. Tersimpan otomatis.</p></div>`;
+}
+function setAtt(d,p,c){(D.att[d]=D.att[d]||{})[p]=c;save();render()}
+
+function nilai(){
+  const P=active(); st.pid=st.pid||(P[0]||{}).id||'';
+  const H=D.scores.filter(s=>s.pid===st.pid).sort((a,b)=>b.date.localeCompare(a.date)), avg=s=>((s.t+s.f+s.k+s.d)/4).toFixed(1);
+  const F=[['n1','Teknik'],['n2','Fisik'],['n3','Taktik'],['n4','Disiplin']];
+  return `<h2>Penilaian dan perkembangan</h2><div class="card"><label>Pemain<select onchange="st.pid=this.value;render()">${P.map(p=>`<option value="${p.id}" ${p.id===st.pid?'selected':''}>${esc(p.name)} (${esc(p.group)})</option>`).join('')}</select></label>
+  ${P.length?`<div class="row">${F.map(([i,l])=>`<label>${l} (1–10)<input id="${i}" type="number" min="1" max="10" value="7"></label>`).join('')}<label>Tanggal<input id="nd" type="date" value="${today()}"></label></div>
+  <label>Catatan pelatih<textarea id="nc" rows="2"></textarea></label><button class="btn" onclick="addNilai()">Simpan penilaian</button>`:'<div class="empty">Belum ada pemain aktif.</div>'}</div>
+  <div class="card"><h3>Riwayat perkembangan</h3>${H.map(s=>`<div class="item"><div style="flex:1"><b>${fd(s.date)}</b> · rata-rata ${avg(s)}<div class="mut">Teknik ${s.t} · Fisik ${s.f} · Taktik ${s.k} · Disiplin ${s.d}</div><div class="bar" style="margin:6px 0"><i style="width:${avg(s)*10}%"></i></div>${esc(s.note)}</div><button class="btn s r" onclick="delNilai('${s.id}')">Hapus</button></div>`).join('')||'<div class="empty">Belum ada penilaian untuk pemain ini.</div>'}</div>`;
+}
+function addNilai(){
+  const n=i=>Math.min(10,Math.max(1,+v(i)||1));
+  D.scores.push({id:uid(),pid:st.pid,date:v('nd')||today(),t:n('n1'),f:n('n2'),k:n('n3'),d:n('n4'),note:v('nc'),coach:me.id});save();render();toast('Penilaian disimpan');
+}
+const delNilai=id=>{D.scores=D.scores.filter(s=>s.id!==id);save();render()};
+
+function jadwal(){
+  const E=[...D.events].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  return `<h2>Jadwal latihan dan pertandingan</h2><div class="card"><h3>Tambah jadwal</h3><div class="row">
+  <label>Jenis<select id="ej"><option>Latihan</option><option>Pertandingan</option></select></label><label>Judul<input id="et" placeholder="Latihan U-13 / vs Garuda FC"></label>
+  <label>Tanggal<input id="ed" type="date" value="${today()}"></label><label>Jam<input id="eh" type="time" value="16:00"></label><label>Lokasi<input id="el"></label></div>
+  <button class="btn" onclick="addEv()">Simpan jadwal</button></div>
+  <div class="card">${E.map(e=>`<div class="item"><div><span class="tag ${e.type==='Latihan'?'':'w'}">${e.type}</span> <b>${esc(e.title)}</b><div class="mut">${fd(e.date)} · ${esc(e.time)} · ${esc(e.place)||'lokasi belum diisi'}${e.date<today()?' · selesai':''}</div></div><button class="btn s r" onclick="delEv('${e.id}')">Hapus</button></div>`).join('')||'<div class="empty">Belum ada jadwal.</div>'}</div>`;
+}
+function addEv(){
+  if(!v('et').trim())return toast('Isi judul jadwal.');
+  D.events.push({id:uid(),type:v('ej'),title:v('et').trim(),date:v('ed'),time:v('eh'),place:v('el')});save();render();toast('Jadwal disimpan');
+}
+const delEv=id=>{D.events=D.events.filter(e=>e.id!==id);save();render()};
+
+function info(){
+  return `<h2>Pengumuman</h2><div class="card"><h3>Kirim pengumuman</h3><div class="row"><label>Tujuan<select id="at"><option>Orang tua dan pemain</option><option>Orang tua</option><option>Pemain</option></select></label><label>Judul<input id="aj"></label></div>
+  <label>Isi pengumuman<textarea id="ab" rows="3"></textarea></label><button class="btn" onclick="addAnn()">Kirim pengumuman</button></div>
+  <div class="card">${D.anns.map(a=>`<div class="item"><div><span class="tag">${esc(a.to)}</span> <b>${esc(a.title)}</b><div class="mut">${fd(a.date)} · ${esc(a.by)}</div><p>${esc(a.body).replace(/\n/g,'<br>')}</p></div>${a.byId===me.id?`<button class="btn s r" onclick="delAnn('${a.id}')">Hapus</button>`:''}</div>`).join('')||'<div class="empty">Belum ada pengumuman.</div>'}</div>`;
+}
+function addAnn(){
+  if(!v('aj').trim()||!v('ab').trim())return toast('Isi judul dan isi pengumuman.');
+  D.anns.unshift({id:uid(),to:v('at'),title:v('aj').trim(),body:v('ab').trim(),date:today(),by:me.name,byId:me.id});save();render();toast('Pengumuman terkirim');
+}
+const delAnn=id=>{D.anns=D.anns.filter(a=>a.id!==id);save();render()};
+
+if(me)page=me.role==='owner'?'dash':'abs';
+render();
+</script>
+</body>
+</html>

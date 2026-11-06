@@ -1,0 +1,72 @@
+/* =====================================================================
+   TEMA PUTIH LEMBUT (v3)
+   Impor file ini PALING AKHIR (setelah global.css dan dashboard.css).
+   ===================================================================== */
+
+/* ---- Warna: krem keabu-abuan, kontras rendah supaya tidak silau ---- */
+html:root {
+  color-scheme: light;
+  --bg: #e6e3db;     /* latar halaman */
+  --bg2: #dcd8ce;    /* latar bagian selang-seling, sidebar */
+  --card: #efede7;   /* kartu */
+  --tx: #2a2d4a;     /* teks */
+  --mut: #666a86;    /* teks redup */
+  --ac: #d9540f;     /* oranye utama */
+  --ac2: #2563eb;
+  --bd: #cfcabd;     /* garis */
+  --ok: #c2410c;
+  --warn: #b45309;
+  --info: #2563eb;
+}
+
+/* ---- Navbar: nama "B.N.R ACADEMY" mengikuti warna logo ---- */
+html .logo .nama-bnr {
+  color: #111111           /* hitam seperti huruf B.N.R di logo */
+}
+
+html .logo b {
+  color: #e05020           /* oranye seperti di logo */
+}
+
+/* ---- Hero: cahaya latar tipis, teks tetap terbaca di atas kartu pastel ---- */
+html .hero {
+  background:
+    radial-gradient(700px 360px at 85% 0, rgba(59, 130, 255, .10), transparent 60%),
+    radial-gradient(600px 300px at 0 100%, rgba(242, 106, 33, .11), transparent 60%)
+}
+
+html .hero-text h1,
+html .hero-text .lead {
+  text-shadow: 0 1px 16px color-mix(in srgb, var(--bg) 85%, transparent)
+}
+
+/* kartu latar yang bergerak: lembut */
+html .hero-bg .drift-wall__overlay {
+  opacity: .3
+}
+
+html .hero-bg .drift-wall__tile.is-active .drift-wall__inner {
+  box-shadow: 0 22px 44px -16px rgba(40, 30, 60, .35)
+}
+
+/* ---- Kotak di belakang logo hero: dihilangkan ----
+   Ukuran, posisi, kemiringan, dan animasi tetap, jadi logo dan dua kartu kecil tidak bergeser. */
+html .ball-card {
+  background: none;
+  box-shadow: none;
+  border: 0;
+  overflow: visible
+}
+
+/* ---- Teks bagian bawah Beranda dibuat hitam ----
+   Selektor ".hero ~ ..." hanya mengenai Beranda, halaman lain tidak berubah. */
+html .hero ~ .w h2,
+html .hero ~ .alt h2,
+html .hero ~ .w .sub,
+html .hero ~ .alt .sub,
+html .hero ~ .w .card h3,
+html .hero ~ .alt .card h3,
+html .hero ~ .w .card p,
+html .hero ~ .alt .card p {
+  color: #111111
+}

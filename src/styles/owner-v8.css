@@ -1,0 +1,158 @@
+/* Akademi Futsal Portal Owner v8 - scoped to .dash.owner-portal.
+   Beranda, Pendaftaran, Gallery, Berita publik, Contact dan portal lain tetap sama. */
+.dash.owner-portal {
+  --owner-canvas:#faf9f7;
+  --owner-divider:color-mix(in srgb,var(--bd) 80%,transparent);
+}
+.dash.owner-portal .topbar > div:nth-child(2) {display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.dash.owner-portal .owner-header-actions {gap:10px;align-self:center}
+.dash.owner-portal .owner-profile-name {margin-right:3px}
+.dash.owner-portal .owner-theme-icon-btn {width:41px;height:41px;border-radius:50%;background:var(--owner-icon-bg);border:1px solid var(--owner-ring);color:var(--ac)}
+.dash.owner-portal .owner-theme-icon-btn:hover {transform:rotate(-12deg) translateY(-1px)}
+.dash.owner-portal .owner-live-clock {display:flex;align-items:center;gap:7px;margin-top:5px;font-size:11px;font-weight:650;color:var(--mut);font-variant-numeric:tabular-nums;line-height:1.4}
+.dash.owner-portal .owner-live-clock svg {color:var(--ac);flex:none}
+.dash.owner-portal .owner-live-clock b {font-weight:800;color:var(--tx)}
+.dash.owner-portal .owner-live-clock time {display:block}
+.dash.owner-portal .owner-clock-divider {color:var(--mut)}
+/* Semua kartu KPI merupakan satu tautan yang dapat diklik dan difokus keyboard. */
+.dash.owner-portal .owner-kpi {position:relative;isolation:isolate}
+.dash.owner-portal .owner-kpi-full-link {position:absolute;inset:0;border-radius:inherit;z-index:2;text-decoration:none;cursor:pointer;outline-offset:3px}
+.dash.owner-portal .owner-kpi:has(.owner-kpi-full-link:focus-visible) {border-color:var(--ac);box-shadow:0 0 0 3px var(--owner-ring)}
+.dash.owner-portal .owner-kpi:hover .owner-kpi-open {color:var(--ac);opacity:1;transform:translateX(3px)}
+.dash.owner-portal .owner-kpi-open {transition:color .2s ease,transform .2s ease,opacity .2s ease}
+/* Periode grafik: input angka 1–24 bulan, validasi dan detail titik. */
+.dash.owner-portal .owner-chart-period-form {display:flex;gap:7px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.dash.owner-portal .owner-chart-period-form label {font-size:11px;font-weight:750;margin:0;color:var(--mut);white-space:nowrap}
+.dash.owner-portal .owner-chart-period-form input {width:65px;min-width:0;height:35px;margin:0!important;border-radius:9px;padding:4px 6px;text-align:center;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.dash.owner-portal .owner-chart-period-form input[aria-invalid="true"] {border-color:#d44d4d!important;outline-color:#d44d4d}
+.dash.owner-portal .owner-chart-apply {border:1px solid var(--ac);background:var(--ac);color:#fff;font:inherit;font-size:11px;font-weight:800;border-radius:9px;padding:8px 11px;min-height:35px;cursor:pointer;transition:filter .2s,transform .2s}
+.dash.owner-portal .owner-chart-apply:hover {filter:brightness(1.06);transform:translateY(-1px)}
+.dash.owner-portal .owner-chart-error {font-size:12px;color:#d44d4d;margin:-8px 0 15px}
+.dash.owner-portal .owner-chart-point {cursor:pointer;outline:none}
+.dash.owner-portal .owner-chart-point circle:not(.owner-chart-hit) {transition:r .16s,stroke-width .16s}
+.dash.owner-portal .owner-chart-point:hover circle:not(.owner-chart-hit),.dash.owner-portal .owner-chart-point:focus-visible circle:not(.owner-chart-hit) {stroke-width:4px;filter:drop-shadow(0 0 2px rgba(233,105,34,.45))}
+.dash.owner-portal .owner-chart-point:focus-visible .owner-chart-hit {stroke:var(--ac);stroke-width:1.5;stroke-dasharray:3 3}
+.dash.owner-portal .owner-chart-labels {position:relative;display:block;height:25px;margin:0 18px;color:var(--mut)}
+.dash.owner-portal .owner-chart-labels span {position:absolute;top:4px;transform:translateX(-50%);font-size:10px;white-space:nowrap}
+.dash.owner-portal .owner-chart-labels span:first-child {transform:translateX(0)}
+.dash.owner-portal .owner-chart-labels span:last-child {transform:translateX(-100%)}
+.dash.owner-portal .owner-chart-labels span:first-child:last-child {transform:translateX(-50%)}
+.dash.owner-portal .owner-chart-selected {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;margin-top:7px;border-radius:10px;background:var(--bg2);font-size:11px;color:var(--mut)}
+.dash.owner-portal .owner-chart-selected strong {color:var(--tx)}
+.dash.owner-portal .owner-chart-selected b {color:var(--ac);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* Halaman administrasi dengan tata letak konsisten. */
+.dash.owner-portal .owner-admin-page {min-width:0}
+.dash.owner-portal .owner-page-heading {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:3px 0 22px;padding-bottom:17px;border-bottom:1px solid var(--owner-divider)}
+.dash.owner-portal .owner-page-heading-main {display:flex;align-items:center;gap:13px;min-width:0;flex:1}
+.dash.owner-portal .owner-page-heading-icon {display:grid;place-items:center;background:var(--owner-icon-bg);color:var(--ac);width:46px;height:46px;border-radius:13px;flex:none}
+.dash.owner-portal .owner-page-heading h2 {font-size:clamp(18px,1.75vw,24px);font-weight:850;letter-spacing:-.6px;line-height:1.35}
+.dash.owner-portal .owner-page-heading p {font-size:12px;color:var(--mut);line-height:1.55;margin-top:3px}
+.dash.owner-portal .owner-page-heading-right {display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dash.owner-portal .owner-page-heading-right>.abtn {display:inline-flex;gap:7px;align-items:center}
+.dash.owner-portal .owner-page-meta,.dash.owner-portal .owner-counter {display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;padding:6px 11px;border:1px solid var(--bd);border-radius:10px;background:var(--card);font-size:11px;font-weight:750;color:var(--mut)}
+.dash.owner-portal .owner-page-section-title {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:23px 0 12px}
+.dash.owner-portal .owner-page-section-title:first-child {margin-top:0}
+.dash.owner-portal .owner-page-section-title h3 {font-size:15px;font-weight:850;letter-spacing:-.3px;margin:0}
+.dash.owner-portal .owner-page-section-title p {font-size:11px;color:var(--mut);margin-top:4px}
+.dash.owner-portal .owner-list-kicker {display:inline-flex;gap:5px;align-items:center;color:var(--warn);font-size:10px;font-weight:700;margin-bottom:5px}
+.dash.owner-portal .owner-admin-page .card {margin-bottom:11px}
+.dash.owner-portal .owner-admin-page .adm-row {display:flex;gap:15px;align-items:center;padding:17px 18px}
+.dash.owner-portal .owner-admin-page .adm-info {min-width:0;gap:2px}
+.dash.owner-portal .owner-admin-page .adm-info b {font-size:13px;overflow-wrap:anywhere;line-height:1.4}
+.dash.owner-portal .owner-admin-page .adm-info small {font-size:11px;overflow-wrap:anywhere;line-height:1.55}
+.dash.owner-portal .owner-admin-page .adm-btns {display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;max-width:100%}
+.dash.owner-portal .owner-admin-page .abtn {font-size:12px;min-height:38px;padding:8px 13px;border-radius:10px;white-space:normal;line-height:1.3}
+.dash.owner-portal .owner-admin-page .abtn:hover {transform:translateY(-1px)}
+.dash.owner-portal .owner-filter-card {padding:18px 20px;margin:0 0 20px!important}
+.dash.owner-portal .owner-filter-intro {display:flex;gap:8px;align-items:center;margin-bottom:12px;color:var(--tx);font-size:13px}
+.dash.owner-portal .owner-filter-intro svg {color:var(--ac)}
+.dash.owner-portal .owner-filter-card .filter-bar {display:flex;align-items:center;gap:10px}
+.dash.owner-portal .owner-filter-card .filter-bar input,.dash.owner-portal .owner-filter-card .filter-bar select {min-width:0;flex:1 1 160px;max-width:100%;border-radius:10px;height:41px;margin:0;padding:8px 12px;font-size:12px}
+.dash.owner-portal .owner-filter-card .filter-bar input[type=search] {flex:2 1 220px}
+.dash.owner-portal .owner-filter-card .filter-bar .abtn {margin-left:auto}
+.dash.owner-portal .owner-filter-card>p {margin-top:12px;font-size:11px}
+.dash.owner-portal .owner-player-card {padding:17px 19px}
+.dash.owner-portal .owner-player-card .adm-row {margin:0;padding:0}
+.dash.owner-portal .owner-player-card .mini-select {width:auto;min-width:140px;max-width:220px;padding:10px 9px;margin:0;font-size:12px;border-radius:10px}
+.dash.owner-portal .owner-player-card .detail-box {margin-top:15px;border-top:1px solid var(--bd);padding-top:16px;gap:13px}
+.dash.owner-portal .owner-finance-kpis {margin-top:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.dash.owner-portal .owner-finance-kpis .card {min-height:120px;gap:8px}
+.dash.owner-portal .owner-finance-kpis .kpi small {font-size:11px}
+.dash.owner-portal .owner-finance-kpis .kpi b {font-size:clamp(18px,1.7vw,26px);font-variant-numeric:tabular-nums;letter-spacing:-.5px;overflow-wrap:anywhere}
+.dash.owner-portal .owner-news-editor {max-width:900px;margin:auto;padding:clamp(18px,2.5vw,28px)}
+.dash.owner-portal .owner-news-editor>h3 {margin-bottom:16px}
+.dash.owner-portal .owner-news-editor label,.dash.owner-portal .owner-settings-card label {font-size:12px;font-weight:700;color:var(--tx)}
+.dash.owner-portal .owner-news-editor input,.dash.owner-portal .owner-news-editor select,.dash.owner-portal .owner-news-editor textarea,.dash.owner-portal .owner-settings-card input,.dash.owner-portal .owner-settings-card select {display:block;min-width:0;max-width:100%;border-radius:10px;font-size:13px;padding:11px 12px;margin-top:6px}
+.dash.owner-portal .owner-news-editor .adm-prev {max-width:340px;aspect-ratio:16/9}
+.dash.owner-portal .owner-news-row .adm-thumb {width:102px;height:68px;border-radius:11px;object-fit:cover;flex:none}
+.dash.owner-portal .owner-settings-card {margin-top:0!important;margin-bottom:16px!important;padding:clamp(17px,2vw,26px)}
+.dash.owner-portal .owner-settings-title {display:flex;gap:12px;align-items:center;padding-bottom:15px;border-bottom:1px solid var(--bd);margin-bottom:12px}
+.dash.owner-portal .owner-settings-title h3 {margin:0;font-size:15px;font-weight:850}
+.dash.owner-portal .owner-settings-title p {margin:4px 0 0;font-size:11px}
+.dash.owner-portal .owner-settings-card>p {margin-bottom:14px}
+.dash.owner-portal .owner-settings-card .kelas-row {border:1px solid var(--bd);border-radius:13px;padding:12px 14px;margin-top:10px;grid-template-columns:1fr 1fr 1fr auto;gap:12px}
+.dash.owner-portal .owner-settings-card .kelas-row label {margin-top:0}
+.dash.owner-portal .owner-settings-card .kelas-row .abtn {align-self:end;margin:0 0 2px}
+.dash.owner-portal .owner-settings-card .adm-actions {border-top:1px solid var(--bd);padding-top:17px;margin-top:19px}
+.dash.owner-portal .owner-danger-zone {border-color:color-mix(in srgb,#d66 35%,var(--bd))}
+.dash.owner-portal .owner-danger-zone .owner-page-heading-icon {background:color-mix(in srgb,#d66 11%,var(--card));color:#d65b5b}
+@media(max-width:1100px){
+ .dash.owner-portal .owner-settings-card .kelas-row {grid-template-columns:repeat(2,minmax(0,1fr))}
+ .dash.owner-portal .owner-profile-name strong {max-width:130px}
+ .dash.owner-portal .owner-page-heading {gap:10px}
+}
+@media(max-width:900px){
+ .dash.owner-portal .owner-profile-name {display:flex}
+ .dash.owner-portal .owner-header-actions {gap:9px}
+ .dash.owner-portal .owner-finance-kpis {grid-template-columns:repeat(3,minmax(0,1fr))}
+ .dash.owner-portal .owner-settings-card .kelas-row {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ .dash.owner-portal .owner-finance-kpis {grid-template-columns:repeat(2,minmax(0,1fr))}
+ .dash.owner-portal .owner-finance-kpis .card:last-child {grid-column:1/-1}
+ .dash.owner-portal .owner-admin-page .adm-row {flex-wrap:wrap;align-items:flex-start}
+ .dash.owner-portal .owner-admin-page .adm-row>.adm-info {flex:1 1 210px}
+ .dash.owner-portal .owner-admin-page .adm-row .adm-btns {flex:1 1 100%;justify-content:flex-start}
+ .dash.owner-portal .owner-player-card .adm-row>.mini-select {flex:1 1 180px;max-width:none}
+ .dash.owner-portal .owner-chart-period-form {justify-content:flex-start}
+}
+@media(max-width:540px){
+ .dash.owner-portal .topbar {gap:7px}
+ .dash.owner-portal .owner-profile-name {max-width:83px;gap:2px}
+ .dash.owner-portal .owner-profile-name strong {max-width:83px;font-size:10px}
+ .dash.owner-portal .owner-profile-name span {font-size:10px}
+ .dash.owner-portal .owner-header-actions {gap:5px}
+ .dash.owner-portal .owner-theme-icon-btn {height:37px;width:37px}
+ .dash.owner-portal .owner-photo {height:38px;width:38px}
+ .dash.owner-portal .owner-live-clock {font-size:10px;gap:5px;line-height:1.4}
+ .dash.owner-portal .owner-live-clock time {max-width:100%;overflow-wrap:anywhere}
+ .dash.owner-portal .owner-panel-heading {flex-direction:column;align-items:stretch}
+ .dash.owner-portal .owner-chart-period-form {justify-content:flex-start;width:100%;gap:8px}
+ .dash.owner-portal .owner-page-heading {padding-bottom:13px;margin-bottom:16px}
+ .dash.owner-portal .owner-page-heading-icon {height:40px;width:40px}
+ .dash.owner-portal .owner-page-heading-right {width:100%}
+ .dash.owner-portal .owner-filter-card {padding:16px}
+ .dash.owner-portal .owner-filter-card .filter-bar {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px}
+ .dash.owner-portal .owner-filter-card .filter-bar input[type=search],.dash.owner-portal .owner-filter-card .filter-bar>.abtn {grid-column:1/-1;width:100%;margin:0}
+ .dash.owner-portal .owner-filter-card .filter-bar select {min-width:0;width:100%}
+ .dash.owner-portal .owner-settings-card .kelas-row {grid-template-columns:1fr;gap:6px}
+ .dash.owner-portal .owner-settings-card .kelas-row .abtn {width:100%;margin-top:8px}
+ .dash.owner-portal .owner-news-row .adm-thumb {width:90px;height:64px}
+ .dash.owner-portal .owner-news-row .adm-info {flex:1 1 100px!important}
+ .dash.owner-portal .owner-chart-selected {flex-wrap:wrap}
+}
+@media(max-width:385px){
+ .dash.owner-portal .topbar {flex-wrap:wrap!important}
+ .dash.owner-portal .topbar>div:nth-child(2) {flex:1 1 calc(100% - 55px)}
+ .dash.owner-portal .owner-header-actions {width:100%;justify-content:flex-end}
+ .dash.owner-portal .owner-profile-name {display:flex;max-width:190px}
+ .dash.owner-portal .owner-profile-name strong {max-width:190px;font-size:12px}
+ .dash.owner-portal .owner-live-clock .owner-clock-divider {display:none}
+ .dash.owner-portal .owner-live-clock time b {display:block}
+ .dash.owner-portal .owner-finance-kpis {grid-template-columns:1fr}
+ .dash.owner-portal .owner-finance-kpis .card:last-child {grid-column:auto}
+ .dash.owner-portal .owner-admin-page .adm-btns .abtn {flex:1 1 100%}
+}
+@media(prefers-reduced-motion:reduce){
+ .dash.owner-portal .owner-kpi-open,.dash.owner-portal .owner-chart-point circle:not(.owner-chart-hit),.dash.owner-portal .owner-chart-apply {transition:none}
+}

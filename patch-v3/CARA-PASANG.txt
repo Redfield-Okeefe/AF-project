@@ -1,0 +1,11 @@
+TAMBALAN v3 - cukup TIMPA 4 file ini ke proyekmu (struktur folder sama dengan src/):
+
+  src/styles/tema-putih.css        (file baru / timpa yang lama)
+  src/main.jsx                     (menambah 1 baris import tema-putih.css)
+  src/components/Navbar.jsx        (tulisan jadi B.N.R ACADEMY)
+  src/components/HeroWall.jsx      (dim 0.85 -> 0.62, overlay mengikuti warna latar)
+
+Home.jsx TIDAK diubah. Kalau sebelumnya kamu sudah mengganti baris ball-card dengan <div className="plate">,
+kembalikan jadi:  <div className="ball-card"><BrandLogo className="ball-logo" /></div>
+
+Setelah menimpa, restart/refresh: npm run dev, lalu Ctrl+F5.

@@ -1,0 +1,150 @@
+/* Akademi Futsal v7 — HANYA Portal Owner. Tidak memengaruhi halaman publik. */
+.dash.owner-portal {
+  --bg:#faf9f7;
+  --bg2:#fff7f0;
+  --bd:#ece8e2;
+  --owner-shadow:0 5px 22px rgba(50,43,38,.035);
+  --owner-hover:#fff4e9;
+  --owner-active:#fff0e1;
+  --owner-icon-bg:#fff3e7;
+  --owner-ring:#fae2cc;
+}
+.dash.owner-portal[data-theme='dark'] {
+  --bg:#11161e;
+  --bg2:#202833;
+  --bd:#303842;
+  --owner-shadow:0 8px 28px rgba(0,0,0,.11);
+  --owner-ring:#704732;
+}
+.dash.owner-portal .main {padding-top:clamp(15px,2.2vw,30px)}
+.dash.owner-portal .sidebar {border-right:1px solid var(--bd)}
+.dash.owner-portal .side-menu .item {transition:background-color .22s ease,color .22s ease,transform .22s ease;transform:none}
+.dash.owner-portal .side-menu .item:hover {transform:translateX(3px)}
+.dash.owner-portal .side-menu .item.active {background:var(--owner-active);box-shadow:none!important}
+.dash.owner-portal .side-menu .item.active::before {height:22px;top:calc(50% - 11px);bottom:auto;border-radius:5px}
+.dash.owner-portal .sidebar-bottom .item {text-decoration:none!important}
+.dash.owner-portal .topbar {
+  padding:16px clamp(16px,2vw,25px);margin-bottom:clamp(17px,2.2vw,25px);
+  gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:18px;
+  box-shadow:var(--owner-shadow);min-width:0;overflow:visible;
+}
+.dash.owner-portal .topbar>div:nth-child(2) {min-width:0;flex:1}
+.dash.owner-portal .topbar h1 {font-size:clamp(20px,1.75vw,27px);letter-spacing:-.6px}
+.dash.owner-portal .topbar .mut {font-size:12px;margin-top:3px}
+.dash.owner-portal .owner-header-actions {display:flex;align-items:center;gap:12px;margin-left:auto;position:relative;flex:none}
+.dash.owner-portal .owner-theme-icon-btn {background:var(--bg2);border:1px solid var(--bd);color:var(--ac);width:43px;height:43px;border-radius:13px;display:grid;place-items:center;flex:none;cursor:pointer;transition:background-color .22s,border-color .22s,transform .25s,box-shadow .25s}
+.dash.owner-portal .owner-theme-icon-btn:hover {border-color:var(--owner-ring);background:var(--owner-active);transform:translateY(-2px);box-shadow:0 5px 18px rgba(229,109,31,.1)}
+.dash.owner-portal .owner-theme-icon-btn:active {transform:scale(.94)}
+.dash.owner-portal .owner-theme-icon-animation {display:grid;place-items:center;animation:owner-v7-icon-in .38s cubic-bezier(.16,1,.3,1) both}
+@keyframes owner-v7-icon-in {from{opacity:.35;transform:rotate(-38deg) scale(.65)}to{opacity:1;transform:rotate(0) scale(1)}}
+.dash.owner-portal .owner-profile-name {display:flex;flex-direction:column;align-items:flex-end;line-height:1.4;min-width:0}
+.dash.owner-portal .owner-profile-name strong {font-size:12px;max-width:182px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx);font-weight:800}
+.dash.owner-portal .owner-profile-name span {font-size:11px;color:var(--mut)}
+.dash.owner-portal .owner-photo-button {padding:0;background:none;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;transition:transform .22s ease,box-shadow .22s ease;flex:none}
+.dash.owner-portal .owner-photo-button:hover {transform:translateY(-2px)}
+.dash.owner-portal .owner-photo-button.is-open {box-shadow:0 0 0 4px var(--owner-ring)}
+.dash.owner-portal .owner-photo {display:grid;place-items:center;width:45px;height:45px;border-radius:50%;overflow:hidden;background:linear-gradient(140deg,#ffd4ac,#f59b5d);border:2px solid var(--card);outline:1px solid var(--owner-ring);color:#7d3b17;flex:none}
+.dash.owner-portal[data-theme='dark'] .owner-photo {background:linear-gradient(145deg,#8d522e,#503c32);color:#ffcca5}
+.dash.owner-portal .owner-photo img {width:100%;height:100%;object-fit:cover;display:block}
+.dash.owner-portal .owner-photo-large {width:58px;height:58px}
+.dash.owner-portal .owner-profile-popup {position:absolute;z-index:40;right:0;top:calc(100% + 13px);width:310px;max-width:min(310px,calc(100vw - 30px));background:var(--card);border:1px solid var(--bd);border-radius:18px;box-shadow:0 19px 56px rgba(24,20,19,.16);padding:18px;animation:owner-v7-pop .2s cubic-bezier(.18,.83,.4,1) both}
+.dash.owner-portal[data-theme='dark'] .owner-profile-popup {box-shadow:0 20px 50px rgba(0,0,0,.4)}
+@keyframes owner-v7-pop {from{opacity:0;transform:translateY(-8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.dash.owner-portal .owner-profile-popup-head {display:flex;align-items:center;gap:12px;padding-bottom:15px;border-bottom:1px solid var(--bd)}
+.dash.owner-portal .owner-profile-popup-head>div {min-width:0;display:flex;flex-direction:column;gap:3px}
+.dash.owner-portal .owner-profile-popup-head strong {font-size:14px;line-height:1.35;overflow-wrap:anywhere;color:var(--tx)}
+.dash.owner-portal .owner-profile-popup-head span:not(.owner-photo) {color:var(--mut);font-size:12px}
+.dash.owner-portal .owner-profile-popup-foot {padding-top:13px}
+.dash.owner-portal .owner-photo-upload {display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border-radius:11px;border:1px solid var(--bd);padding:11px 12px;background:var(--bg2);color:var(--tx);font:inherit;font-size:12px;font-weight:750;cursor:pointer;transition:background-color .2s,border-color .2s}
+.dash.owner-portal .owner-photo-upload:hover {background:var(--owner-active);border-color:var(--owner-ring)}
+.dash.owner-portal .owner-photo-upload:disabled {cursor:wait;opacity:.6}
+.dash.owner-portal .owner-photo-help {margin:10px 0 0;color:var(--mut);font-size:10px;line-height:1.55}
+.dash.owner-portal .owner-photo-error {color:#dc5353;font-size:11px;line-height:1.4;margin-top:8px}
+.dash.owner-portal .owner-sr-only {position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.dash.owner-portal .owner-close-sidebar {display:none}
+/* Permukaan minimalis: tipis, lapang, dengan penekanan pada isi bukan garis. */
+.dash.owner-portal .card {border:1px solid var(--bd);border-radius:17px;box-shadow:var(--owner-shadow);transition:box-shadow .23s ease,border-color .23s ease,transform .23s ease}
+.dash.owner-portal .card:hover {border-color:var(--owner-ring);box-shadow:0 13px 30px rgba(46,37,30,.075)}
+.dash.owner-portal[data-theme='dark'] .card:hover {box-shadow:0 13px 28px rgba(0,0,0,.26)}
+.dash.owner-portal .owner-kpis {gap:15px}
+.dash.owner-portal .owner-kpi {padding:20px;min-height:170px;border-top:1px solid var(--bd)}
+.dash.owner-portal .owner-kpi:hover {transform:translateY(-3px)}
+.dash.owner-portal .owner-kpi-icon {border-radius:13px;width:42px;height:42px;transition:transform .24s ease}
+.dash.owner-portal .owner-kpi:hover .owner-kpi-icon {transform:rotate(-6deg) scale(1.07)}
+.dash.owner-portal .owner-kpi-number {overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dash.owner-portal .owner-chart-grid {gap:17px;margin-top:17px}
+.dash.owner-portal .owner-chart-panel {padding:clamp(18px,2vw,25px)}
+.dash.owner-portal .owner-line-chart {animation:owner-v7-chart .65s ease both}
+@keyframes owner-v7-chart {from{opacity:.15;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.dash.owner-portal .owner-quick-links a {border-color:var(--bd)}
+.dash.owner-portal .owner-welcome {border-radius:18px}
+.dash.owner-portal .owner-attention {border-radius:14px}
+.dash.owner-portal .owner-panel-icon,.dash.owner-portal .owner-attention-icon {border-radius:12px}
+.dash.owner-portal .owner-quick-panel {gap:18px}
+.dash.owner-portal .owner-chart-labels {font-variant-numeric:tabular-nums}
+.dash.owner-portal .owner-quick-links a:hover {transform:translateY(-2px)}
+.dash.owner-portal .filter-bar {gap:12px}
+.dash.owner-portal .adm-row {border-radius:15px}
+.dash.owner-portal .abtn {border-radius:11px}
+.dash.owner-portal .adm-btns button {white-space:normal}
+@media(max-width:1100px) {
+  .dash.owner-portal .owner-profile-name strong {max-width:140px}
+  .dash.owner-portal .owner-header-actions {gap:9px}
+}
+@media(max-width:900px) {
+  .dash.owner-portal .main {padding:17px clamp(14px,3vw,25px) 36px}
+  .dash.owner-portal .owner-close-sidebar {display:grid;place-items:center;position:absolute;right:14px;top:22px;width:37px;height:37px;background:var(--bg2);border:1px solid var(--bd);border-radius:11px;color:var(--tx);cursor:pointer}
+  .dash.owner-portal .sidebar {padding-top:25px;max-width:min(85vw,300px)}
+  .dash.owner-portal .owner-profile-name {display:none}
+  .dash.owner-portal .topbar {padding:15px;flex-wrap:nowrap}
+  .dash.owner-portal .owner-kpis {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dash.owner-portal .owner-chart-grid {grid-template-columns:1fr}
+  .dash.owner-portal .owner-quick-panel {flex-direction:column;align-items:stretch}
+  .dash.owner-portal .owner-quick-links a {justify-content:space-between}
+}
+@media(max-width:610px) {
+  .dash.owner-portal .topbar {flex-wrap:nowrap;align-items:center;gap:9px;padding:13px}
+  .dash.owner-portal .topbar>div:nth-child(2) {min-width:0}
+  .dash.owner-portal .topbar h1 {font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dash.owner-portal .topbar .mut {display:none}
+  .dash.owner-portal .owner-header-actions {margin-left:auto;gap:8px}
+  .dash.owner-portal .owner-theme-icon-btn {width:41px;height:41px;border-radius:12px}
+  .dash.owner-portal .owner-photo {width:41px;height:41px}
+  .dash.owner-portal .owner-photo-large {width:58px;height:58px}
+  .dash.owner-portal .owner-chart-panel {padding:17px}
+  .dash.owner-portal .owner-quick-links {width:100%;display:grid;grid-template-columns:1fr}
+  .dash.owner-portal .adm-row {gap:12px}
+  .dash.owner-portal .adm-btns {width:100%;flex-wrap:wrap}
+  .dash.owner-portal .adm-btns .abtn {flex:1}
+  .dash.owner-portal .filter-bar input,.dash.owner-portal .filter-bar select {min-width:0;flex:1 1 140px}
+  .dash.owner-portal .owner-welcome {padding:22px 20px}
+  .dash.owner-portal .owner-section-heading {gap:10px}
+  .dash.owner-portal .owner-period {padding:7px 9px}
+  .dash.owner-portal .owner-attention-link {min-height:40px}
+}
+@media(max-width:480px) {
+  .dash.owner-portal .main {padding-left:12px;padding-right:12px}
+  .dash.owner-portal .owner-kpis {gap:11px}
+  .dash.owner-portal .owner-kpi {min-height:150px;padding:15px}
+  .dash.owner-portal .owner-kpi:nth-child(3),.dash.owner-portal .owner-kpi:nth-child(4) {grid-column:1/-1;min-height:137px}
+  .dash.owner-portal .owner-kpi-number {font-size:clamp(20px,5vw,27px)}
+  .dash.owner-portal .owner-panel-heading {gap:8px}
+  .dash.owner-portal .owner-chart-total b {font-size:25px}
+  .dash.owner-portal .owner-kpi-label {font-size:11px}
+  .dash.owner-portal .owner-kpi-hint {font-size:10px}
+  .dash.owner-portal .owner-attendance-summary {gap:12px}
+}
+@media(max-width:350px) {
+  .dash.owner-portal .topbar {padding:10px;gap:7px}
+  .dash.owner-portal .burger {width:39px;height:39px;flex:none}
+  .dash.owner-portal .topbar h1 {font-size:18px}
+  .dash.owner-portal .owner-theme-icon-btn {width:38px;height:38px}
+  .dash.owner-portal .owner-photo {width:38px;height:38px}
+  .dash.owner-portal .owner-kpis {grid-template-columns:1fr}
+  .dash.owner-portal .owner-kpi:nth-child(3),.dash.owner-portal .owner-kpi:nth-child(4) {grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce) {
+  .dash.owner-portal .owner-theme-icon-animation,.dash.owner-portal .owner-profile-popup,.dash.owner-portal .owner-line-chart {animation:none!important}
+  .dash.owner-portal .owner-photo-button,.dash.owner-portal .owner-theme-icon-btn,.dash.owner-portal .card,.dash.owner-portal .owner-kpi-icon,.dash.owner-portal .side-menu .item,.dash.owner-portal .owner-quick-links a {transition:none!important}
+  .dash.owner-portal .owner-kpi:hover,.dash.owner-portal .owner-photo-button:hover,.dash.owner-portal .owner-theme-icon-btn:hover {transform:none}
+}
