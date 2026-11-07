@@ -69,7 +69,7 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
       <main className="main">
         <header className="topbar">
           <button className="burger" aria-label="Buka menu portal" aria-expanded={open} onClick={() => setOpen(true)}><OwnerIcon name="menu" /></button>
-          <div>
+          <div className="portal-topbar-heading">
             <h1>{current.title}</h1>
             <p className="mut">{current.sub}</p>
             <OwnerLiveClock />
