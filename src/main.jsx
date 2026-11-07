@@ -14,6 +14,7 @@ import './styles/ui-refinement-2026.css'
 import './styles/ui-hotfix-2026.css'
 import './styles/mobile-responsive-2026.css'
 import './styles/portal-mobile-header-2026.css'
+import './styles/portal-topbar-2026.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

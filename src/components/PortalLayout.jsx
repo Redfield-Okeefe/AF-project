@@ -79,8 +79,11 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
             : <div className="portal-header-actions"><ThemeToggle /><div className="user"><Avatar foto={profil.foto} nama={profil.nama} /><div><b>{profil.nama}</b><small className="mut">{roleLabel}</small></div></div></div>}
         </header>
 
-        {/* key = pathname supaya animasi masuk ulang tiap pindah menu */}
-        <Outlet key={pathname} context={{ profil, simpan }} />
+        {/* Bar atas selebar konten; halaman portal tetap punya padding tersendiri. */}
+        <div className="portal-main-content">
+          {/* key = pathname supaya animasi masuk ulang tiap pindah menu */}
+          <Outlet key={pathname} context={{ profil, simpan }} />
+        </div>
       </main>
     </div>
   )
