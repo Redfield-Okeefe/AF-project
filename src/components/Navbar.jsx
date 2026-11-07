@@ -23,7 +23,7 @@ export default function Navbar() {
     if (!open) return
     const onKeyDown = (event) => { if (event.key === 'Escape') setOpen(false) }
     const prevOverflow = document.body.style.overflow
-    const media = window.matchMedia('(max-width: 760px)')
+    const media = window.matchMedia('(max-width: 960px)')
     const setLock = () => { document.body.style.overflow = media.matches ? 'hidden' : prevOverflow }
     setLock()
     document.addEventListener('keydown', onKeyDown)
