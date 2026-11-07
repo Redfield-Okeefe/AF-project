@@ -288,3 +288,19 @@
     gap: 4px;
   }
 }
+
+/* Owner desktop only: give Dashboard title and subtitle clearer separation.
+   This intentionally does not affect mobile, Pemain, or Pelatih. */
+@media (min-width: 901px) {
+  .dash.owner-portal .topbar {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+  .dash.owner-portal .topbar > .portal-topbar-heading {
+    gap: 12px !important;
+  }
+  .dash.owner-portal .topbar > .portal-topbar-heading > .mut {
+    margin: 0 !important;
+    line-height: 1.5 !important;
+  }
+}
