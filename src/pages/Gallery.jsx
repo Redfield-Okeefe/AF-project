@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Reveal from '../components/Reveal.jsx'
 import CircularGallery from '../components/CircularGallery.jsx'
 import { GALLERY } from '../data/config.js'
@@ -18,6 +18,14 @@ const svgTile = (title, gradient) => {
 }
 
 export default function Gallery() {
+  const [isCompact, setIsCompact] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 760px)').matches)
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 760px)')
+    const change = () => setIsCompact(query.matches)
+    change()
+    query.addEventListener?.('change', change)
+    return () => query.removeEventListener?.('change', change)
+  }, [])
   const items = useMemo(
     () => GALLERY.map((g) => ({
       image: g.image || svgTile(g.title, g.gradient || ''),
@@ -32,7 +40,17 @@ export default function Gallery() {
     <div className="w">
       <Reveal as="h2" anim="down">Gallery</Reveal>
       <Reveal as="p" anim="down" delay={100} className="sub">Dokumentasi kegiatan di akademi kami.</Reveal>
-      <div style={{ height: 'clamp(380px, 62vh, 600px)', position: 'relative' }}>
+      {isCompact ? (
+        <div className="mobile-gallery-grid" aria-label="Foto kegiatan akademi">
+          {items.map((item, index) => (
+            <figure className="mobile-gallery-card" key={index}>
+              <img src={item.image} alt={item.alt || item.text} loading="lazy" decoding="async" />
+              <figcaption>{item.text}</figcaption>
+            </figure>
+          ))}
+        </div>
+      ) : (
+      <div className="gallery-desktop" style={{ height: 'clamp(380px, 62vh, 600px)', position: 'relative' }}>
         <CircularGallery
           items={items}
           bend={3.5}
@@ -50,6 +68,7 @@ export default function Gallery() {
           openOnClick={false}
         />
       </div>
+      )}
     </div>
   )
 }
