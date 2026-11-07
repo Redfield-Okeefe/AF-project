@@ -9,7 +9,6 @@ import OwnerIcon from './OwnerIcon.jsx'
 import { useTheme } from '../hooks/useTheme.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import OwnerHeaderActions from './OwnerHeaderActions.jsx'
-import OwnerLiveClock from './OwnerLiveClock.jsx'
 
 // Kerangka dashboard (sidebar + topbar) yang dipakai portal pemain, pelatih, dan owner.
 // menu: [{ to, icon, label, title, sub, badge? }]
@@ -71,8 +70,6 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
           <button className="burger" aria-label="Buka menu portal" aria-expanded={open} onClick={() => setOpen(true)}><OwnerIcon name="menu" /></button>
           <div className="portal-topbar-heading">
             <h1>{current.title}</h1>
-            <p className="mut">{current.sub}</p>
-            <OwnerLiveClock />
           </div>
           {ownerMode
             ? <OwnerHeaderActions setMode={setTheme} theme={theme} profil={profil} simpan={simpan} />
