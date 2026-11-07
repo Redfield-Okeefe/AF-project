@@ -291,3 +291,45 @@
 @media(prefers-reduced-motion:reduce){
   .masonry__card,.masonry__image,.masonry__caption{transition:none!important}
 }
+
+/* Gallery color-mode toggle works for Masonry tiles and full-size photo lightbox. */
+.masonry[data-color-mode="mono"] .masonry__image,
+.masonry-lightbox[data-color-mode="mono"] .masonry-lightbox__image{
+ filter:grayscale(1);
+}
+.masonry[data-color-mode="color"] .masonry__image,
+.masonry-lightbox[data-color-mode="color"] .masonry-lightbox__image{
+ filter:none;
+}
+.masonry__image,.masonry-lightbox__image{
+ transition:opacity .5s ease,transform .8s cubic-bezier(.2,.8,.2,1),filter .25s ease;
+}
+.masonry-lightbox__color-controls{
+ position:fixed;z-index:5;top:max(18px,env(safe-area-inset-top));left:50%;
+ transform:translateX(-50%);display:flex;align-items:center;gap:3px;
+ padding:4px;border-radius:999px;background:#252b35;
+ border:1px solid #536078;box-shadow:0 7px 25px #0007;
+}
+.masonry-lightbox__color-controls button{
+ appearance:none;border:0;background:transparent;color:#e5ebf4;
+ padding:10px 13px;min-height:40px;border-radius:999px;cursor:pointer;
+ font:inherit;font-size:12px;font-weight:750;white-space:nowrap;
+}
+.masonry-lightbox__color-controls button[aria-pressed="true"]{
+ color:#141820;background:#ff995c;
+}
+.masonry-lightbox__color-controls button:focus-visible{
+ outline:2px solid #fff;outline-offset:2px;
+}
+@media(max-width:760px){
+ .masonry-lightbox__color-controls{
+  top:max(12px,env(safe-area-inset-top));
+  left:10px;transform:none;max-width:calc(100vw - 75px);
+ }
+ .masonry-lightbox__color-controls button{
+  padding:9px 8px;font-size:11px;min-height:38px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .masonry__image,.masonry-lightbox__image{transition:none}
+}

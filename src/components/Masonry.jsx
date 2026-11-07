@@ -128,6 +128,8 @@ const Masonry = ({
   parallax = 0,
   lightbox = true,
   draggable = true,
+  colorMode = 'color',
+  onColorModeChange,
   onItemClick,
   onReorder,
   className = '',
@@ -861,6 +863,7 @@ const Masonry = ({
       className={[ROOT, className].filter(Boolean).join(' ')}
       style={{ '--masonry-radius': `${Math.max(0, radius)}px`, ...style }}
       data-hover={mode}
+      data-color-mode={colorMode}
       role="list"
     >
       {(layout?.tiles ?? []).map((tile, index) => {
@@ -961,11 +964,16 @@ const Masonry = ({
           <div
             ref={boxRef}
             className={BOX}
+            data-color-mode={colorMode}
             role="dialog"
             aria-modal="true"
             aria-label={openItem.title || openItem.alt || 'Image'}
           >
             <div className={BOX_BACKDROP} data-box-backdrop="" onClick={closeBox} />
+            <div className="masonry-lightbox__color-controls" role="group" aria-label="Tampilan warna foto yang dibuka" data-box-fade="">
+              <button type="button" aria-pressed={colorMode === 'mono'} onClick={() => onColorModeChange?.('mono')}>Hitam Putih</button>
+              <button type="button" aria-pressed={colorMode === 'color'} onClick={() => onColorModeChange?.('color')}>Warna Asli</button>
+            </div>
             <img
               className={BOX_IMAGE}
               data-box-image=""

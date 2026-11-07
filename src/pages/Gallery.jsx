@@ -19,6 +19,7 @@ function columnsFor(width) {
 
 export default function Gallery() {
   const [screenWidth, setScreenWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1200)
+  const [colorMode, setColorMode] = useState('mono')
   useEffect(() => {
     const update = () => setScreenWidth(window.innerWidth)
     window.addEventListener('resize', update, { passive: true })
@@ -49,12 +50,20 @@ export default function Gallery() {
         <h2>Gallery</h2>
         <p className="sub">Jelajahi momen latihan, pertandingan, dan kebersamaan melalui galeri bergaya Masonry.</p>
         <div className="bnr-gallery-meta">
-          <span className="bnr-gallery-count">{items.length} foto</span>
           <p className="bnr-gallery-note">Foto olahraga sementara berasal dari Pexels sebagai ilustrasi desain; belum merupakan dokumentasi resmi B.N.R Academy.</p>
         </div>
       </header>
+      <div className="bnr-gallery-toolbar">
+        <span className="bnr-gallery-toolbar-label">Tampilan foto</span>
+        <div className="bnr-gallery-color-options" role="group" aria-label="Pilihan warna Gallery">
+          <button type="button" aria-pressed={colorMode === 'mono'} onClick={() => setColorMode('mono')}>Hitam Putih</button>
+          <button type="button" aria-pressed={colorMode === 'color'} onClick={() => setColorMode('color')}>Warna Asli</button>
+        </div>
+      </div>
       <Masonry
         className="bnr-gallery-masonry"
+        colorMode={colorMode}
+        onColorModeChange={setColorMode}
         items={items}
         columns={columnsFor(screenWidth)}
         columnWidth={220}

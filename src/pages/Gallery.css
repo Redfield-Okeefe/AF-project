@@ -4,7 +4,6 @@
 .bnr-gallery-heading h2{font-size:clamp(31px,4vw,50px);line-height:1.2;letter-spacing:-1.5px;color:var(--tx);margin:0 0 12px}
 .bnr-gallery-heading .sub{font-size:clamp(14px,1.5vw,16px);line-height:1.65;max-width:650px;color:var(--mut);margin:0 0 18px}
 .bnr-gallery-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.bnr-gallery-count{flex:none;padding:7px 12px;border:1px solid var(--bd);background:var(--card);color:var(--ac);border-radius:999px;font-size:12px;font-weight:800}
 .bnr-gallery-note{margin:0;color:var(--mut);font-size:12px;line-height:1.55;max-width:560px}
 .bnr-gallery-masonry{width:100%;max-width:100%;min-width:0;min-height:300px;overflow:visible}
 .bnr-gallery-masonry .masonry__card{box-shadow:0 7px 20px rgba(0,0,0,.14);border:1px solid color-mix(in srgb,var(--bd) 72%,transparent)}
@@ -19,3 +18,35 @@
 }
 @media(max-width:350px){.bnr-gallery-page{padding-left:12px!important;padding-right:12px!important}}
 @media(prefers-reduced-motion:reduce){.bnr-gallery-masonry .masonry__card{transition:none}}
+
+/* Gallery-only color controls; separate from the website's light/dark theme. */
+.bnr-gallery-toolbar{
+ display:flex;align-items:center;justify-content:flex-end;gap:12px;
+ margin:0 0 21px;min-width:0;
+}
+.bnr-gallery-toolbar-label{color:var(--mut);font-size:12px;font-weight:700}
+.bnr-gallery-color-options{
+ display:flex;align-items:center;gap:4px;padding:4px;
+ background:var(--card);border:1px solid var(--bd);border-radius:999px;
+}
+.bnr-gallery-color-options button{
+ appearance:none;border:0;background:transparent;color:var(--mut);
+ font:inherit;font-size:13px;font-weight:750;white-space:nowrap;
+ padding:10px 14px;min-height:40px;border-radius:999px;cursor:pointer;
+ transition:background .2s ease,color .2s ease;
+}
+.bnr-gallery-color-options button[aria-pressed="true"]{
+ background:var(--ac);color:#1a1d22;
+}
+.bnr-gallery-color-options button:focus-visible{
+ outline:2px solid var(--ac);outline-offset:3px;
+}
+@media(max-width:430px){
+ .bnr-gallery-toolbar{justify-content:stretch;align-items:stretch;flex-direction:column;gap:9px;margin-bottom:15px}
+ .bnr-gallery-toolbar-label{font-size:12px}
+ .bnr-gallery-color-options{width:100%;box-sizing:border-box}
+ .bnr-gallery-color-options button{flex:1;min-width:0;padding:9px 6px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .bnr-gallery-color-options button{transition:none}
+}
