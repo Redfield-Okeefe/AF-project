@@ -1,0 +1,21 @@
+.bnr-gallery-page{max-width:1280px!important;margin:0 auto;padding-top:64px!important;padding-bottom:80px!important;overflow:visible!important}
+.bnr-gallery-heading{max-width:750px;margin:0 0 30px}
+.bnr-gallery-eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;color:var(--ac);margin-bottom:11px}
+.bnr-gallery-heading h2{font-size:clamp(31px,4vw,50px);line-height:1.2;letter-spacing:-1.5px;color:var(--tx);margin:0 0 12px}
+.bnr-gallery-heading .sub{font-size:clamp(14px,1.5vw,16px);line-height:1.65;max-width:650px;color:var(--mut);margin:0 0 18px}
+.bnr-gallery-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bnr-gallery-count{flex:none;padding:7px 12px;border:1px solid var(--bd);background:var(--card);color:var(--ac);border-radius:999px;font-size:12px;font-weight:800}
+.bnr-gallery-note{margin:0;color:var(--mut);font-size:12px;line-height:1.55;max-width:560px}
+.bnr-gallery-masonry{width:100%;max-width:100%;min-width:0;min-height:300px;overflow:visible}
+.bnr-gallery-masonry .masonry__card{box-shadow:0 7px 20px rgba(0,0,0,.14);border:1px solid color-mix(in srgb,var(--bd) 72%,transparent)}
+.bnr-gallery-masonry .masonry__card:hover{box-shadow:0 16px 32px rgba(0,0,0,.21)}
+@media(max-width:760px){
+ .bnr-gallery-page{padding:42px 16px 65px!important;max-width:100%;overflow:visible!important}
+ .bnr-gallery-heading{margin-bottom:23px}
+ .bnr-gallery-heading h2{font-size:clamp(27px,7vw,35px);letter-spacing:-.7px}
+ .bnr-gallery-heading .sub{margin-bottom:13px;font-size:14px}
+ .bnr-gallery-note{flex-basis:100%;font-size:11px}
+ .bnr-gallery-masonry{min-height:220px}
+}
+@media(max-width:350px){.bnr-gallery-page{padding-left:12px!important;padding-right:12px!important}}
+@media(prefers-reduced-motion:reduce){.bnr-gallery-masonry .masonry__card{transition:none}}
