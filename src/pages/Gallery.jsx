@@ -7,7 +7,7 @@ import './Gallery.css'
 function imagePath(path) {
   if (!path) return ''
   if (/^(https?:|data:|blob:)/i.test(path)) return path
-  return `${import.meta.env.BASE_URL}${path.replace(/^\\/+/, '')}`
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
 }
 
 function columnsFor(width) {
