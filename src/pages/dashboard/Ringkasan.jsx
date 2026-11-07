@@ -3,7 +3,7 @@ import Reveal from '../../components/Reveal.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
 import OwnerLiveClock from '../../components/OwnerLiveClock.jsx'
 import { ambilAkun, ambilKelas, bulanIni, infoUntuk, iso, listSesi, listTagihan, statPemain, useDb } from '../../services/db.js'
-import { bulanTeks, fmtTanggal, rupiah } from '../../utils/format.js'
+import { fmtTanggal, rupiah } from '../../utils/format.js'
 
 export default function Ringkasan() {
   useDb()
@@ -32,7 +32,7 @@ export default function Ringkasan() {
       <span className="workspace-hero-art" aria-hidden="true"><OwnerIcon name="players" size={105}/></span>
     </Reveal>
     {!kelas && <div className="workspace-note"><OwnerIcon name="warning" size={18}/>Belum ada kelas yang ditetapkan Owner untuk akunmu.</div>}
-    <div className="workspace-section-head"><div className="portal-section-heading-copy"><div className="portal-section-heading-inline"><h2>Ringkasan akademi</h2><OwnerLiveClock compact /></div><p>Informasi berdasarkan akun yang sedang masuk</p></div><span className="workspace-period"><OwnerIcon name="calendar" size={16}/>{bulanTeks(bulanIni())}</span></div>
+    <div className="workspace-section-head"><div className="portal-section-heading-copy"><h2>Ringkasan akademi</h2><p>Informasi berdasarkan akun yang sedang masuk</p></div><OwnerLiveClock compact /></div>
     <div className="workspace-stats">{cards.map((c,i)=><Reveal key={c.label} anim="up" delay={i*40} className="workspace-stat">
       <span className="workspace-stat-icon"><OwnerIcon name={c.icon} size={21}/></span><span className="workspace-stat-label">{c.label}</span><strong>{c.value}</strong><span className="workspace-stat-detail">{c.detail}</span><Link to={c.to} aria-label={'Buka '+c.label} className="workspace-stat-link"/></Reveal>)}</div>
     <div className="workspace-columns">

@@ -16,7 +16,7 @@
   width: 100%;
   min-width: 0;
   margin: 0 !important;
-  padding: 12px clamp(18px, 3vw, 48px) !important;
+  padding: 10px clamp(18px, 3vw, 48px) !important;
   background: var(--card) !important;
   border: 0 !important;
   border-bottom: 1px solid var(--bd) !important;
@@ -59,7 +59,7 @@
     grid-template-areas: "menu heading actions" !important;
     align-items: center !important;
     column-gap: 10px !important;
-    padding: calc(10px + env(safe-area-inset-top, 0px)) 18px 10px !important;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 18px 8px !important;
     row-gap: 0 !important;
     border-radius: 0 !important;
   }
@@ -75,7 +75,7 @@
   .dash.owner-portal .topbar {
     grid-template-columns: 37px minmax(0, 1fr) auto !important;
     column-gap: 8px !important;
-    padding: calc(9px + env(safe-area-inset-top, 0px)) 14px 9px !important;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 14px 8px !important;
   }
 
   .dash.workspace-portal .portal-main-content,
@@ -181,4 +181,69 @@
   .dash.workspace-portal .topbar .user { padding: 2px 3px; }
   .dash.workspace-portal .topbar .theme-toggle { width: 34px; height: 34px; }
   .dash.workspace-portal .topbar .avatar { width: 34px; height: 34px; }
+}
+
+/* Compact subtitle restored beneath the dashboard title on all three portals. */
+.dash.workspace-portal .topbar .portal-topbar-heading,
+.dash.owner-portal .topbar .portal-topbar-heading {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:2px;
+}
+.dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+.dash.owner-portal .topbar .portal-topbar-heading > .mut {
+  display:block;
+  margin:0!important;
+  max-width:100%;
+  font-size:12px!important;
+  line-height:1.25!important;
+  font-weight:400;
+  white-space:normal;
+  overflow-wrap:break-word;
+  color:var(--mut);
+}
+
+/* The live clock replaces the former month/year badge at the right of each
+   dashboard overview, while the heading and its description remain on the left. */
+.dash.workspace-portal .workspace-section-head,
+.dash.owner-portal .owner-section-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px 12px;
+}
+.dash.workspace-portal .workspace-section-head > .portal-section-clock,
+.dash.owner-portal .owner-section-heading > .portal-section-clock {
+  margin-left:auto!important;
+  margin-top:0!important;
+  align-self:center;
+  flex-shrink:0;
+}
+@media(max-width:900px){
+  .dash.workspace-portal .topbar .portal-topbar-heading,
+  .dash.owner-portal .topbar .portal-topbar-heading {gap:2px}
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut {
+    display:block!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+}
+@media(max-width:430px){
+  .dash.workspace-portal .topbar .portal-topbar-heading h1,
+  .dash.owner-portal .topbar .portal-topbar-heading h1 {
+    font-size:clamp(15px,4vw,18px)!important;
+  }
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut {
+    font-size:9px!important;
+    line-height:1.2!important;
+  }
+  .dash.workspace-portal .workspace-section-head > .portal-section-clock,
+  .dash.owner-portal .owner-section-heading > .portal-section-clock {
+    margin-left:auto!important;
+  }
 }

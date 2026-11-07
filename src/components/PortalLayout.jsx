@@ -70,6 +70,7 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
           <button className="burger" aria-label="Buka menu portal" aria-expanded={open} onClick={() => setOpen(true)}><OwnerIcon name="menu" /></button>
           <div className="portal-topbar-heading">
             <h1>{current.title}</h1>
+            <p className="mut">{current.sub}</p>
           </div>
           {ownerMode
             ? <OwnerHeaderActions setMode={setTheme} theme={theme} profil={profil} simpan={simpan} />
