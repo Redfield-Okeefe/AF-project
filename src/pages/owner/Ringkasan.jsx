@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
+import OwnerLiveClock from '../../components/OwnerLiveClock.jsx'
 import { bulanIni, bulanLalu, daftarPelatih, daftarPemain, listKelas, listTagihan, pemainDiKelas, rataKehadiran, useDb } from '../../services/db.js'
 import { bulanTeks, rupiah } from '../../utils/format.js'
 import { validasiPeriodeBulan } from '../../utils/ownerDashboard.js'
@@ -107,7 +108,7 @@ export default function Ringkasan() {
         <Link to={menunggu.length ? '../pelatih' : '../pemain'} className="owner-attention-link">Tinjau <OwnerIcon name="arrow" size={17}/></Link>
       </Reveal>}
 
-      <div className="owner-section-heading"><div><h2>Performa akademi</h2><p>Data terkini akademi</p></div><span className="owner-period"><OwnerIcon name="calendar" size={16}/>{bulanTeks(bulan)}</span></div>
+      <div className="owner-section-heading"><div className="portal-section-heading-copy"><h2>Performa akademi</h2><p>Data terkini akademi</p></div><OwnerLiveClock compact /></div>
       <div className="owner-kpis">
         {kpi.map((k, i) => <Reveal key={k.label} anim="up" delay={i * 45} className={`card owner-kpi owner-tone-${k.tone}`}>
           <div className="owner-kpi-head"><span className="owner-kpi-icon"><OwnerIcon name={k.icon} size={21}/></span><span className="owner-kpi-open"><OwnerIcon name="arrow" size={17}/></span></div>

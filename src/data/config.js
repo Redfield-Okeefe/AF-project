@@ -1,5 +1,5 @@
 export const SITE = {
-  name: 'ArenaFutsal',
+  name: 'B.N.R Futsal',
   // Awali 62, tanpa 0 / tanda +
   waNumber: '6281234567890',
   waMessage: 'Halo Min, Saya Ingin menanyakan Info Pendaftaran nya!',

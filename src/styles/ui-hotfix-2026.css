@@ -1,0 +1,145 @@
+/* Evidence-based refinements — 6 Nov 2026. Loaded after all previous theme sheets. */
+/* Older tema-putih.css used html .hero ~ selectors that forced black on dark backgrounds.
+   Override at the same/higher specificity with semantic theme tokens, not hard-coded text. */
+html[data-theme='dark'] .hero ~ .journey-section,
+html[data-theme='dark'] .hero ~ .journey-section .w{color:var(--tx);background:transparent}
+html[data-theme='dark'] .hero ~ .journey-section h2,
+html[data-theme='dark'] .hero ~ .journey-section .sub,
+html[data-theme='dark'] .hero ~ .journey-section .journey-card h3{color:#f4f7fd!important}
+html[data-theme='dark'] .hero ~ .journey-section .journey-card p{color:#b9c9de!important}
+html[data-theme='dark'] .hero ~ .journey-section .journey-card{background:#1d2d42!important;border:1px solid #394b62!important;box-shadow:0 18px 38px #02071342}
+html[data-theme='dark'] .hero ~ .journey-section .journey-number{color:#ffa87429}
+html[data-theme='dark'] .hero ~ .journey-section .journey-icon{color:#ffab78;background:linear-gradient(140deg,#41372f,#2f3341);border:1px solid #75543f}
+html[data-theme='light'] .hero ~ .journey-section .journey-card p{color:#576476!important}
+html[data-theme='light'] .hero ~ .journey-section .journey-card h3{color:#243248!important}
+html[data-theme='light'] .hero ~ .journey-section .sub{color:#596b7f!important}
+html[data-theme='light'] .hero ~ .journey-section h2{color:#243248!important}
+.journey-card{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.journey-card:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--ac) 45%,var(--bd))!important}
+.journey-icon{color:#dd6930;box-shadow:inset 0 1px 0 #ffffff14}
+.journey-number{letter-spacing:-2px;opacity:.85}
+.journey-card p{font-weight:450}
+.journey-card h3{font-weight:780;letter-spacing:-.5px}
+.w .card .ic{color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid color-mix(in srgb,var(--ac) 22%,var(--bd));box-shadow:0 8px 19px color-mix(in srgb,var(--ac) 11%,transparent)}
+.w .card .ic svg,.journey-icon svg,.portal-ico svg{transition:transform .25s ease}
+.w .card:hover .ic svg,.journey-card:hover .journey-icon svg,.portal-card:hover .portal-ico svg{transform:scale(1.07) rotate(-3deg)}
+.hero .float em{display:grid;place-items:center;color:var(--ac)}
+/* Explicit contrast for older homepage CSS rules. */
+html[data-theme='dark'] .hero ~ .w h2,
+html[data-theme='dark'] .hero ~ .alt h2,
+html[data-theme='dark'] .hero ~ .w .card h3,
+html[data-theme='dark'] .hero ~ .alt .card h3{color:var(--tx)!important}
+html[data-theme='dark'] .hero ~ .w .sub,
+html[data-theme='dark'] .hero ~ .alt .sub,
+html[data-theme='dark'] .hero ~ .w .card p,
+html[data-theme='dark'] .hero ~ .alt .card p{color:var(--mut)!important}
+/* Role-selection cards: premium restrained line icons. */
+.portal-card{border-radius:23px!important;min-height:225px;gap:15px;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+.portal-card:hover,.portal-card:focus-visible{transform:translateY(-4px)}
+.portal-ico{width:82px;height:82px;background:color-mix(in srgb,var(--ac) 11%,var(--card))!important;border:1px solid color-mix(in srgb,var(--ac) 25%,var(--bd));color:var(--ac);border-radius:23px;box-shadow:inset 0 1px 0 #ffffff15}
+.portal-txt{display:flex;flex-direction:column;align-items:center;gap:3px}
+.portal-txt b{color:var(--tx)!important;letter-spacing:-.4px}
+.portal-txt small{color:var(--mut)!important;line-height:1.55;font-size:12px;margin-top:2px}
+.portal-card .portal-arr{display:flex;color:var(--ac);opacity:0;transform:translateY(-3px);transition:transform .2s,opacity .2s}
+.portal-card:hover .portal-arr,.portal-card:focus-visible .portal-arr{opacity:1;transform:translateY(0)}
+/* Full-width, centered login panel — no 420px outer-shell squeeze. */
+.login.auth-login-page{max-width:none;width:100%;margin:0;min-height:calc(100dvh - 85px);padding:clamp(35px,7vh,70px) 20px;display:flex;align-items:center;justify-content:center;background:var(--bg)!important}
+.login.auth-login-page .auth-login-card{width:min(100%,520px);max-width:none;margin:0;padding:clamp(26px,3.5vw,45px);border:1px solid var(--bd);border-radius:27px;background:var(--card)!important;color:var(--tx);box-shadow:0 28px 75px #0000001b;display:flex;flex-direction:column;align-items:stretch}
+.auth-login-card .auth-login-mark{display:grid;place-items:center;width:61px;height:61px;margin:0 auto 17px;border-radius:19px;color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,var(--card));border:1px solid color-mix(in srgb,var(--ac) 23%,var(--bd))}
+.auth-login-card .auth-login-eyebrow{text-align:center;font-size:10px;font-weight:830;letter-spacing:1.7px;color:var(--ac);margin-bottom:11px}
+.login .auth-login-card h2{text-align:center;font-size:clamp(29px,3.4vw,36px);line-height:1.2;letter-spacing:-1px;color:var(--tx)}
+.login .auth-login-card .sub{text-align:center;color:var(--mut);line-height:1.6;margin:10px 0 25px;font-size:14px}
+.login .auth-input-label{display:block;margin:10px 0 8px;font-weight:710;color:var(--tx);font-size:13px}
+.login .auth-input-wrap{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:57px;padding:0 14px;border:1px solid var(--bd);border-radius:14px;background:var(--bg2);color:var(--mut);transition:border-color .2s,box-shadow .2s}
+.login .auth-input-wrap:focus-within{border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 17%,transparent)}
+.login .auth-input-wrap>svg{flex:none;color:var(--mut)}
+.login .auth-input-wrap input{display:block;min-width:0;flex:1;width:100%;height:54px;padding:0!important;margin:0;border:0!important;outline:none;background:transparent!important;color:var(--tx)!important;font:inherit;font-size:15px;box-shadow:none!important}
+.login .auth-input-wrap input::placeholder{color:var(--mut);opacity:.85}
+.login .auth-password-toggle{flex:none;display:grid;place-items:center;width:34px;height:36px;border:0;border-radius:8px;background:transparent;color:var(--mut);cursor:pointer}
+.login .auth-password-toggle:hover{background:color-mix(in srgb,var(--ac) 13%,transparent);color:var(--ac)}
+.login .auth-login-submit{width:100%;display:flex;align-items:center;justify-content:center;gap:11px;margin-top:24px;min-height:54px;border-radius:14px;font-size:15px;cursor:pointer}
+.login .auth-login-submit:disabled{opacity:.75;cursor:wait}
+.login .auth-login-card .foot{margin-top:16px}
+.login .auth-login-back a{display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+.login .auth-login-back a:hover{text-decoration:underline}
+.login .auth-login-card .alert{margin-top:13px}
+.login .auth-demo-box{border:1px solid color-mix(in srgb,var(--ac) 29%,var(--bd));border-radius:14px;background:color-mix(in srgb,var(--ac) 7%,var(--card));padding:13px 16px;margin-bottom:19px;color:var(--tx)}
+.auth-demo-heading{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--ac)}
+.auth-demo-details{display:flex;gap:9px;flex-wrap:wrap;margin:11px 0 10px}
+.auth-demo-details span{font-size:12px;color:var(--tx);font-weight:650;border:1px solid var(--bd);padding:6px 9px;border-radius:8px;background:var(--card)}
+.auth-demo-fill{display:inline-flex;align-items:center;gap:6px;border:none;padding:0;background:transparent;color:var(--ac);font:inherit;font-size:12px;font-weight:820;cursor:pointer}
+.auth-demo-fill:hover{text-decoration:underline}
+.auth-demo-box small{display:block;font-size:10px;line-height:1.6;color:var(--mut);margin-top:8px}
+:root[data-theme='dark'] .login .auth-login-card{box-shadow:0 27px 72px #0104096b}
+:root[data-theme='dark'] .auth-input-wrap{background:#142136}
+:root[data-theme='dark'] .portal-card{background:#1b2a3c!important}
+/* Sidebar icons — same calm stroke system across all 3 roles. */
+.dash .side-menu .menu-icon{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:10px;color:inherit;background:transparent;transition:background .18s,color .18s}
+.dash .side-menu .item.active .menu-icon{color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,transparent)}
+.dash .side-menu .item:hover .menu-icon{color:var(--ac);background:color-mix(in srgb,var(--ac) 8%,transparent)}
+.dash .side-menu .menu-icon svg{stroke-width:1.85}
+@media(max-width:640px){.login.auth-login-page{min-height:calc(100dvh - 70px);padding:32px 14px}.login.auth-login-page .auth-login-card{padding:25px 20px}.portal-card{min-height:140px}.portal-txt{align-items:flex-start}.portal-ico{width:66px;height:66px;border-radius:18px}.portal-ico svg{width:29px;height:29px}.portal-card .portal-arr{display:none}}
+@media(prefers-reduced-motion:reduce){.journey-card,.portal-card,.auth-input-wrap,.auth-password-toggle{transition:none!important}.w .card .ic svg,.journey-icon svg,.portal-ico svg{transform:none!important}}
+
+/* Review pass 7 — slightly deeper navy section (#172638) with flat fill. */
+html[data-theme='light'] .hero ~ .journey-section .journey-number{
+  color:#111111!important;
+  opacity:1!important;
+  text-shadow:none;
+}
+html[data-theme='dark'] .hero ~ .journey-section{
+  background:#172638!important;
+  border-top:1px solid #293c51;
+  border-bottom:1px solid #293c51;
+}
+html[data-theme='dark'] .hero ~ .journey-section .w{
+  background:transparent!important;
+}
+html[data-theme='dark'] .hero ~ .journey-section .journey-number{
+  color:#ffffff!important;
+  opacity:1!important;
+  text-shadow:none;
+}
+/* Sidebar: keep only vertical scroll when needed; avoid horizontal scrolling from
+   text, translated hover links, and child min-content dimensions. */
+.dash .sidebar{
+  box-sizing:border-box;
+  overflow-x:hidden!important;
+}
+.dash .sidebar .side-menu{
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  overflow-x:hidden!important;
+  overflow-y:auto;
+  min-width:0;
+  max-width:100%;
+  width:100%;
+  scrollbar-width:thin;
+  scrollbar-color:color-mix(in srgb,var(--mut) 32%,transparent) transparent;
+}
+.dash .sidebar .side-menu .item{
+  box-sizing:border-box;
+  max-width:100%;
+  min-width:0;
+}
+.dash .sidebar .side-menu .item:hover{
+  transform:none!important;
+}
+.dash .sidebar .menu-label{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.dash .sidebar .logo,.dash .sidebar .sidebar-bottom{
+  min-width:0;
+  max-width:100%;
+}
+.dash .sidebar .portal-brand-text{
+  min-width:0;
+  white-space:nowrap;
+}
+@media(max-width:640px){
+ html[data-theme='dark'] .hero ~ .journey-section{
+  background:#172638!important;
+ }
+}

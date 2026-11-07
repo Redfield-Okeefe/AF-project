@@ -1,0 +1,185 @@
+/* Responsive shared dashboard header — Owner, Pelatih, Pemain.
+   Overrides earlier owner-v7/v8 and workspace rules only on tablet/phone. */
+@media (max-width:900px) {
+  .dash .main { min-width:0; }
+  .dash .topbar {
+    display:grid!important;
+    grid-template-columns:42px minmax(0,1fr);
+    grid-template-rows:auto auto;
+    grid-template-areas:
+      "menu heading"
+      "actions actions";
+    column-gap:13px!important;
+    row-gap:14px!important;
+    align-items:start!important;
+    flex-wrap:initial!important;
+    min-width:0;
+    width:100%;
+    box-sizing:border-box;
+    padding:16px!important;
+    overflow:visible;
+  }
+  .dash .topbar > .burger {
+    grid-area:menu;
+    display:grid!important;
+    place-items:center;
+    position:static;
+    flex:none;
+    width:42px;
+    height:42px;
+    padding:0;
+    margin:0;
+    align-self:start;
+  }
+  .dash .topbar > .portal-topbar-heading,
+  .dash.owner-portal .topbar > .portal-topbar-heading,
+  .dash.workspace-portal .topbar > .portal-topbar-heading {
+    grid-area:heading;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    justify-content:flex-start;
+    min-width:0!important;
+    width:100%;
+    max-width:100%;
+    margin:0;
+    gap:4px;
+  }
+  .dash .topbar .portal-topbar-heading h1,
+  .dash.owner-portal .topbar .portal-topbar-heading h1,
+  .dash.workspace-portal .topbar .portal-topbar-heading h1 {
+    display:block;
+    max-width:100%;
+    color:var(--tx);
+    font-size:clamp(19px,3.4vw,24px)!important;
+    font-weight:800;
+    line-height:1.25;
+    letter-spacing:-.45px;
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    overflow-wrap:break-word;
+    margin:0;
+  }
+  .dash .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut,
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut {
+    display:block!important;
+    max-width:100%;
+    margin:0!important;
+    font-size:12px!important;
+    line-height:1.45!important;
+    white-space:normal;
+    overflow-wrap:break-word;
+  }
+  .dash .topbar .portal-topbar-heading .owner-live-clock {
+    display:flex!important;
+    align-items:flex-start;
+    gap:7px;
+    width:100%;
+    max-width:100%;
+    margin:4px 0 0;
+    min-width:0;
+    font-size:11px;
+    line-height:1.45;
+  }
+  .dash .topbar .portal-topbar-heading .owner-live-clock > svg {
+    flex:0 0 auto;
+    margin-top:1px;
+  }
+  .dash .topbar .portal-topbar-heading .owner-live-clock time {
+    min-width:0;
+    max-width:100%;
+    display:inline;
+    overflow-wrap:normal;
+    word-break:normal;
+  }
+  .dash.owner-portal .topbar .owner-live-clock time b {
+    display:inline!important;
+  }
+  .dash.owner-portal .topbar .owner-live-clock .owner-clock-divider {
+    display:inline!important;
+  }
+  .dash .topbar > .portal-header-actions,
+  .dash .topbar > .owner-header-actions,
+  .dash.owner-portal .topbar > .owner-header-actions,
+  .dash.workspace-portal .topbar > .portal-header-actions {
+    grid-area:actions;
+    justify-self:end;
+    align-self:center;
+    display:flex!important;
+    align-items:center;
+    justify-content:flex-end!important;
+    width:auto!important;
+    min-width:0;
+    max-width:100%;
+    margin:0!important;
+    gap:9px;
+    position:relative;
+    flex:none;
+  }
+  /* The name remains accessible through Owner's avatar profile dialog. */
+  .dash.owner-portal .topbar .owner-profile-name {
+    display:none!important;
+  }
+  .dash.workspace-portal .topbar .user {
+    margin:0!important;
+    display:flex;
+    align-items:center;
+    padding:4px 8px;
+    min-width:0;
+  }
+  .dash.workspace-portal .topbar .user > div:last-child {
+    display:none!important;
+  }
+  .dash .topbar .owner-profile-popup {
+    right:0;
+    left:auto;
+    max-width:min(310px,calc(100vw - 48px));
+  }
+}
+@media (max-width:430px) {
+  .dash .topbar {
+    grid-template-columns:39px minmax(0,1fr);
+    column-gap:11px!important;
+    row-gap:12px!important;
+    padding:14px!important;
+    border-radius:17px;
+  }
+  .dash .topbar > .burger {
+    width:39px!important;
+    height:39px!important;
+  }
+  .dash .topbar .portal-topbar-heading h1,
+  .dash.owner-portal .topbar .portal-topbar-heading h1,
+  .dash.workspace-portal .topbar .portal-topbar-heading h1 {
+    font-size:20px!important;
+  }
+  .dash .topbar .portal-topbar-heading > .mut {
+    font-size:11px!important;
+  }
+  .dash .topbar .portal-topbar-heading .owner-live-clock {
+    font-size:10px;
+    line-height:1.55;
+  }
+}
+@media (max-width:350px) {
+  .dash .topbar {
+    grid-template-columns:36px minmax(0,1fr);
+    column-gap:9px!important;
+    padding:12px!important;
+  }
+  .dash .topbar > .burger {
+    width:36px!important;
+    height:36px!important;
+  }
+  .dash .topbar .portal-topbar-heading h1,
+  .dash.owner-portal .topbar .portal-topbar-heading h1,
+  .dash.workspace-portal .topbar .portal-topbar-heading h1 {
+    font-size:18px!important;
+  }
+  .dash .topbar > .portal-header-actions,
+  .dash .topbar > .owner-header-actions {
+    gap:7px;
+  }
+}

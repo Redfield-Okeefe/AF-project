@@ -2,9 +2,12 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import HeroWall from '../components/HeroWall.jsx'
 import BrandLogo from '../components/BrandLogo.jsx'
+import OwnerIcon from '../components/OwnerIcon.jsx'
 import { STATS, FEATURES, PROGRAMS } from '../data/config.js'
 
 const dirs = ['left', 'up', 'right']
+const featureIcons = ['award', 'trend', 'stadium']
+const programIcons = ['sprout', 'target', 'zap']
 
 export default function Home() {
   return (
@@ -29,8 +32,8 @@ export default function Home() {
 
           <Reveal anim="right" delay={150} className="hero-visual">
             <div className="ball-card"><BrandLogo className="ball-logo" /></div>
-            <div className="float f1"><em>🏆</em><div><b>Juara Turnamen</b><small>50+ trofi diraih</small></div></div>
-            <div className="float f2"><em>⭐</em><div><b>Pelatih Berlisensi</b><small>12 pelatih</small></div></div>
+            <div className="float f1"><em><OwnerIcon name="award" size={21}/></em><div><b>Juara Turnamen</b><small>50+ trofi diraih</small></div></div>
+            <div className="float f2"><em><OwnerIcon name="sparkles" size={21}/></em><div><b>Pelatih Berlisensi</b><small>12 pelatih</small></div></div>
           </Reveal>
         </div>
       </div>
@@ -42,7 +45,7 @@ export default function Home() {
         <div className="grid">
           {FEATURES.map((f, i) => (
             <Reveal key={f.title} anim={dirs[i % 3]} delay={i * 120} className="card">
-              <div className="ic">{f.icon}</div>
+              <div className="ic"><OwnerIcon name={featureIcons[i]} size={27}/></div>
               <h3>{f.title}</h3>
               <p>{f.text}</p>
             </Reveal>
@@ -58,7 +61,7 @@ export default function Home() {
           <div className="grid">
             {PROGRAMS.map((p, i) => (
               <Reveal key={p.title} anim="zoom" delay={i * 120} className="card">
-                <div className="ic">{p.icon}</div>
+                <div className="ic"><OwnerIcon name={programIcons[i]} size={27}/></div>
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
                 <span className="price">{p.freq}</span>
@@ -77,13 +80,13 @@ export default function Home() {
           </Reveal>
           <div className="journey-grid">
             {[
-              { n: '01', icon: '📝', title: 'Daftar Online', text: 'Isi formulir pendaftaran dan lengkapi informasi calon pemain.' },
-              { n: '02', icon: '✅', title: 'Konfirmasi', text: 'Ikuti tahapan konfirmasi dan pembayaran sesuai informasi akademi.' },
-              { n: '03', icon: '⚽', title: 'Mulai Berlatih', text: 'Akses portal pemain untuk melihat jadwal dan pengumuman.' },
+              { n: '01', icon: 'file-check', title: 'Daftar Online', text: 'Isi formulir pendaftaran dan lengkapi informasi calon pemain.' },
+              { n: '02', icon: 'check-circle', title: 'Konfirmasi', text: 'Ikuti tahapan konfirmasi dan pembayaran sesuai informasi akademi.' },
+              { n: '03', icon: 'ball', title: 'Mulai Berlatih', text: 'Akses portal pemain untuk melihat jadwal dan pengumuman.' },
             ].map((step, i) => (
               <Reveal key={step.n} anim="up" delay={i * 100} className="journey-card">
                 <span className="journey-number">{step.n}</span>
-                <span className="journey-icon" aria-hidden="true">{step.icon}</span>
+                <span className="journey-icon" aria-hidden="true"><OwnerIcon name={step.icon} size={30}/></span>
                 <h3>{step.title}</h3><p>{step.text}</p>
               </Reveal>
             ))}

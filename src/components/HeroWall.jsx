@@ -26,7 +26,6 @@ const ukuran = () => {
 
 export default function HeroWall() {
   const [size, setSize] = useState(ukuran)
-
   useEffect(() => {
     const onResize = () => setSize((s) => {
       const n = ukuran()
@@ -48,12 +47,12 @@ export default function HeroWall() {
         decorative
         items={items}
         {...size}
-        tilt={16}
-        turn={-14}
+        tilt={size.columns === 3 ? 9 : 16}
+        turn={size.columns === 3 ? -8 : -14}
         perspective={1200}
         depth={120}
-        speed={34}
-        parallax={0.5}
+        speed={size.columns === 3 ? 21 : 34}
+        parallax={size.columns === 3 ? 0 : 0.5}
         lift={48}
         fade={0.45}
         dim={0.62}

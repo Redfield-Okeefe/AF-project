@@ -1,63 +1,42 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
-import { iso, listInfo, listSesi, pemainDiKelas } from '../../services/db.js'
+import OwnerIcon from '../../components/OwnerIcon.jsx'
+import OwnerLiveClock from '../../components/OwnerLiveClock.jsx'
+import { iso, listInfo, listSesi, pemainDiKelas, rataKehadiran } from '../../services/db.js'
 import { fmtTanggal } from '../../utils/format.js'
 import { useSaya } from './useSaya.js'
 
 export default function Beranda() {
   const { email, akun, kelas, kelasIds } = useSaya()
   const hari = iso()
-  const mendatang = listSesi(kelasIds).filter((s) => s.tanggal >= hari).slice(0, 5)
-  const hariIni = mendatang.filter((s) => s.tanggal === hari)
-  const infoSaya = listInfo().filter((i) => i.oleh === email).slice(0, 3)
-  const totalPemain = kelas.reduce((n, k) => n + pemainDiKelas(k.id).length, 0)
-
-  return (
-    <div className="view active">
-      <Reveal anim="down" className="card sapa">
-        <h3>Halo, {akun?.nama?.split(' ')[0]} 👋</h3>
-        <p className="mut">
-          {kelas.length
-            ? `Kamu mengampu ${kelas.length} kelas dengan ${totalPemain} pemain. ${hariIni.length ? `Hari ini ada ${hariIni.length} sesi.` : 'Tidak ada sesi hari ini.'}`
-            : 'Kamu belum memegang kelas. Owner akan menempatkanmu di sebuah kelas, lalu menu di samping siap dipakai.'}
-        </p>
-        {hariIni.length > 0 && <Link className="abtn" to="../absensi">Ambil absensi</Link>}
-      </Reveal>
-
-      <div className="kpis">
-        {kelas.map((k, i) => (
-          <Reveal key={k.id} anim="up" delay={i * 80} className="card kpi">
-            <small className="mut">Kelas</small>
-            <b>{k.nama}</b>
-            <span className="mut">{pemainDiKelas(k.id).length} pemain · {k.usia}</span>
-          </Reveal>
-        ))}
-      </div>
-
-      <div className="cols2">
-        <Reveal anim="left" className="card">
-          <h3>Sesi mendatang</h3>
-          {mendatang.length === 0 && <p className="mut">Belum ada jadwal. Buat di menu Jadwal.</p>}
-          {mendatang.map((s) => (
-            <div key={s.id} className="rowline">
-              <div>
-                <b>{s.judul}</b>
-                <small className="mut">{fmtTanggal(s.tanggal)} · {s.mulai} · {s.lokasi}</small>
-              </div>
-              <span className={`pill ${s.tipe === 'pertandingan' ? 'warn' : 'info'}`}>{s.tipe}</span>
-            </div>
-          ))}
-        </Reveal>
-        <Reveal anim="right" className="card">
-          <h3>Pengumuman terakhirmu</h3>
-          {infoSaya.length === 0 && <p className="mut">Belum ada. Kirim lewat menu Pengumuman.</p>}
-          {infoSaya.map((i) => (
-            <div key={i.id} className="rowline">
-              <div><b>{i.judul}</b><small className="mut">{fmtTanggal(i.tgl)}</small></div>
-            </div>
-          ))}
-        </Reveal>
-      </div>
+  const semua = listSesi(kelasIds)
+  const mendatang = semua.filter(s => s.tanggal >= hari).slice(0,5)
+  const hariIni = semua.filter(s => s.tanggal === hari)
+  const kabar = listInfo().filter(i => i.oleh === email).slice(0,3)
+  const pemain = kelas.reduce((n,k)=>n+pemainDiKelas(k.id).length,0)
+  const presentase = kelas.map(k=>rataKehadiran(k.id)).filter(n=>n!=null)
+  const rerata = presentase.length?Math.round(presentase.reduce((s,n)=>s+n,0)/presentase.length):null
+  const cards = [
+    {label:'Kelas diampu',value:kelas.length,detail:'Kelas saya',icon:'players',to:'../jadwal'},
+    {label:'Total pemain',value:pemain,detail:'Seluruh kelas saya',icon:'coaches',to:'../absensi'},
+    {label:'Sesi hari ini',value:hariIni.length,detail:'Jadwal latihan hari ini',icon:'calendar',to:'../jadwal'},
+    {label:'Rata-rata kehadiran',value:rerata===null?'—':rerata+'%',detail:'Dari data absensi',icon:'activity',to:'../absensi'}
+  ]
+  return <div className="view active workspace-overview">
+    <Reveal anim="up" className="workspace-hero"><div><span className="workspace-eyebrow"><span className="workspace-live-dot"/> WORKSPACE PELATIH</span>
+      <h2>Selamat datang, Coach {akun?.nama?.split(' ')[0] || 'Pelatih'}! <span>Bangun talenta terbaik.</span></h2>
+      <p>Kelola latihan, kehadiran, perkembangan pemain, dan pengumuman dari satu dashboard.</p>
+      <div className="workspace-hero-actions"><Link className="workspace-button" to="../jadwal"><OwnerIcon name="calendar" size={17}/> Kelola jadwal <OwnerIcon name="arrow" size={16}/></Link><Link className="workspace-button subtle" to="../absensi"><OwnerIcon name="check" size={17}/> Isi absensi</Link></div></div><span className="workspace-hero-art" aria-hidden="true"><OwnerIcon name="activity" size={105}/></span></Reveal>
+    {!kelas.length&&<div className="workspace-note"><OwnerIcon name="warning" size={18}/>Belum ada kelas yang ditugaskan oleh Owner. Statistik akan muncul setelah penugasan.</div>}
+    <div className="workspace-section-head"><div className="portal-section-heading-copy"><h2>Ringkasan pelatihan</h2><p>Data dari kelas yang kamu ampu</p></div><OwnerLiveClock compact /></div>
+    <div className="workspace-stats">{cards.map((c,i)=><Reveal key={c.label} anim="up" delay={i*40} className="workspace-stat"><span className="workspace-stat-icon"><OwnerIcon name={c.icon} size={21}/></span><span className="workspace-stat-label">{c.label}</span><strong>{c.value}</strong><span className="workspace-stat-detail">{c.detail}</span><Link to={c.to} aria-label={'Buka '+c.label} className="workspace-stat-link"/></Reveal>)}</div>
+    <div className="workspace-columns">
+      <Reveal anim="up" className="card workspace-panel"><div className="workspace-panel-head"><div><span className="workspace-panel-icon"><OwnerIcon name="calendar"/></span><div><h3>Agenda latihan</h3><p>Sesi mendatang</p></div></div><Link to="../jadwal">Kelola jadwal <OwnerIcon name="arrow" size={15}/></Link></div>
+      {mendatang.length?<div>{mendatang.map(s=><div className="workspace-row" key={s.id}><span className="workspace-date"><b>{new Date(s.tanggal+'T12:00:00').getDate()}</b><small>{new Date(s.tanggal+'T12:00:00').toLocaleDateString('id-ID',{month:'short'})}</small></span><div className="workspace-row-copy"><strong>{s.judul}</strong><span>{fmtTanggal(s.tanggal)} · {s.mulai} · {s.lokasi}</span></div><span className="workspace-chip">{s.tipe}</span></div>)}</div>:<div className="workspace-empty">Belum ada agenda mendatang.</div>}</Reveal>
+      <Reveal anim="up" className="card workspace-panel"><div className="workspace-panel-head"><div><span className="workspace-panel-icon"><OwnerIcon name="activity"/></span><div><h3>Kelas saya</h3><p>Aktivitas dan kehadiran</p></div></div><Link to="../absensi">Absensi <OwnerIcon name="arrow" size={15}/></Link></div>
+      {kelas.length?<div>{kelas.map(k=><div className="workspace-row" key={k.id}><span className="workspace-ann-icon"><OwnerIcon name="players"/></span><div className="workspace-row-copy"><strong>{k.nama}</strong><span>{pemainDiKelas(k.id).length} pemain · {k.usia}</span></div><span className="workspace-chip">{rataKehadiran(k.id)==null?'—':rataKehadiran(k.id)+'%'}</span></div>)}</div>:<div className="workspace-empty">Belum ada kelas aktif.</div>}</Reveal>
     </div>
-  )
+    <Reveal anim="up" className="workspace-bottom-banner"><div><span className="workspace-panel-icon"><OwnerIcon name="news"/></span><div><h3>Pengumuman akademi</h3><p>{kabar.length?kabar[0].judul:'Belum ada pengumuman yang dibuat.'}</p></div></div><Link className="workspace-button" to="../pengumuman">Kelola pengumuman <OwnerIcon name="arrow" size={16}/></Link></Reveal>
+    <div className="workspace-shortcuts"><Link to="../absensi"><OwnerIcon name="check"/> Absensi <OwnerIcon name="arrow" size={15}/></Link><Link to="../penilaian"><OwnerIcon name="trend"/> Penilaian <OwnerIcon name="arrow" size={15}/></Link><Link to="../profil"><OwnerIcon name="user"/> Profil saya <OwnerIcon name="arrow" size={15}/></Link></div>
+  </div>
 }

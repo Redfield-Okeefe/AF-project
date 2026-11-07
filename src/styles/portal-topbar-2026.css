@@ -1,0 +1,306 @@
+/* Dashboard top bar — Pemain, Pelatih, Owner.
+ * Replaces the rounded header card with a full-width top navigation strip.
+ * Only portal layout is changed; public pages and dashboard cards are unaffected. */
+.dash.workspace-portal .main,
+.dash.owner-portal .main {
+  padding: 0 !important;
+  min-width: 0;
+}
+
+.dash.workspace-portal .topbar,
+.dash.owner-portal .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 14; /* Below mobile sidebar overlay, above dashboard content. */
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 10px clamp(18px, 3vw, 48px) !important;
+  background: var(--card) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--bd) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.dash.owner-portal .topbar {
+  padding-inline: clamp(20px, 3.1vw, 52px) !important;
+}
+
+.dash .topbar > .portal-topbar-heading {
+  min-width: 0;
+}
+
+.dash .portal-main-content {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+}
+
+.dash.workspace-portal .portal-main-content {
+  padding: 24px clamp(18px, 3vw, 48px) 60px;
+}
+
+.dash.owner-portal .portal-main-content {
+  padding: 25px clamp(20px, 3.1vw, 52px) 52px;
+}
+
+/* Phone and tablet: short top bar with one row (menu, title, controls).
+ * It scrolls normally on phones so it does not cover content. */
+@media (max-width: 900px) {
+  .dash.workspace-portal .topbar,
+  .dash.owner-portal .topbar {
+    position: relative;
+    top: auto;
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) auto !important;
+    grid-template-rows: auto !important;
+    grid-template-areas: "menu heading actions" !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 18px 8px !important;
+    row-gap: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .dash.workspace-portal .portal-main-content,
+  .dash.owner-portal .portal-main-content {
+    padding: 20px 18px calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 430px) {
+  .dash.workspace-portal .topbar,
+  .dash.owner-portal .topbar {
+    grid-template-columns: 37px minmax(0, 1fr) auto !important;
+    column-gap: 8px !important;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 14px 8px !important;
+  }
+
+  .dash.workspace-portal .portal-main-content,
+  .dash.owner-portal .portal-main-content {
+    padding-inline: 14px;
+  }
+}
+
+@media (max-width: 350px) {
+  .dash.workspace-portal .topbar,
+  .dash.owner-portal .topbar {
+    grid-template-columns: 36px minmax(0, 1fr) auto !important;
+    column-gap: 6px !important;
+    padding-inline: 12px !important;
+  }
+
+  .dash.workspace-portal .portal-main-content,
+  .dash.owner-portal .portal-main-content {
+    padding-inline: 12px;
+  }
+}
+
+
+/* Keep the new header compact at every viewport width. */
+.dash .topbar > .portal-topbar-heading h1 { margin: 0; }
+.dash.owner-portal .topbar > .portal-topbar-heading,
+.dash.workspace-portal .topbar > .portal-topbar-heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dash .portal-section-heading-copy { min-width: 0; }
+.dash .portal-section-heading-inline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px 13px;
+  min-width: 0;
+}
+.dash .portal-section-heading-inline h2 { margin: 0; }
+.dash.owner-portal .portal-section-clock,
+.dash.workspace-portal .portal-section-clock {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 9px;
+  border: 1px solid var(--bd);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--mut);
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.dash .portal-section-clock svg { color: var(--ac); flex: none; }
+.dash .portal-section-clock time { display: block; max-width: 100%; }
+.dash .portal-section-clock time b { display: inline !important; color: var(--tx); }
+.dash .portal-clock-short { display: none; }
+.dash .portal-clock-full { display: inline; }
+
+@media (max-width: 900px) {
+  .dash.workspace-portal .topbar > .burger,
+  .dash.owner-portal .topbar > .burger { align-self: center !important; }
+  .dash.workspace-portal .topbar > .portal-header-actions,
+  .dash.owner-portal .topbar > .owner-header-actions {
+    align-self: center;
+    justify-self: end;
+    grid-area: actions;
+    margin: 0 !important;
+  }
+  .dash.workspace-portal .topbar .portal-topbar-heading h1,
+  .dash.owner-portal .topbar .portal-topbar-heading h1 {
+    font-size: clamp(17px, 3.8vw, 22px) !important;
+    line-height: 1.2 !important;
+    overflow-wrap: normal;
+  }
+  .dash .portal-section-heading-inline { gap: 5px 9px; }
+  .dash .portal-clock-full { display: none; }
+  .dash .portal-clock-short { display: inline; }
+  .dash.owner-portal .portal-section-clock,
+  .dash.workspace-portal .portal-section-clock { font-size: 10px; padding: 5px 7px; }
+}
+
+@media (max-width: 430px) {
+  .dash.workspace-portal .topbar > .burger,
+  .dash.owner-portal .topbar > .burger { width: 37px !important; height: 37px !important; }
+  .dash.owner-portal .topbar .owner-theme-icon-btn,
+  .dash.owner-portal .topbar .owner-photo { width: 37px; height: 37px; }
+  .dash.workspace-portal .topbar .portal-header-actions { gap: 6px !important; }
+  .dash.workspace-portal .topbar .user { padding: 2px 5px; }
+  .dash.workspace-portal .topbar .theme-toggle { width: 37px; height: 37px; }
+  .dash.workspace-portal .topbar .avatar { width: 37px; height: 37px; }
+}
+@media (max-width: 350px) {
+  .dash.workspace-portal .topbar > .burger,
+  .dash.owner-portal .topbar > .burger { width: 36px !important; height: 36px !important; }
+  .dash.workspace-portal .topbar .portal-header-actions { gap: 4px !important; }
+  .dash.workspace-portal .topbar .user { padding: 2px 3px; }
+  .dash.workspace-portal .topbar .theme-toggle { width: 34px; height: 34px; }
+  .dash.workspace-portal .topbar .avatar { width: 34px; height: 34px; }
+}
+
+/* Compact subtitle restored beneath the dashboard title on all three portals. */
+.dash.workspace-portal .topbar .portal-topbar-heading,
+.dash.owner-portal .topbar .portal-topbar-heading {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:2px;
+}
+.dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+.dash.owner-portal .topbar .portal-topbar-heading > .mut {
+  display:block;
+  margin:0!important;
+  max-width:100%;
+  font-size:12px!important;
+  line-height:1.25!important;
+  font-weight:400;
+  white-space:normal;
+  overflow-wrap:break-word;
+  color:var(--mut);
+}
+
+/* The live clock replaces the former month/year badge at the right of each
+   dashboard overview, while the heading and its description remain on the left. */
+.dash.workspace-portal .workspace-section-head,
+.dash.owner-portal .owner-section-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px 12px;
+}
+.dash.workspace-portal .workspace-section-head > .portal-section-clock,
+.dash.owner-portal .owner-section-heading > .portal-section-clock {
+  margin-left:auto!important;
+  margin-top:0!important;
+  align-self:center;
+  flex-shrink:0;
+}
+@media(max-width:900px){
+  .dash.workspace-portal .topbar .portal-topbar-heading,
+  .dash.owner-portal .topbar .portal-topbar-heading {gap:2px}
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut {
+    display:block!important;
+    font-size:10px!important;
+    line-height:1.25!important;
+  }
+}
+@media(max-width:430px){
+  .dash.workspace-portal .topbar .portal-topbar-heading h1,
+  .dash.owner-portal .topbar .portal-topbar-heading h1 {
+    font-size:clamp(15px,4vw,18px)!important;
+  }
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut {
+    font-size:9px!important;
+    line-height:1.2!important;
+  }
+  .dash.workspace-portal .workspace-section-head > .portal-section-clock,
+  .dash.owner-portal .owner-section-heading > .portal-section-clock {
+    margin-left:auto!important;
+  }
+}
+
+/* Desktop: enough visual breathing room between dashboard title and subtitle. */
+@media (min-width: 901px) {
+  .dash.workspace-portal .topbar .portal-topbar-heading,
+  .dash.owner-portal .topbar .portal-topbar-heading {
+    gap: 7px;
+  }
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Player overview only: keep heading/subtitle and live date in one mobile row.
+   Longer text may wrap inside its own column instead of pushing the clock below. */
+@media (max-width: 760px) {
+  .dash.workspace-portal .player-overview-head {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .dash.workspace-portal .player-overview-head > .portal-section-heading-copy {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .dash.workspace-portal .player-overview-head > .portal-section-clock {
+    flex: 0 0 auto;
+    margin-left: auto !important;
+  }
+}
+@media (max-width: 350px) {
+  .dash.workspace-portal .player-overview-head h2 {
+    font-size: 16px;
+  }
+  .dash.workspace-portal .player-overview-head > .portal-section-clock {
+    font-size: 9px;
+    padding: 5px;
+    gap: 4px;
+  }
+}
+
+/* Owner desktop only: give Dashboard title and subtitle clearer separation.
+   This intentionally does not affect mobile, Pemain, or Pelatih. */
+@media (min-width: 901px) {
+  .dash.owner-portal .topbar {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+  .dash.owner-portal .topbar > .portal-topbar-heading {
+    gap: 12px !important;
+  }
+  .dash.owner-portal .topbar > .portal-topbar-heading > .mut {
+    margin: 0 !important;
+    line-height: 1.5 !important;
+  }
+}

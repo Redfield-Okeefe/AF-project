@@ -3,6 +3,23 @@ import React from 'react'
 /** Ikon SVG konsisten untuk Portal Owner, tanpa dependensi tambahan. */
 export default function OwnerIcon({ name, size = 20, strokeWidth = 1.85, className = '' }) {
   const paths = {
+    ball: <><circle cx="12" cy="12" r="9"/><path d="m9 3.8 3 2.7 3-2.7m-3 2.7-3.6 2.6 1.2 4.3h4.8l1.2-4.3L12 6.5ZM3.4 10l3.9 1.2 2.3 2.2-1.1 4.3L6 19m14.6-9-3.9 1.2-2.3 2.2 1.1 4.3L18 19M9.6 13.4l-1.1 4.3m6.9 0-1.1-4.3M9 20.5l3-1.7 3 1.7"/></>,
+    award: <><circle cx="12" cy="8" r="5"/><path d="M8.8 12 7 21l5-2.6 5 2.6-1.8-9M10 8l1.4 1.3L14 6.7"/></>,
+    stadium: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 19v-5l5-3 5 3v5m-10-6 4 2m6-2-4 2"/></>,
+    sparkles: <><path d="m12 2 1.7 5.2L19 9l-5.3 1.8L12 16l-1.7-5.2L5 9l5.3-1.8L12 2ZM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16ZM19 15l.8 1.7L22 17.5l-2.2.8L19 20l-.8-1.7-2.2-.8 2.2-.8L19 15Z"/></>,
+    sprout: <><path d="M12 22v-9m0 4c-6 0-8-3-8-8 5 0 8 3 8 8Zm0-4c0-5 2.8-8 8-8 0 5-2 8-8 8Z"/></>,
+    target: <><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></>,
+    zap: <path d="M13 2 4.8 13H12l-1 9 8.2-11H12L13 2Z"/>,
+    'file-check': <><path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10Z"/><path d="M13 3v7h7M8 16l2.5 2.5L16 13"/></>,
+    'check-circle': <><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></>,
+    shield: <><path d="M12 2 20 5v6c0 5.5-3.4 8.5-8 11-4.6-2.5-8-5.5-8-11V5l8-3Z"/><path d="m9 12 2.2 2.2L16 9.7"/></>,
+    whistle: <><path d="M6 7.5h8.3l4.3 4.3a4.2 4.2 0 0 1-5.9 5.9L8 13H6A3 3 0 0 1 6 7.5Z"/><circle cx="15.8" cy="14" r="1.5"/><path d="M6 7.5V5h4"/></>,
+    mail: <><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></>,
+    lock: <><rect x="5" y="10" width="14" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></>,
+    eye: <><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></>,
+    'eye-off': <><path d="M3 3 21 21M10 6.2A11.9 11.9 0 0 1 12 6c6.5 0 10 6 10 6a17.4 17.4 0 0 1-3.6 4.2M6.1 8.1A16.4 16.4 0 0 0 2 12s3.5 6 10 6c1.1 0 2.1-.2 3-.5"/><path d="M10 10a2.6 2.6 0 0 0 4 4"/></>,
+    'log-in': <><path d="M10 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8"/><path d="m12 8 4 4-4 4m4-4H3"/></>,
+    'arrow-left': <><path d="M19 12H5m6 6-6-6 6-6"/></>,
     overview: <><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></>,
     coaches: <><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2"/><path d="M17 8a3 3 0 0 1 0 6m2 6h2v-2a6 6 0 0 0-4-5.7"/></>,
     players: <><circle cx="9" cy="8" r="3"/><path d="M2.8 20v-1.4A5.6 5.6 0 0 1 8.4 13h1.2a5.6 5.6 0 0 1 5.6 5.6V20"/><circle cx="18.5" cy="9" r="2"/><path d="M17 15.6a4.5 4.5 0 0 1 4 4.4"/></>,
