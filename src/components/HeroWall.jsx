@@ -26,19 +26,6 @@ const ukuran = () => {
 
 export default function HeroWall() {
   const [size, setSize] = useState(ukuran)
-  // Keep the expensive animated wallpaper off phone screens and reduced-motion devices.
-  const [compact, setCompact] = useState(() => typeof window !== 'undefined' &&
-    (window.matchMedia('(max-width: 760px)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches))
-  useEffect(() => {
-    const mobile = window.matchMedia('(max-width: 760px)')
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const sync = () => setCompact(mobile.matches || reduced.matches)
-    sync()
-    mobile.addEventListener?.('change', sync)
-    reduced.addEventListener?.('change', sync)
-    return () => { mobile.removeEventListener?.('change', sync); reduced.removeEventListener?.('change', sync) }
-  }, [])
-
   useEffect(() => {
     const onResize = () => setSize((s) => {
       const n = ukuran()
@@ -54,20 +41,18 @@ export default function HeroWall() {
     return [...dasar, ...dasar.slice(3), ...dasar.slice(0, 3)]
   }, [])
 
-  if (compact) return null
-
   return (
     <div className="hero-bg" aria-hidden="true">
       <DriftWall
         decorative
         items={items}
         {...size}
-        tilt={16}
-        turn={-14}
+        tilt={size.columns === 3 ? 9 : 16}
+        turn={size.columns === 3 ? -8 : -14}
         perspective={1200}
         depth={120}
-        speed={34}
-        parallax={0.5}
+        speed={size.columns === 3 ? 21 : 34}
+        parallax={size.columns === 3 ? 0 : 0.5}
         lift={48}
         fade={0.45}
         dim={0.62}
