@@ -18,6 +18,22 @@ export default function Navbar() {
   const close = () => setOpen(false)
   // Tutup menu seluler saat navigasi berubah.
   useEffect(() => { setOpen(false) }, [location.pathname])
+  // Escape closes the mobile navigation. Prevent background page scroll while open.
+  useEffect(() => {
+    if (!open) return
+    const onKeyDown = (event) => { if (event.key === 'Escape') setOpen(false) }
+    const prevOverflow = document.body.style.overflow
+    const media = window.matchMedia('(max-width: 760px)')
+    const setLock = () => { document.body.style.overflow = media.matches ? 'hidden' : prevOverflow }
+    setLock()
+    document.addEventListener('keydown', onKeyDown)
+    media.addEventListener?.('change', setLock)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      media.removeEventListener?.('change', setLock)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [open])
 
   return (
     <nav className="nav" aria-label="Navigasi utama">
@@ -29,6 +45,7 @@ export default function Navbar() {
             {l.label}
           </NavLink>
         ))}
+        <Link className="mobile-login-link" to="/login" onClick={close}><OwnerIcon name="log-in" size={18} /> Masuk Portal</Link>
       </div>
 
       <div className="nav-right">
