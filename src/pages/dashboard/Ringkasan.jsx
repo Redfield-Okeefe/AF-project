@@ -32,7 +32,7 @@ export default function Ringkasan() {
       <span className="workspace-hero-art" aria-hidden="true"><OwnerIcon name="players" size={105}/></span>
     </Reveal>
     {!kelas && <div className="workspace-note"><OwnerIcon name="warning" size={18}/>Belum ada kelas yang ditetapkan Owner untuk akunmu.</div>}
-    <div className="workspace-section-head"><div className="portal-section-heading-copy"><h2>Ringkasan akademi</h2><p>Informasi berdasarkan akun yang sedang masuk</p></div><OwnerLiveClock compact /></div>
+    <div className="workspace-section-head player-overview-head"><div className="portal-section-heading-copy"><h2>Ringkasan akademi</h2><p>Data akademi Anda</p></div><OwnerLiveClock compact /></div>
     <div className="workspace-stats">{cards.map((c,i)=><Reveal key={c.label} anim="up" delay={i*40} className="workspace-stat">
       <span className="workspace-stat-icon"><OwnerIcon name={c.icon} size={21}/></span><span className="workspace-stat-label">{c.label}</span><strong>{c.value}</strong><span className="workspace-stat-detail">{c.detail}</span><Link to={c.to} aria-label={'Buka '+c.label} className="workspace-stat-link"/></Reveal>)}</div>
     <div className="workspace-columns">

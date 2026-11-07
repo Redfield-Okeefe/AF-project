@@ -247,3 +247,44 @@
     margin-left:auto!important;
   }
 }
+
+/* Desktop: enough visual breathing room between dashboard title and subtitle. */
+@media (min-width: 901px) {
+  .dash.workspace-portal .topbar .portal-topbar-heading,
+  .dash.owner-portal .topbar .portal-topbar-heading {
+    gap: 7px;
+  }
+  .dash.workspace-portal .topbar .portal-topbar-heading > .mut,
+  .dash.owner-portal .topbar .portal-topbar-heading > .mut {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Player overview only: keep heading/subtitle and live date in one mobile row.
+   Longer text may wrap inside its own column instead of pushing the clock below. */
+@media (max-width: 760px) {
+  .dash.workspace-portal .player-overview-head {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .dash.workspace-portal .player-overview-head > .portal-section-heading-copy {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .dash.workspace-portal .player-overview-head > .portal-section-clock {
+    flex: 0 0 auto;
+    margin-left: auto !important;
+  }
+}
+@media (max-width: 350px) {
+  .dash.workspace-portal .player-overview-head h2 {
+    font-size: 16px;
+  }
+  .dash.workspace-portal .player-overview-head > .portal-section-clock {
+    font-size: 9px;
+    padding: 5px;
+    gap: 4px;
+  }
+}
