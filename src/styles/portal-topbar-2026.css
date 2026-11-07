@@ -289,26 +289,18 @@
   }
 }
 
-/* Owner desktop: isolate title/subtitle spacing from owner-v8's legacy
-   flex-column gap:2px. Grid rows give an explicit and stable vertical gap.
-   The horizontal topbar flex layout stays intact for right-side actions. */
+/* Owner desktop only: give Dashboard title and subtitle clearer separation.
+   This intentionally does not affect mobile, Pemain, or Pelatih. */
 @media (min-width: 901px) {
   .dash.owner-portal .topbar {
     padding-top: 14px !important;
     padding-bottom: 14px !important;
   }
   .dash.owner-portal .topbar > .portal-topbar-heading {
-    display: grid !important;
-    grid-template-rows: auto auto;
-    align-content: center;
-    row-gap: 14px !important;
-    min-width: 0;
+    gap: 12px !important;
   }
-  .dash.owner-portal .topbar > .portal-topbar-heading > h1,
-  .dash.owner-portal .topbar > .portal-topbar-heading > p.mut {
+  .dash.owner-portal .topbar > .portal-topbar-heading > .mut {
     margin: 0 !important;
-  }
-  .dash.owner-portal .topbar > .portal-topbar-heading > p.mut {
-    line-height: 1.45 !important;
+    line-height: 1.5 !important;
   }
 }
