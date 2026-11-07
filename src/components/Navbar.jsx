@@ -45,7 +45,7 @@ export default function Navbar() {
             {l.label}
           </NavLink>
         ))}
-        <Link className="mobile-login-link" to="/login" onClick={close}><OwnerIcon name="log-in" size={18} /> Masuk Portal</Link>
+        <Link className="mobile-login-link" to="/login" onClick={close}><span>Login</span><OwnerIcon name="arrow" size={19} /></Link>
       </div>
 
       <div className="nav-right">
