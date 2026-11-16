@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit'
 import nodemailer from 'nodemailer'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { setupMedia } from './media.js'
 
 const {
   PORT = 3001, FRONTEND_URL = 'http://localhost:5173',
@@ -41,7 +42,8 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 const gagal = (res, code, message) => res.status(code).json({ message })
 
 const app = express()
-app.use(cors({ origin: FRONTEND_URL }))
+// Mendukung frontend lokal dan GitHub Pages sesuai daftar URL yang dipercaya.
+app.use(cors({ origin: FRONTEND_URL.split(',').map(x=>x.trim()).filter(Boolean) }))
 const jsonKecil = express.json({ limit: '10kb' })
 const jsonBesar = express.json({ limit: '400kb' }) // untuk /profil (memuat foto)
 
@@ -180,6 +182,9 @@ app.put('/profil', wajibLogin, jsonBesar, (req, res) => {
   if (u) u.nama = baru.nama
   res.json(baru)
 })
+
+// Upload foto Gallery dan Sorotan Beranda: hanya JWT Owner/admin yang boleh menulis.
+setupMedia(app, wajibLogin)
 
 // bersihkan kode kedaluwarsa tiap 10 menit
 setInterval(() => { for (const [e, o] of otps) if (Date.now() > o.exp) otps.delete(e) }, 10 * 60 * 1000).unref()
