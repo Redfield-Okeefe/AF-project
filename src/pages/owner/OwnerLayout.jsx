@@ -7,6 +7,7 @@ const menu = [
   { to: 'pemain', icon: '⚽', ownerIcon: 'players', label: 'Pemain', title: 'Pemain & Pendaftar', sub: 'Data pemain, kelas, dan status' },
   { to: 'keuangan', icon: '💰', ownerIcon: 'wallet', label: 'Keuangan', title: 'Keuangan', sub: 'Pembayaran, tunggakan, dan laporan' },
   { to: 'berita', icon: '📰', ownerIcon: 'news', label: 'Berita', title: 'Kelola Berita', sub: 'Terbitkan kabar terbaru akademi' },
+  { to: 'media', icon: '📷', ownerIcon: 'camera', label: 'Media & Foto', title: 'Media & Foto', sub: 'Kelola Gallery dan foto Beranda' },
   { to: 'pengaturan', icon: '⚙️', ownerIcon: 'settings', label: 'Pengaturan', title: 'Pengaturan', sub: 'Kelas, harga, dan rekening' },
 ]
 

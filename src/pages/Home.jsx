@@ -1,4 +1,7 @@
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { getHomeMedia, subscribeMedia } from '../services/media.js'
+import './HomeMedia.css'
 import Reveal from '../components/Reveal.jsx'
 import HeroWall from '../components/HeroWall.jsx'
 import BrandLogo from '../components/BrandLogo.jsx'
@@ -10,6 +13,14 @@ const featureIcons = ['award', 'trend', 'stadium']
 const programIcons = ['sprout', 'target', 'zap']
 
 export default function Home() {
+  const [homePhoto,setHomePhoto] = useState(null)
+  useEffect(() => {
+    let active=true
+    const refresh=()=>getHomeMedia().then(item=>{if(active)setHomePhoto(item)}).catch(()=>{})
+    refresh()
+    const unsubscribe=subscribeMedia(refresh)
+    return ()=>{active=false;unsubscribe()}
+  },[])
   return (
     <>
       <div className="hero">
@@ -37,6 +48,17 @@ export default function Home() {
           </Reveal>
         </div>
       </div>
+
+      {homePhoto?.img && <section className="w home-media-feature" aria-label="Sorotan foto Akademi">
+        <div className="home-media-feature-grid">
+          <img src={homePhoto.img} alt={homePhoto.title || 'Kegiatan B.N.R Academy'} decoding="async"/>
+          <div className="home-media-feature-copy">
+            <span className="section-eyebrow">SOROTAN AKADEMI</span>
+            <h2>{homePhoto.title || 'Sorotan Akademi'}</h2>
+            {homePhoto.description && <p>{homePhoto.description}</p>}
+          </div>
+        </div>
+      </section>}
 
       <div className="w">
         <span className="section-eyebrow">KEUNGGULAN KAMI</span>

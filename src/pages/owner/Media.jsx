@@ -54,6 +54,7 @@ export default function OwnerMedia() {
     e.preventDefault()
     if(!galleryFiles.length){setError('Pilih foto Gallery terlebih dahulu.');return}
     if(galleryFiles.length>20){setError('Unggah maksimal 20 foto dalam satu proses.');return}
+    const formElement=e.currentTarget
     setBusy(true);setError('');setNotice('')
     let count=0
     try{
@@ -63,7 +64,7 @@ export default function OwnerMedia() {
       }
       await reload()
       setGalleryFiles([]);setGalleryTitle('')
-      e.currentTarget.reset()
+      formElement.reset()
       setNotice(`${count} foto berhasil disimpan ${mediaMode==='local-demo'?'di browser ini':'ke server'}.`)
     }catch(err){
       setError(`${count} foto berhasil disimpan. Proses berhenti: ${err.message}`)

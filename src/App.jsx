@@ -34,6 +34,7 @@ import OwnerPemain from './pages/owner/Pemain.jsx'
 import OwnerKeuangan from './pages/owner/Keuangan.jsx'
 import OwnerBerita from './pages/owner/Berita.jsx'
 import OwnerPengaturan from './pages/owner/Pengaturan.jsx'
+import OwnerMedia from './pages/owner/Media.jsx'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -100,6 +101,7 @@ export default function App() {
           <Route path="pemain" element={<OwnerPemain />} />
           <Route path="keuangan" element={<OwnerKeuangan />} />
           <Route path="berita" element={<OwnerBerita />} />
+          <Route path="media" element={<OwnerMedia />} />
           <Route path="pengaturan" element={<OwnerPengaturan />} />
         </Route>
 
