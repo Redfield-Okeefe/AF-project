@@ -1,13 +1,16 @@
 {
   "name": "bnr-academy-backend",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node server.js",
     "seed:dummy": "node scripts/seed-dummy.js --local-dev",
-    "test": "node --test tests/auth.test.js"
+    "test": "node --test tests/auth.test.js tests/registration.test.js",
+    "seed:programs": "node scripts/seed-programs.js --local-dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
