@@ -31,7 +31,7 @@ try {
   setupMedia(app,authenticate,pool);
   app.use((req,res)=>res.status(404).json({ok:false,message:'Endpoint tidak ditemukan.'}));
   app.use(errorHandler);
-  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 3A: login, media, pendaftaran, undangan, OTP lokal`));
+  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 3B: login, media, pendaftaran, undangan, OTP, aktivasi Pemain`));
   server.on('error',async error=>{ console.error('Server gagal:',error.code || error.name); await closePool(); process.exitCode=1; });
   for (const signal of ['SIGINT','SIGTERM']) process.once(signal,()=>server.close(async()=>{await closePool();process.exit(0);}));
 } catch(error) {

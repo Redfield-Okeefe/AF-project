@@ -3,7 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {ActivationError,PURPOSE,LIMITS,demoEmail,uuid,tokenHash,validateCode,proofKey} from './activation.crypto.js';
 const AUDIENCE='bnr-academy-email-verification';
 function bodyInput(body){
-  if(!body||typeof body!=='object'||Array.isArray(body)||body.purpose!==PURPOSE)throw new ActivationError(400,'purpose harus activate_player pada Fase 3A.');
+  if(!body||typeof body!=='object'||Array.isArray(body)||body.purpose!==PURPOSE)throw new ActivationError(400,'purpose harus activate_player pada Fase 3B.');
   tokenHash(body.invitation_token);
   return {invitationToken:body.invitation_token,email:demoEmail(body.email)};
 }
@@ -18,8 +18,7 @@ export function createActivationService(repo,config){
     }
   };
 }
-// Foundation for 3B only: future account creation must additionally check DB
-// invitation/challenge binding, consume invitation atomically, and enforce unique email.
+// Proof is not a login token. Account creation rechecks the bound database records.
 export function readVerificationProof(token,config){
   try {
     const p=jwt.verify(token,proofKey(config.secret),{algorithms:['HS256'],issuer:config.issuer,audience:AUDIENCE});

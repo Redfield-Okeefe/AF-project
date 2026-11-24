@@ -89,7 +89,7 @@ $verifyB=$requestB.Clone();$verifyB.challenge_id=$challengeB.challenge_id;$verif
 $wrongB=$verifyB.Clone();$wrongB.code=if($codeB -eq '000000'){'000001'}else{'000000'}
 for($n=1;$n -le 5;$n++){$null=Assert-Status 'POST' '/api/v1/auth/otp/verify' $null $wrongB 400}
 $null=Assert-Status 'POST' '/api/v1/auth/otp/verify' $null $verifyB 400
-$null=Assert-Status 'POST' '/api/v1/auth/player/activate' $null @{} 501
+$null=Assert-Status 'POST' '/api/v1/auth/player/activate' $null @{} 400
 $null=Assert-Status 'GET' '/api/v1/auth/me' $owner $null 200
 $null=Assert-Status 'GET' '/media/gallery' $null $null 200
 $null=Assert-Status 'GET' '/media/home' $null $null 200

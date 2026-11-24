@@ -1,12 +1,12 @@
 import {randomUUID} from 'node:crypto';
 import {ActivationError,PURPOSE,LIMITS,demoEmail,tokenHash,inviteToken,otpCode,hashOtp,scopePrefix,otpDecision} from '../services/activation.crypto.js';
-async function tx(pool,fn){
+export async function tx(pool,fn){
   const db=await pool.connect();
   try{await db.query('BEGIN');const result=await fn(db);await db.query('COMMIT');return result;}
   catch(error){await db.query('ROLLBACK').catch(()=>{});throw error;}
   finally{db.release();}
 }
-async function audit(db,actor,action,entity,id,meta={}){
+export async function audit(db,actor,action,entity,id,meta={}){
   await db.query('INSERT INTO public.audit_logs(actor_user_id,action,entity_type,entity_id,metadata) VALUES($1,$2,$3,$4,$5::jsonb)',[actor,action,entity,id,JSON.stringify(meta)]);
 }
 const invalidInvite=()=>new ActivationError(409,'Undangan tidak berlaku atau pendaftaran belum siap.');
@@ -15,14 +15,14 @@ function eligible(row){
 }
 // Called in a transaction, with registration/player locked first to serialize
 // reissue, request and verify; no cleartext token or OTP is stored.
-async function findInvite(db,hash){
+export async function findInvite(db,hash){
   const ref=(await db.query('SELECT registration_id FROM public.account_activation_tokens WHERE token_hash=$1',[hash])).rows[0];
   if(!ref)throw invalidInvite();
-  const r=(await db.query("SELECT r.id,r.registration_number,r.status AS registration_status,p.status AS player_status,p.user_id,p.contact_email FROM public.registrations r JOIN public.players p ON p.id=r.player_id WHERE r.id=$1 FOR UPDATE OF r,p",[ref.registration_id])).rows[0];
+  const r=(await db.query("SELECT r.id,r.registration_number,r.status AS registration_status,p.id AS player_id,p.full_name,p.status AS player_status,p.user_id,p.contact_email FROM public.registrations r JOIN public.players p ON p.id=r.player_id WHERE r.id=$1 FOR UPDATE OF r,p",[ref.registration_id])).rows[0];
   if(!eligible(r))throw invalidInvite();
   const i=(await db.query('SELECT id,registration_id,target_email,used_at,expires_at,expires_at>clock_timestamp() AS live FROM public.account_activation_tokens WHERE token_hash=$1 AND registration_id=$2 FOR UPDATE',[hash,r.id])).rows[0];
   if(!i||i.used_at||!i.live||i.target_email.trim().toLowerCase()!==String(r.contact_email||'').trim().toLowerCase())throw invalidInvite();
-  return {...i,registration_number:r.registration_number};
+  return {...i,registration_number:r.registration_number,player_id:r.player_id,full_name:r.full_name};
 }
 export function createActivationRepository(pool,{secret,mailer}){
   return {
@@ -31,7 +31,7 @@ export function createActivationRepository(pool,{secret,mailer}){
       return tx(pool,async db=>{
         const owner=await db.query("SELECT id FROM public.users WHERE id=$1 AND role='owner' AND status='aktif' AND email_verified_at IS NOT NULL FOR SHARE",[actor]);
         if(!owner.rowCount)throw new ActivationError(403,'Akun Owner tidak aktif.');
-        const r=(await db.query("SELECT r.id,r.registration_number,r.status AS registration_status,p.status AS player_status,p.user_id,p.contact_email FROM public.registrations r JOIN public.players p ON p.id=r.player_id WHERE r.id=$1 FOR UPDATE OF r,p",[registrationId])).rows[0];
+        const r=(await db.query("SELECT r.id,r.registration_number,r.status AS registration_status,p.id AS player_id,p.full_name,p.status AS player_status,p.user_id,p.contact_email FROM public.registrations r JOIN public.players p ON p.id=r.player_id WHERE r.id=$1 FOR UPDATE OF r,p",[registrationId])).rows[0];
         if(!r)throw new ActivationError(404,'Pendaftaran tidak ditemukan.');
         if(!eligible(r))throw invalidInvite();
         const email=demoEmail(r.contact_email);
