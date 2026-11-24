@@ -1,0 +1,22 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import {randomUUID,randomBytes} from 'node:crypto';
+import {createAuthService,parseLogin} from '../services/auth.service.js';
+const password='local-test-password-not-a-real-account';
+const hash=await bcrypt.hash(password,12);
+const rows=['owner','pelatih','pemain'].map(role=>({id:randomUUID(),email:`${role}@example.test`,full_name:`Test ${role}`,password_hash:hash,role,status:'aktif',email_verified_at:new Date(),coach_ready:true,player_ready:true}));
+const repo={findByEmail:async email=>rows.find(x=>x.email===email),findById:async id=>rows.find(x=>x.id===id),recordLogin:async()=>true};
+const config={secret:randomBytes(48).toString('hex'),issuer:'bnr-academy',audience:'bnr-academy-api',expiresIn:'30m'};
+const auth=createAuthService({repo,config});
+for(const row of rows){test(`login dan token ${row.role}`,async()=>{const result=await auth.login({email:row.email,password,role:row.role});assert.equal(result.role,row.role);assert.equal(result.user.password_hash,undefined);assert.equal((await auth.authenticate(result.token)).id,row.id);});}
+test('role legacy player dipetakan ke pemain',()=>assert.equal(parseLogin({email:rows[2].email,password,peran:'player'}).role,'pemain'));
+test('role admin ditolak',()=>assert.throws(()=>parseLogin({email:rows[0].email,password,role:'admin'}),{status:400}));
+test('role berbeda ditolak',async()=>assert.rejects(auth.login({email:rows[2].email,password,role:'owner'}),{status:403}));
+test('password salah ditolak',async()=>assert.rejects(auth.login({email:rows[0].email,password:'wrong',role:'owner'}),{status:401}));
+test('email tidak terdaftar ditolak',async()=>assert.rejects(auth.login({email:'unknown@example.test',password,role:'owner'}),{status:401}));
+test('akun nonaktif ditolak termasuk token lama',async()=>{const row=rows[1];const {token}=await auth.login({email:row.email,password,role:row.role});row.status='nonaktif';try{await assert.rejects(auth.authenticate(token),{status:403});await assert.rejects(auth.login({email:row.email,password,role:row.role}),{status:403});}finally{row.status='aktif';}});
+test('pemain belum diterima tidak boleh login',async()=>{const row=rows[2];row.player_ready=false;try{await assert.rejects(auth.login({email:row.email,password,role:row.role}),{status:403});}finally{row.player_ready=true;}});
+test('token rusak ditolak',async()=>assert.rejects(auth.authenticate('not-a-token'),{status:401}));
+test('token kedaluwarsa ditolak',async()=>{const token=jwt.sign({role:'owner'},config.secret,{subject:rows[0].id,issuer:config.issuer,audience:config.audience,expiresIn:-1});await assert.rejects(auth.authenticate(token),{status:401});});
