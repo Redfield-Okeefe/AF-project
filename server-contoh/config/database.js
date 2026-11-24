@@ -17,9 +17,11 @@ export async function verifyDatabase(db = getPool()) {
     to_regclass('public.public_media') IS NOT NULL AS media_ready,
     to_regclass('public.registrations') IS NOT NULL AS registrations_ready,
     to_regclass('public.programs') IS NOT NULL AS programs_ready,
+    to_regclass('public.auth_challenges') IS NOT NULL AS challenges_ready,
+    to_regclass('public.account_activation_tokens') IS NOT NULL AS activation_ready,
     to_regclass('public.audit_logs') IS NOT NULL AS audit_ready`);
   const row = r.rows[0];
-  if (row.name !== 'bnr_academy' || !row.users_ready || !row.players_ready || !row.coaches_ready || !row.media_ready || !row.registrations_ready || !row.programs_ready || !row.audit_ready) {
+  if (row.name !== 'bnr_academy' || !row.users_ready || !row.players_ready || !row.coaches_ready || !row.media_ready || !row.registrations_ready || !row.programs_ready || !row.challenges_ready || !row.activation_ready || !row.audit_ready) {
     throw new Error('Database/skema belum sesuai. Verifikasi schema v1 yang sudah diimpor.');
   }
   return row.name;

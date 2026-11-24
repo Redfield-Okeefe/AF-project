@@ -9,6 +9,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { mountAuth } from './routes/auth.routes.js';
 import { setupMedia } from './media.js';
 import { mountRegistration } from './routes/registration.routes.js';
+import { mountActivation } from './routes/activation.routes.js';
 
 try {
   const { port, host, origins } = serverConfig();
@@ -26,10 +27,11 @@ try {
   });
   mountAuth(app,auth,authenticate);
   mountRegistration(app,authenticate,pool);
+  mountActivation(app,authenticate,pool,config);
   setupMedia(app,authenticate,pool);
   app.use((req,res)=>res.status(404).json({ok:false,message:'Endpoint tidak ditemukan.'}));
   app.use(errorHandler);
-  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 2: login, me, role, media, pendaftaran`));
+  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 3A: login, media, pendaftaran, undangan, OTP lokal`));
   server.on('error',async error=>{ console.error('Server gagal:',error.code || error.name); await closePool(); process.exitCode=1; });
   for (const signal of ['SIGINT','SIGTERM']) process.once(signal,()=>server.close(async()=>{await closePool();process.exit(0);}));
 } catch(error) {
