@@ -38,7 +38,9 @@ import OwnerPengaturan from './pages/owner/Pengaturan.jsx'
 import OwnerMedia from './pages/owner/Media.jsx'
 import {OwnerOperations} from './pages/academy/Operations.jsx'
 import {AttendancePage} from './pages/academy/Sessions.jsx'
-import {academyApiEnabled} from './services/academy.js'
+import {academyApiEnabled,academyDesignEnabled,academyWorkspaceEnabled} from './services/academy.js'
+import {setSession} from './utils/auth.js'
+import {useNavigate} from 'react-router-dom'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -78,6 +80,7 @@ export default function App() {
         </Route>
 
         <Route path="login" element={<LoginPortal />} />
+        {academyDesignEnabled&&<Route path="design/akademi" element={<DesignEntry/>}/>}
 
         <Route path="dashboard" element={<RoleRoute role="player"><DashboardLayout /></RoleRoute>}>
           <Route index element={<Navigate to="ringkasan" replace />} />
@@ -109,7 +112,7 @@ export default function App() {
           <Route path="berita" element={<OwnerBerita />} />
           <Route path="media" element={<OwnerMedia />} />
           <Route path="pengaturan" element={<OwnerPengaturan />} />
-          {academyApiEnabled&&<Route path="akademi" element={<OwnerOperations/>}/>}
+          {academyWorkspaceEnabled&&<Route path="akademi" element={<OwnerOperations/>}/>}
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -118,3 +121,4 @@ export default function App() {
     </ThemeProvider>
   )
 }
+function DesignEntry(){const nav=useNavigate();return <main className="login"><div className="card"><h2>Preview desain Akademi &amp; Kelas</h2><p>Data fiktif, tanpa koneksi backend. Sesi ini hanya untuk desain.</p><button className="btn" onClick={()=>{setSession('design-preview','owner',{email:'design.owner@bnr.demo',nama:'Owner Preview'});nav('/owner/akademi')}}>Buka dashboard desain</button></div></main>}

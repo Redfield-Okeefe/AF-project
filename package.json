@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test:owner": "node --test tests/ownerDashboard.test.js",
     "dev:api": "vite --mode local-api --host localhost --port 5173 --strictPort",
-    "test:otp": "node --test tests/otp-contract.test.js"
+    "test:otp": "node --test tests/otp-contract.test.js",
+    "dev:design": "vite --mode design-preview"
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "latest",
