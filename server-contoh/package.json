@@ -1,6 +1,6 @@
 {
   "name": "bnr-academy-backend",
-  "version": "1.7.1-dev.1",
+  "version": "1.8.0-dev.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,10 +9,11 @@
   "scripts": {
     "start": "node server.js",
     "seed:dummy": "node scripts/seed-dummy.js --local-dev",
-    "test": "node --test tests/auth.test.js tests/registration.test.js tests/activation.test.js tests/player-activation.test.js tests/coach-registration.test.js tests/account-security.test.js tests/player-status.test.js tests/academy.test.js",
+    "test": "node --test tests/auth.test.js tests/registration.test.js tests/activation.test.js tests/player-activation.test.js tests/coach-registration.test.js tests/account-security.test.js tests/player-status.test.js tests/academy.test.js tests/profile.test.js",
     "seed:programs": "node scripts/seed-programs.js --local-dev",
     "inspect:phase-456": "node scripts/inspect-phase-456.js",
-    "test:academy-db": "node --test tests/academy-postgres.test.js"
+    "test:academy-db": "node --test tests/academy-postgres.test.js",
+    "inspect:phase-789": "node scripts/inspect-phase-789.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

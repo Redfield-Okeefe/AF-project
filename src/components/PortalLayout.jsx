@@ -24,8 +24,10 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
 
   // profil akun yang sedang login (nama, foto, kontak). Dibagikan ke halaman anak lewat Outlet.
   const [profil, setProfil] = useState(profilCepat)
-  useEffect(() => { muatProfil().then(setProfil) }, [])
+  const [profileReady,setProfileReady]=useState(!accountApiEnabled),[profileError,setProfileError]=useState(''),[profileRevision,setProfileRevision]=useState(0)
+  useEffect(() => {let live=true;setProfileError('');muatProfil().then(p=>{if(live){setProfil(p);setProfileReady(true)}}).catch(e=>{if(live)setProfileError(e.message)});return()=>{live=false}},[profileRevision])
   const simpan = async (data) => {
+    if(!profileReady)throw new Error('Profil belum berhasil dimuat. Muat ulang profil dahulu.')
     const baru = await simpanProfil(data)
     setProfil(baru)
     return baru
@@ -87,7 +89,8 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
         <div className="portal-main-content">
           {/* key = pathname supaya animasi masuk ulang tiap pindah menu */}
           {security&&<ChangePassword onComplete={finishLogout} onClose={()=>setSecurity(false)}/>}
-          <Outlet key={pathname} context={{ profil, simpan }} />
+          {profileError&&<div className="alert err" role="alert">{profileError} <button className="abtn ghost" onClick={()=>setProfileRevision(v=>v+1)}>Muat ulang profil</button></div>}
+          {!profileReady&&!profileError?<p className="mut">Memuat profil akun...</p>:<Outlet key={pathname} context={{ profil, simpan, profileReady }} />}
         </div>
       </main>
     </div>

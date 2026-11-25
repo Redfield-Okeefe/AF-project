@@ -132,13 +132,13 @@ export default function Biodata() {
             <h3>Ubah Data Pribadi</h3>
             {error && <div className="alert err">{error}</div>}
 
-            <p className="sec-title">Data Pemain</p>
+            <p className="sec-title">Data Pemain</p>{import.meta.env.VITE_API_URL&&<p className="mut small">Tanggal lahir dan jenis kelamin dikunci agar aturan usia/kategori kelas tetap konsisten.</p>}
             <label>Nama lengkap
               <input value={draft.nama} onChange={set('nama')} maxLength={80} autoComplete="name" />
             </label>
             <div className="f2">
               <label>Jenis kelamin
-                <select value={draft.jk} onChange={set('jk')}>
+                <select value={draft.jk} onChange={set('jk')} disabled={Boolean(import.meta.env.VITE_API_URL)}>
                   <option value="">Pilih...</option>
                   <option>Laki-laki</option>
                   <option>Perempuan</option>
@@ -153,7 +153,7 @@ export default function Biodata() {
             </div>
             <div className="f2">
               <label>Tanggal lahir
-                <input type="date" value={draft.tglLahir} onChange={set('tglLahir')} max={new Date().toISOString().slice(0, 10)} />
+                <input type="date" disabled={Boolean(import.meta.env.VITE_API_URL)} value={draft.tglLahir} onChange={set('tglLahir')} max={new Date().toISOString().slice(0, 10)} />
               </label>
               <label>Tempat lahir
                 <input value={draft.tempatLahir} onChange={set('tempatLahir')} maxLength={60} />

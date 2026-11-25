@@ -1,4 +1,5 @@
-import { getToken, getUser, updateUser } from '../utils/auth.js'
+import { apiRequest } from './otp-contract.js'
+import { getToken, getUser, getRole, updateUser } from '../utils/auth.js'
 import { sinkronAkun } from './db.js'
 
 /* Profil pemain per akun.
@@ -34,6 +35,7 @@ function tulis(p) {
 
 // Baca profil dari cache; kalau belum ada, buat profil awal dari data akun.
 export function profilCepat() {
+  if(API_URL)return {...dasar(),id:'',nama:getUser()?.nama||'Pengguna'}
   try {
     const raw = localStorage.getItem(kunci())
     if (raw) return { ...dasar(), ...JSON.parse(raw) }
@@ -58,13 +60,7 @@ export async function muatProfil() {
     await wait(120)
     return profilCepat()
   }
-  try {
-    const p = { ...profilCepat(), ...(await request('/profil')) }
-    try { tulis(p) } catch { /* abaikan */ }
-    return p
-  } catch {
-    return profilCepat() // server tidak terjangkau -> pakai cache
-  }
+  return (await apiRequest(API_URL,'/api/v1/me/profile',{method:'GET',token:getToken()})).profile
 }
 
 const FIELD = ['nama', 'jk', 'tglLahir', 'tempatLahir', 'sekolah', 'jersey', 'wa', 'ortu', 'alamat', 'foto', 'lisensi']
@@ -73,7 +69,9 @@ export async function simpanProfil(data) {
   const kirim = Object.fromEntries(FIELD.map((k) => [k, data[k] ?? '']))
   let baru
   if (API_URL) {
-    baru = { ...profilCepat(), ...(await request('/profil', { method: 'PUT', body: JSON.stringify(kirim) })) }
+    const role=getRole(),keys=role==='owner'?['nama','foto']:role==='pelatih'?['nama','wa','lisensi','foto']:['nama','wa','ortu','alamat','sekolah','tempatLahir','jersey','foto'];
+    baru=(await apiRequest(API_URL,'/api/v1/me/profile',{method:'PATCH',body:Object.fromEntries(keys.filter(k=>data[k]!==undefined).map(k=>[k,data[k]])),token:getToken()})).profile
+    updateUser({nama:baru.nama});return baru
   } else {
     await wait(300)
     baru = { ...profilCepat(), ...kirim }

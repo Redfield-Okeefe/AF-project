@@ -1,0 +1,7 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import sharp from 'sharp';
+import {profileInput,profilePhoto,createProfileService} from '../services/profile.service.js';
+test('profile role allowlist prevents privilege and identity mutation',()=>{assert.deepEqual(profileInput('owner',{nama:' Owner '}),{nama:'Owner'});for(const b of [{email:'x@y.test'},{role:'owner'},{status:'aktif'},{id:'abc'},{jk:'Perempuan'},{tglLahir:'2015-01-01'},{foto:'data:image/svg+xml;base64,AAAA'}])assert.throws(()=>profileInput('pemain',b),{status:400});assert.throws(()=>profileInput('pelatih',{alamat:'alamat'}),{status:400});assert.throws(()=>profileInput('pemain',{wa:'123'}),{status:400});assert.throws(()=>profileInput('pemain',{ortu:''}),{status:400});});
+test('profile photo decoding and removal',async()=>{assert.equal(await profilePhoto(''),null);const b=await sharp({create:{width:10,height:10,channels:3,background:'red'}}).jpeg().toBuffer();const out=await profilePhoto('data:image/jpeg;base64,'+b.toString('base64'));assert.equal((await sharp(out).metadata()).format,'jpeg');await assert.rejects(profilePhoto('data:image/jpeg;base64,AAAA'),{status:400});});
+test('revoked session cannot mutate profile',async()=>{const calls=[];const db={async query(sql){calls.push(sql);return {rows:[]}},release(){}};const svc=createProfileService({connect:async()=>db});await assert.rejects(svc.save({id:'x',role:'owner',session_version:0},{nama:'Test'}),{status:401});assert.ok(calls.includes('ROLLBACK'));assert.ok(!calls.some(x=>x.startsWith('UPDATE')));});

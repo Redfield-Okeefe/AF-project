@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import OwnerIcon from './OwnerIcon.jsx'
 
 // Foto asli belum disertakan di project. Avatar menampilkan ilustrasi sampai Owner mengunggah fotonya.
-const OWNER_NAME = 'Muhammad Naufal Gonzales'
+const OWNER_NAME = 'Owner'
 
 function resizeImage(file) {
   return new Promise((resolve, reject) => {
@@ -35,6 +35,8 @@ function OwnerPhoto({ photo, size = 'normal' }) {
 }
 
 export default function OwnerHeaderActions({ setMode, theme, profil, simpan }) {
+  const ownerName=profil.nama||OWNER_NAME
+  const [name,setName]=useState(ownerName)
   const [open, setOpen] = useState(false)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -67,15 +69,15 @@ export default function OwnerHeaderActions({ setMode, theme, profil, simpan }) {
     try {
       setSaving(true)
       const foto = await resizeImage(file)
-      await simpan({ ...profil, nama: OWNER_NAME, foto })
+      await simpan({ ...profil, nama: ownerName, foto })
     } catch (err) { setError(err?.message || 'Gagal menyimpan foto.') }
     finally { setSaving(false) }
   }
 
   return (
     <div className="owner-header-actions" ref={root}>
-      <div className="owner-profile-name" aria-label={`${OWNER_NAME}, Owner`}>
-        <strong>{OWNER_NAME}</strong><span>Owner</span>
+      <div className="owner-profile-name" aria-label={`${ownerName}, Owner`}>
+        <strong>{ownerName}</strong><span>Owner</span>
       </div>
       <button
         type="button" className="owner-theme-icon-btn"
@@ -88,9 +90,9 @@ export default function OwnerHeaderActions({ setMode, theme, profil, simpan }) {
       </button>
       <span className="owner-sr-only" role="status" aria-live="polite">{activeLabel}</span>
       <button type="button" className={`owner-photo-button${open ? ' is-open' : ''}`}
-        aria-label="Lihat profil Muhammad Naufal Gonzales" aria-expanded={open}
+        aria-label="Lihat profil Owner" aria-expanded={open}
         aria-haspopup="dialog" aria-controls="owner-profile-popup"
-        onClick={() => { setOpen(!open); setError('') }}
+        onClick={() => { setOpen(!open); setName(ownerName); setError('') }}
       >
         <OwnerPhoto photo={profil.foto} />
       </button>
@@ -98,12 +100,13 @@ export default function OwnerHeaderActions({ setMode, theme, profil, simpan }) {
         <div id="owner-profile-popup" className="owner-profile-popup" role="dialog" aria-label="Profil Owner">
           <div className="owner-profile-popup-head">
             <OwnerPhoto photo={profil.foto} size="large" />
-            <div><strong>{OWNER_NAME}</strong><span>Owner</span></div>
+            <div><strong>{ownerName}</strong><span>Owner</span></div>
           </div>
           <div className="owner-profile-popup-foot">
             <button type="button" className="owner-photo-upload" disabled={saving} onClick={() => input.current?.click()}>
               <OwnerIcon name="camera" size={17}/>{saving ? 'Menyimpan foto...' : profil.foto ? 'Ganti foto profil' : 'Unggah foto profil'}
             </button>
+            <label>Nama Owner<input value={name} maxLength={100} onChange={e=>setName(e.target.value)}/></label><button type="button" className="owner-photo-upload" disabled={saving} onClick={async()=>{setSaving(true);setError('');try{await simpan({...profil,nama:name})}catch(e){setError(e.message)}finally{setSaving(false)}}}>Simpan nama</button>{profil.foto&&<button type="button" className="owner-photo-upload" disabled={saving} onClick={async()=>{setSaving(true);setError('');try{await simpan({...profil,foto:''})}catch(e){setError(e.message)}finally{setSaving(false)}}}>Hapus foto</button>}
             {error && <p className="owner-photo-error" role="alert">{error}</p>}
             <p className="owner-photo-help">Foto ditampilkan dalam lingkaran. JPG, PNG, atau WebP (maks. 4 MB).</p>
           </div>

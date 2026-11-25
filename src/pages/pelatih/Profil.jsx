@@ -1,14 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import Avatar from '../../components/Avatar.jsx'
 import { kompresFoto } from '../../utils/image.js'
 import { useToast } from '../../utils/useToast.jsx'
+import { academy,academyApiEnabled } from '../../services/academy.js'
 import { useSaya } from './useSaya.js'
 
 export default function Profil() {
   const { profil, simpan } = useOutletContext()
   const { kelas } = useSaya()
   const [form, setForm] = useState(profil)
+  const [remoteClasses,setRemoteClasses]=useState(null),[classError,setClassError]=useState('')
+  useEffect(()=>{if(!academyApiEnabled)return;let live=true;academy.classes().then(r=>{if(live)setRemoteClasses(r.items)}).catch(e=>{if(live)setClassError(e.message)});return()=>{live=false}},[])
+  useEffect(()=>setForm(profil),[profil])
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
   const [toast, info] = useToast()
@@ -41,7 +45,7 @@ export default function Profil() {
         <h2>{form.nama}</h2>
         <p className="mut">{form.email}</p>
         <span className="pill ok">● Pelatih aktif</span>
-        <p className="mut" style={{ marginTop: 14 }}>Kelas diampu: {kelas.length ? kelas.map((k) => k.nama).join(', ') : 'belum ada'}</p>
+        <p className="mut" style={{ marginTop: 14 }}>Kelas diampu: {academyApiEnabled?(classError|| (remoteClasses?remoteClasses.map(k=>k.name).join(', ')||'belum ada':'Memuat...')):(kelas.length ? kelas.map((k) => k.nama).join(', ') : 'belum ada')}</p>
         {form.foto && <p><button type="button" className="linkbtn small" onClick={() => setForm((f) => ({ ...f, foto: '' }))}>Hapus foto</button></p>}
       </div>
       <form className="card" onSubmit={submit} noValidate>

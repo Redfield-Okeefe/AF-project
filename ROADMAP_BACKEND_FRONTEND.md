@@ -1,5 +1,5 @@
-# Roadmap B.N.R Academy — satu branch development
-Branch tunggal development: main. Riwayat branch frontend dan backend dipertahankan melalui fast-forward. GitHub Pages hanya preview frontend mode demo; deployment backend produksi tetap ditunda sampai validasi database dan browser.
+# Roadmap B.N.R Academy — revisi 15 fase
+Branch integrasi: main; branch frontend-design khusus desain. Riwayat branch frontend dan backend dipertahankan melalui fast-forward. GitHub Pages hanya preview frontend mode demo; deployment backend produksi tetap ditunda sampai validasi database dan browser.
 Tidak ada MFA/2FA; login email/password, OTP registrasi/aktivasi/reset saja.
 ## Status kandidat
 - v1.5.1: OTP pelatih pindah ke auth_challenges (purpose register_coach); pemain tetap activate_player. Logika bisnis keduanya tetap terpisah.
@@ -12,12 +12,14 @@ Tidak ada MFA/2FA; login email/password, OTP registrasi/aktivasi/reset saja.
 5: jadwal, validasi tabrakan sesi, perubahan/pembatalan.
 6: absensi dan rekap.
 7: penilaian dan grafik perkembangan.
-8: tagihan, bukti transfer, status dan verifikasi Owner.
-9: berita/pengumuman/galeri/media.
-10: dashboard statistik aktual, filter periode dan ekspor.
-11: hilangkan fallback demo saat API aktif, loading/empty/error states.
-12: regresi, mobile/desktop, aksesibilitas, security, UAT.
-13: produksi, HTTPS, email sungguhan, backup/monitoring. Data demo dan kredensial tidak digunakan dalam produksi.
+8: berita/pengumuman/galeri/media.
+9: dashboard statistik operasional aktual, filter periode dan ekspor.
+10: keuangan, tagihan, bukti transfer, verifikasi Owner.
+11: cloud staging deployment.
+12: QRIS Sandbox, webhook dan dashboard keuangan.
+13: penyempurnaan frontend/integrasi dan hilangkan fallback demo saat API aktif.
+14: regresi, mobile/desktop, aksesibilitas, security, UAT.
+15: produksi, HTTPS, email sungguhan, backup/monitoring. Data demo dan kredensial tidak digunakan dalam produksi.
 ## Instalasi kandidat
 Backup DB dan .env lokal. Jangan reset paksa. git status; git fetch origin; git switch main; git merge --ff-only origin/main.
 Jalankan revisi server-contoh/migrations/003c-coach.sql lalu 003d-account-security.sql di DBeaver (SQL script, auto-commit aktif). Jika ada constraint gabungan atau tipe domain tak dikenal, hentikan dan periksa DDL; schema v1 penuh belum ada di repo. Jika tabel OTP lama ada, migration salin semua baris lalu drop tabel lama tanpa CASCADE di transaksi; backup wajib.
@@ -41,3 +43,6 @@ CI: isolated PostgreSQL 18 fixture integration test `npm run test:academy-db` ha
 Satu pelatih utama per kelas pada satu periode. API menolak asisten; penugasan lama asisten tidak memberi akses portal kelas/jadwal/absensi. Owner bisa menutup periode lama, tidak ada penghapusan riwayat atau migrasi wajib. Kelas dapat belum memiliki pelatih. Ringkasan kelas menghitung jumlah keanggotaan berlaku dan nama pelatih utama aktif; kelas dengan asisten lama diberi peringatan. DB masih mempertahankan constraint historis yang membolehkan nilai asisten; perubahan ini diberlakukan oleh API dan UI, bukan untuk SQL manual. Frontend desain menggunakan data fiktif terisolasi.
 
 Preview desain: `npm run dev:design`, buka /design/akademi, klik Buka dashboard desain. Tidak perlu login asli, backend, atau Mailpit; data fiktif in-memory reset saat refresh. `npm run dev:api` tetap memakai PostgreSQL dan tidak mengaktifkan rute desain. Branch `frontend-design` hanya memuat snapshot frontend dan workflow build/test frontend. Jangan merge branch snapshot langsung ke main karena file backend sengaja tidak ada; ambil perubahan src/public melalui patch/commit pilihan.
+
+## v1.8.0-dev.1 — penyelesaian kandidat 3D-3 dan persiapan 7–9
+Urutan 15 fase disetujui. Profil API GET/PATCH /api/v1/me/profile, role allowlist, nama sinkron, biodata pemain dan pelatih, foto pribadi JPEG dikompresi server dalam users.profile_photo_jpeg (migration 003d-profile-photo.sql; tetap 23 tabel). Tanggal lahir dan gender pemain read-only demi konsistensi aturan kelas, koreksi administratif masih backlog. Foto path lama tidak dimigrasikan otomatis. API tidak fallback ke profil dummy. UAT lokal masih wajib. Skema inspeksi sebelumnya tidak mencakup assessments, announcements, announcement_reads, news, public_media. Jalankan npm run inspect:phase-789 untuk metadata read-only sebelum integrasi tabel tersebut. Keuangan/QRIS/cloud ditunda.
