@@ -24,6 +24,7 @@ export function mountAcademy(app,authenticate,pool){
  app.post(C+'/sessions',...coach,json,handle(async q=>({session:await r.saveSession(q.user,sessionInput(q.body))}),201));
  app.put(C+'/sessions/:id',...coach,json,handle(async q=>({session:await r.saveSession(q.user,sessionInput(q.body),id(q.params.id))})));
  app.post(C+'/sessions/:id/cancel',...coach,handle(async q=>({session:await r.cancelSession(q.user,id(q.params.id))})));
+ app.post(O+'/sessions/:id/cancel',...owner,handle(async q=>({session:await r.cancelSession(q.user,id(q.params.id))})));
  app.get(C+'/sessions/:id/attendance',...coach,handle(q=>r.attendanceRoster(q.user,id(q.params.id))));
  app.put(C+'/sessions/:id/attendance',...coach,json,handle(async q=>({session:await r.saveAttendance(q.user,id(q.params.id),attendanceInput(q.body))})));
  app.get(M+'/attendance',...all,handle(async q=>({items:await r.attendance(q.user)})));

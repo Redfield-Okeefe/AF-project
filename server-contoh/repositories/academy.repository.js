@@ -35,6 +35,7 @@ async function conflict(db,v,exclude=null){
  if(r)fail(409,'Jadwal bertabrakan dengan kelas, pelatih, atau lokasi.');
 }
 function scope(u,kind){
+ if(!['owner','pelatih','pemain'].includes(u.role))fail(403,'Tidak berwenang.');
  if(u.role==='owner')return {sql:'TRUE',args:[]};
  const day=kind==='session'?'s.session_date':today;
  if(u.role==='pelatih')return {sql:"EXISTS(SELECT 1 FROM public.coach_assignments a WHERE a.class_id=c.id AND a.coach_user_id=$1 AND "+active('a',today)+" AND "+active('a',day)+")",args:[u.id]};

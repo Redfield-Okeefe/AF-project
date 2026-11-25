@@ -50,7 +50,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const {session:{id:future}}=await call('coach','POST','/coach/sessions',201,{...s,session_date:tomorrow});
   await call('coach','PUT','/coach/sessions/'+future,200,{...s,session_date:tomorrow,title:'Revisi'});
   await call('coach','PUT','/coach/sessions/'+future+'/attendance',409,{items:[{player_id:playerId,status:'hadir'}]});
-  await call('coach','POST','/coach/sessions/'+future+'/cancel',200);
+  await call('owner','POST','/owner/sessions/'+future+'/cancel',200);
   await call('coach','PUT','/coach/sessions/'+future+'/attendance',409,{items:[{player_id:playerId,status:'hadir'}]});
   assert.equal((await call('player','GET','/me/sessions',200)).items.length,2);
   assert.equal((await call('outsider','GET','/me/sessions',200)).items.length,0);
