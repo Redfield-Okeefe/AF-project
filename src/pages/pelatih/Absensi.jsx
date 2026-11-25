@@ -1,3 +1,5 @@
+import {academyApiEnabled} from '../../services/academy.js'
+import {CoachAttendance} from '../academy/Sessions.jsx'
 import { useEffect, useState } from 'react'
 import { ambilKelas, getAbsensi, iso, listSesi, pemainDiKelas, simpanAbsensi, statPemain } from '../../services/db.js'
 import { fmtTanggal } from '../../utils/format.js'
@@ -6,7 +8,8 @@ import { useSaya } from './useSaya.js'
 
 const STATUS = [['H', 'Hadir'], ['I', 'Izin'], ['S', 'Sakit'], ['A', 'Alpa']]
 
-export default function Absensi() {
+export default function Absensi(){return academyApiEnabled?<CoachAttendance/>:<AbsensiDemo/>}
+function AbsensiDemo() {
   const { kelas, kelasIds } = useSaya()
   const hari = iso()
   const sesi = listSesi(kelasIds).reverse() // terbaru dulu

@@ -1,3 +1,5 @@
+import {academyApiEnabled} from '../../services/academy.js'
+import {SessionPage} from '../academy/Sessions.jsx'
 import { useOutletContext } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
 import { ambilAkun, ambilKelas, listSesi, namaDari, useDb, iso } from '../../services/db.js'
@@ -5,7 +7,8 @@ import { ambilAkun, ambilKelas, listSesi, namaDari, useDb, iso } from '../../ser
 const HARI = ['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB']
 const fmt = (t) => new Date(t).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })
 
-export default function Jadwal() {
+export default function Jadwal(){return academyApiEnabled?<SessionPage mode="player"/>:<JadwalDemo/>}
+function JadwalDemo() {
   useDb()
   const { profil } = useOutletContext()
   const akun = ambilAkun(profil.email)

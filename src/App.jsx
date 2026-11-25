@@ -36,6 +36,9 @@ import OwnerKeuangan from './pages/owner/Keuangan.jsx'
 import OwnerBerita from './pages/owner/Berita.jsx'
 import OwnerPengaturan from './pages/owner/Pengaturan.jsx'
 import OwnerMedia from './pages/owner/Media.jsx'
+import {OwnerOperations} from './pages/academy/Operations.jsx'
+import {AttendancePage} from './pages/academy/Sessions.jsx'
+import {academyApiEnabled} from './services/academy.js'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -83,6 +86,7 @@ export default function App() {
           <Route path="jadwal" element={<Jadwal />} />
           <Route path="pengumuman" element={<Pengumuman />} />
           <Route path="bayar" element={<Bayar />} />
+          {academyApiEnabled&&<Route path="kehadiran" element={<AttendancePage/>}/>}
         </Route>
 
         <Route path="pelatih" element={<RoleRoute role="pelatih"><PelatihLayout /></RoleRoute>}>
@@ -105,6 +109,7 @@ export default function App() {
           <Route path="berita" element={<OwnerBerita />} />
           <Route path="media" element={<OwnerMedia />} />
           <Route path="pengaturan" element={<OwnerPengaturan />} />
+          {academyApiEnabled&&<Route path="akademi" element={<OwnerOperations/>}/>}
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

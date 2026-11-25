@@ -20,3 +20,6 @@ Sebelum implementasi repository/mutasi: jalankan npm run inspect:phase-456 dari 
 - Absensi H/I/S/A, peserta asing ditolak, sesi dibatalkan/masa depan ditolak, tidak ada duplikasi, perubahan diaudit, rekap benar.
 - Mode demo Pages tetap berfungsi; UI API tidak boleh menyimpan ke localStorage seolah-olah sudah tersimpan ke DB.
 - Regression npm test, npm run test:otp, build; uji PostgreSQL nyata dan browser. Tidak klaim fase selesai sebelum lulus.
+
+## Implementasi kandidat v1.7.0-dev.1
+Skema aktual telah diterima. API memakai GET /api/v1/me/classes, /me/sessions, /me/attendance untuk ketiga role; owner endpoints /owner/programs, /owner/classes, /owner/classes/:id/members, /coaches, /players dan PATCH /:member/end; PUT kelas/program/sesi untuk perubahan penuh, PATCH status untuk arsip. Absensi PUT /coach/sessions/:id/attendance. Tanggal akhir inklusif; relasi baru mulai setelah tanggal akhir relasi lama. Sesi tidak dihapus. Kelas arsip diblokir jika relasi/jadwal masih terbuka. Absensi disimpan setelah jam selesai, satu batch lengkap. Pengujian PostgreSQL lokal dan browser masih wajib.

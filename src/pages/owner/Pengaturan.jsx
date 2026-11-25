@@ -1,10 +1,13 @@
+import {Link} from 'react-router-dom'
+import {academyApiEnabled} from '../../services/academy.js'
 import { useState } from 'react'
 import OwnerPageHeading from '../../components/OwnerPageHeading.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
 import { daftarPelatih, getSetelan, hapusKelas, listKelas, resetDemo, simpanBanyakKelas, simpanSetelan } from '../../services/db.js'
 import { useToast } from '../../utils/useToast.jsx'
 
-export default function Pengaturan() {
+export default function Pengaturan(){return academyApiEnabled?<div className="view active adm owner-admin-page"><OwnerPageHeading icon="settings" title="Pengaturan" description="Pengaturan akademi yang terhubung ke PostgreSQL."/><div className="card"><h3>Kelas &amp; program</h3><p className="mut">Kelola kelas, program dan penugasan melalui menu Akademi &amp; Kelas.</p><Link className="abtn" to="/owner/akademi">Buka Akademi &amp; Kelas</Link></div><div className="card"><h3>Harga &amp; rekening pembayaran</h3><p className="mut">Integrasi rekening dan pembayaran dijadwalkan pada Fase 8. Data demo tidak dapat diubah dari mode API.</p></div></div>:<PengaturanDemo/>}
+function PengaturanDemo() {
   const [kls, setKls] = useState(() => listKelas())
   const [st, setSt] = useState(() => getSetelan())
   const [error, setError] = useState('')

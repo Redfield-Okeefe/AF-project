@@ -1,10 +1,13 @@
+import {academyApiEnabled} from '../../services/academy.js'
+import {SessionPage} from '../academy/Sessions.jsx'
 import { useState } from 'react'
 import { hapusSesi, iso, listSesi, simpanSesi, ambilKelas } from '../../services/db.js'
 import { fmtTanggal } from '../../utils/format.js'
 import { useToast } from '../../utils/useToast.jsx'
 import { useSaya } from './useSaya.js'
 
-export default function Jadwal() {
+export default function Jadwal(){return academyApiEnabled?<SessionPage mode="coach"/>:<JadwalDemo/>}
+function JadwalDemo() {
   const { email, kelas, kelasIds } = useSaya()
   const [form, setForm] = useState(null)
   const [error, setError] = useState('')

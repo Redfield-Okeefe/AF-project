@@ -1,3 +1,4 @@
+import {academyApiEnabled} from '../../services/academy.js'
 import PortalLayout from '../../components/PortalLayout.jsx'
 import { daftarPelatih, daftarPemain, useDb } from '../../services/db.js'
 
@@ -19,7 +20,7 @@ export default function OwnerLayout() {
     <PortalLayout
       roleLabel="Owner"
       ownerMode
-      menu={menu.map((m) => (m.to === 'pelatih' ? { ...m, badge: menunggu } : m.to === 'pemain' ? { ...m, badge: baru } : m))}
+      menu={(academyApiEnabled?[...menu.slice(0,3),{to:'akademi',ownerIcon:'players',label:'Akademi & Kelas',title:'Akademi & Kelas',sub:'Program, kelas, jadwal dan absensi'},...menu.slice(3)]:menu).map((m) => (m.to === 'pelatih' ? { ...m, badge: menunggu } : m.to === 'pemain' ? { ...m, badge: baru } : m))}
     />
   )
 }

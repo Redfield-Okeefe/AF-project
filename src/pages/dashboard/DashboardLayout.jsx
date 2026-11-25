@@ -1,3 +1,4 @@
+import {academyApiEnabled} from '../../services/academy.js'
 import PortalLayout from '../../components/PortalLayout.jsx'
 import { jumlahInfoBaru, useDb } from '../../services/db.js'
 import { getUser } from '../../utils/auth.js'
@@ -13,5 +14,5 @@ const menu = [
 export default function DashboardLayout() {
   useDb()
   const baru = jumlahInfoBaru(getUser()?.email || '')
-  return <PortalLayout roleLabel="Pemain" menu={menu.map((m) => (m.to === 'pengumuman' ? { ...m, badge: baru } : m))} />
+  return <PortalLayout roleLabel="Pemain" menu={(academyApiEnabled?[...menu.slice(0,3),{to:'kehadiran',ownerIcon:'calendar',label:'Kehadiran',title:'Kehadiran',sub:'Riwayat absensi pribadi'},...menu.slice(3)]:menu).map((m) => (m.to === 'pengumuman' ? { ...m, badge: baru } : m))} />
 }
