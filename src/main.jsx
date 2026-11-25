@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 import App from './App.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import './styles/global.css'
@@ -16,12 +16,16 @@ import './styles/mobile-responsive-2026.css'
 import './styles/portal-mobile-header-2026.css'
 import './styles/portal-topbar-2026.css'
 
+const isPagesPreview=import.meta.env.VITE_DESIGN_HASH_ROUTER==='true'
+const Router=isPagesPreview?HashRouter:BrowserRouter
+const routerProps=isPagesPreview?{}:{basename:import.meta.env.BASE_URL}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <Router {...routerProps}>
         <App />
-      </BrowserRouter>
+      </Router>
     </ErrorBoundary>
   </React.StrictMode>
 )

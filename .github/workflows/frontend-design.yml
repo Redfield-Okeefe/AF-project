@@ -18,5 +18,14 @@ jobs:
       - run: npm run test:design
       - run: npm run test:otp
       - run: npm run build
+        env:
+          GITHUB_PAGES: 'true'
+      - name: Verify Pages design base
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const html=fs.readFileSync('dist/index.html','utf8');
+          if(html.includes('/src/main.jsx')||!html.includes('/AF-project/frontend-design/assets/'))throw Error('Incorrect design Pages build');
+          JS
       - name: Check frontend-only snapshot
         run: test ! -d server-contoh

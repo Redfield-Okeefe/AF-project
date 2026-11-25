@@ -11,3 +11,6 @@ Buka http://localhost:5173/design/akademi lalu klik Buka dashboard desain. Mode 
 File utama desain: src/pages/academy/Operations.jsx, Classes.jsx, Sessions.jsx, shared.jsx, operations.css; src/services/academy-preview.js adalah adapter desain. Pertahankan kontrak API di src/services/academy.js. `npm run build`, `npm run test:design`, `npm run test:otp` untuk verifikasi.
 
 **Jangan merge branch snapshot ini langsung ke main:** backend sengaja tidak ada. Buat commit khusus perubahan src/public, lalu pengembang mengambil perubahan terpilih menggunakan cherry-pick commit desain atau patch. Jangan cherry-pick commit snapshot awal. Riwayat Git bersama masih mengandung commit backend; branch ini bukan pembatas izin akses repository.
+
+## Public preview (GitHub Pages)
+Settings > Pages > Source must be **GitHub Actions**, not Deploy from a branch. The main branch workflow publishes both compiled builds in one Pages artifact. Public design URL: https://redfield-okeefe.github.io/AF-project/frontend-design/#/design/akademi . The hash route prevents GitHub Pages deep-link 404s. `npm run dev` still uses ordinary local browser routes. Do not publish repository root; index.html is Vite source, not a compiled website.
