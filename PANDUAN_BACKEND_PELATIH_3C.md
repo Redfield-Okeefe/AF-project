@@ -27,3 +27,10 @@ SELECT u.email,u.role,u.status,c.registration_review_status,c.registration_whats
 FROM public.users u JOIN public.coach_profiles c ON c.user_id=u.id WHERE u.role='pelatih';
 SELECT email,attempts,consumed_at IS NOT NULL AS consumed FROM public.coach_registration_otp ORDER BY created_at DESC;
 Jangan tampilkan OTP, password, token atau hash pada screenshot. Sebelum produksi perlu review kebijakan retensi OTP, mail delivery/outbox, rate limit terdistribusi dan integrasi seluruh portal.
+
+## Script pemeriksaan API lokal
+Dari terminal kedua server-contoh setelah migrasi dan npm start:
+```powershell
+powershell -NoProfile -File .\scripts\test-coach-registration.ps1
+```
+Masukkan password Owner dummy dan OTP dari Mailpit. Script menggunakan .test, menguji cooldown, konfirmasi password, pendaftaran, token terbatas, replay, penolakan/persetujuan, penonaktifan/aktivasi dan otorisasi. Tidak mencetak kredensial. Akun uji dan audit tetap tersimpan.

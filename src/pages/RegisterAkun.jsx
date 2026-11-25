@@ -74,9 +74,11 @@ export default function RegisterAkun() {
     setError('')
     const email = normalizeEmail(form.email)
     if (form.nama.trim().length < 3) return setError('Nama lengkap minimal 3 huruf.')
+    if (pelatih && form.nama.trim().length > 120) return setError('Nama lengkap maksimal 120 karakter.')
     if (!GMAIL_RE.test(email)) return setError('Gunakan alamat Gmail pribadi (contoh: nama@gmail.com).')
     if (form.password.length < 8 || !/[A-Za-z]/.test(form.password) || !/\d/.test(form.password))
       return setError('Password minimal 8 karakter dan mengandung huruf serta angka.')
+    if (new TextEncoder().encode(form.password).length > 72 || form.password.includes('\0')) return setError('Password maksimal 72 byte UTF-8.')
     if (form.password !== form.ulang) return setError('Konfirmasi password tidak sama.')
     if (pelatih && !/^(\+62|62|0)8[0-9]{7,12}$/.test(form.wa.replace(/[\s-]/g, ''))) return setError('Nomor WhatsApp tidak valid (contoh: 081234567890).')
 

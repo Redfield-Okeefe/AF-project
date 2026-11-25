@@ -1,0 +1,30 @@
+name: Phase 3C checks (no deployment)
+on:
+  push:
+    branches: [feature/backend-phase-3c]
+  pull_request:
+    branches: [feature/ui-modern-dark-2026]
+    paths:
+      - 'server-contoh/**'
+      - 'src/**'
+      - '.github/workflows/backend-phase-3c-check.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install backend dependencies
+        working-directory: server-contoh
+        run: npm install --no-audit --no-fund
+      - name: Backend regression tests
+        working-directory: server-contoh
+        run: npm test
+      - name: Install frontend dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Frontend production build
+        run: npm run build
