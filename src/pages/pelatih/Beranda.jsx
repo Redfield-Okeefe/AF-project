@@ -1,3 +1,5 @@
+import OperationalDashboard from '../academy/OperationalDashboard.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { Link } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
@@ -6,7 +8,8 @@ import { iso, listInfo, listSesi, pemainDiKelas, rataKehadiran } from '../../ser
 import { fmtTanggal } from '../../utils/format.js'
 import { useSaya } from './useSaya.js'
 
-export default function Beranda() {
+export default function Beranda(){return academyApiEnabled?<OperationalDashboard role="pelatih"/>:<BerandaDemo/>}
+function BerandaDemo() {
   const { email, akun, kelas, kelasIds } = useSaya()
   const hari = iso()
   const semua = listSesi(kelasIds)

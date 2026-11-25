@@ -1,3 +1,5 @@
+import OperationalDashboard from '../academy/OperationalDashboard.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { Link, useOutletContext } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
@@ -5,7 +7,8 @@ import OwnerLiveClock from '../../components/OwnerLiveClock.jsx'
 import { ambilAkun, ambilKelas, bulanIni, infoUntuk, iso, listSesi, listTagihan, statPemain, useDb } from '../../services/db.js'
 import { fmtTanggal, rupiah } from '../../utils/format.js'
 
-export default function Ringkasan() {
+export default function Ringkasan(){return academyApiEnabled?<OperationalDashboard role="pemain"/>:<RingkasanDemo/>}
+function RingkasanDemo() {
   useDb()
   const { profil } = useOutletContext()
   const email = profil?.email || ''

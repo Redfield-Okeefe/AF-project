@@ -14,3 +14,8 @@ CREATE UNIQUE INDEX uq_active_player ON class_enrollments(player_id) WHERE end_d
 CREATE TABLE public.training_sessions(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),class_id uuid NOT NULL REFERENCES classes(id),session_type varchar(16) NOT NULL CHECK(session_type IN('latihan','pertandingan')),title varchar(150) NOT NULL,session_date date NOT NULL,start_time time NOT NULL,end_time time NOT NULL CHECK(end_time>start_time),venue varchar(150) NOT NULL,status varchar(16) NOT NULL DEFAULT 'terjadwal' CHECK(status IN('terjadwal','selesai','dibatalkan')),notes text,created_by uuid REFERENCES users(id));
 CREATE TABLE public.attendance(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),session_id uuid NOT NULL REFERENCES training_sessions(id),player_id uuid NOT NULL REFERENCES players(id),status varchar(8) NOT NULL CHECK(status IN('hadir','izin','sakit','alpa')),notes text,recorded_by uuid REFERENCES users(id),recorded_at timestamptz DEFAULT now() NOT NULL,UNIQUE(session_id,player_id));
 CREATE TABLE public.audit_logs(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),actor_user_id uuid REFERENCES users(id),action text NOT NULL,entity_type text NOT NULL,entity_id uuid NOT NULL,metadata jsonb);
+
+-- Profile-only additions matching local metadata; fixture is isolated.
+ALTER TABLE users ADD COLUMN profile_photo_jpeg bytea CHECK(octet_length(profile_photo_jpeg)<=262144);
+ALTER TABLE coach_profiles ADD COLUMN phone varchar(25), ADD COLUMN registration_whatsapp text, ADD COLUMN license_name varchar(120);
+ALTER TABLE players ADD COLUMN birth_place varchar(100),ADD COLUMN school_name varchar(150),ADD COLUMN guardian_name varchar(100) NOT NULL DEFAULT 'Wali Uji',ADD COLUMN contact_phone varchar(25),ADD COLUMN address text,ADD COLUMN jersey_size varchar(5);

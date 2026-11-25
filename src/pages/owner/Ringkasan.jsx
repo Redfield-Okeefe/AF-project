@@ -1,3 +1,5 @@
+import OperationalDashboard from '../academy/OperationalDashboard.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
@@ -53,7 +55,8 @@ function PanelTitle({ icon, title, description, action }) {
   return <div className="owner-panel-heading"><div className="owner-panel-heading-left"><span className="owner-panel-icon"><OwnerIcon name={icon} size={20} /></span><div><h3>{title}</h3><p>{description}</p></div></div>{action}</div>
 }
 
-export default function Ringkasan() {
+export default function Ringkasan(){return academyApiEnabled?<OperationalDashboard role="owner"/>:<RingkasanDemo/>}
+function RingkasanDemo() {
   useDb()
   const pemain = daftarPemain()
   const aktif = pemain.filter((p) => p.status === 'aktif').length

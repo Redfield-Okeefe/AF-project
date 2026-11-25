@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import pg from 'pg';
 import express from 'express';
+import {mountProfile} from '../routes/profile.routes.js';
+import {mountDashboard} from '../routes/dashboard.routes.js';
 import {mountAcademy} from '../routes/academy.routes.js';
 import {errorHandler} from '../middleware/errorHandler.js';
 import {ApiError} from '../services/auth.service.js';
@@ -18,7 +20,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await db.query(await readFile(new URL('./academy-fixture.sql',import.meta.url),'utf8'));
   async function user(role,name){const {rows:[u]}=await db.query("INSERT INTO users(full_name,email,role,status,email_verified_at) VALUES($1,$2,$3,'aktif',now()) RETURNING id,role,session_version",[name,name+'@bnr.test',role]);if(role==='pelatih')await db.query("INSERT INTO coach_profiles(user_id,registration_review_status) VALUES($1,'aktif')",[u.id]);return u;}
   const owner=await user('owner','Owner'),coach=await user('pelatih','Coach'),other=await user('pelatih','Other'),player=await user('pemain','Player'),outsider=await user('pemain','Outsider');
-  const tokens={owner,coach,other,player,outsider};const app=express();const auth=(q,s,n)=>{const u=tokens[q.get('Authorization')];if(!u)return n(new ApiError(401,'Login'));q.user=u;n();};mountAcademy(app,auth,db);app.use(errorHandler);
+  const tokens={owner,coach,other,player,outsider};const app=express();const auth=(q,s,n)=>{const u=tokens[q.get('Authorization')];if(!u)return n(new ApiError(401,'Login'));q.user=u;n();};mountAcademy(app,auth,db);mountProfile(app,auth,db);mountDashboard(app,auth,db);app.use(errorHandler);
   server=await new Promise(resolve=>{const s=app.listen(0,'127.0.0.1',()=>resolve(s))});
   const base='http://127.0.0.1:'+server.address().port+'/api/v1';
   async function call(role,method,path,status,body){const r=await fetch(base+path,{method,headers:{Authorization:role,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});const data=await r.json();assert.equal(r.status,status,method+' '+path+' '+JSON.stringify(data));return data;}
@@ -74,5 +76,25 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await call('owner','POST','/owner/classes/'+cid2+'/players',201,{player_id:playerId,start_date:tomorrow});
   assert.equal((await call('player','GET','/me/attendance',200)).items[0].status,'hadir');
   assert.ok((await db.query('SELECT count(*)::int AS n FROM audit_logs')).rows[0].n>=10);
+  const month=yesterday.slice(0,7);
+  const d=(await call('player','GET','/me/dashboard?month='+month,200)).dashboard;assert.equal(d.attendance.hadir,1);assert.equal(d.attendance.percentage,100);assert.equal(d.accounts,undefined);
+  const outsiderDash=(await call('outsider','GET','/me/dashboard?month='+month,200)).dashboard;assert.equal(outsiderDash.attendance.recorded,0);assert.equal(outsiderDash.attendance.percentage,null);
+  const coachDash=(await call('other','GET','/me/dashboard?month='+month,200)).dashboard;assert.equal(coachDash.attendance.recorded,0);assert.equal(coachDash.active_players,0);
+  assert.equal((await call('owner','GET','/me/dashboard?month='+month,200)).dashboard.accounts.active_players,2);
+  await call('owner','GET','/me/dashboard?month=bad',400);
+  assert.equal((await call('player','GET','/me/profile',200)).profile.ortu,'Wali Uji');
+  await call('player','PATCH','/me/profile',400,{role:'owner'});
+  const edited=(await call('player','PATCH','/me/profile',200,{nama:'Pemain Baru',wa:'081234567890',ortu:'Wali Baru',sekolah:'Sekolah Uji'})).profile;
+  assert.equal(edited.nama,'Pemain Baru');assert.equal(edited.sekolah,'Sekolah Uji');
+  assert.equal((await db.query('SELECT full_name FROM users WHERE id=$1',[player.id])).rows[0].full_name,'Pemain Baru');
+  assert.equal((await db.query('SELECT full_name FROM players WHERE id=$1',[playerId])).rows[0].full_name,'Pemain Baru');
+  assert.equal((await call('outsider','GET','/me/profile',200)).profile.nama,'Outsider');
+  await call('coach','PATCH','/me/profile',200,{wa:'081234567890',lisensi:'Lisensi Uji'});
+  assert.equal((await call('coach','GET','/me/profile',200)).profile.lisensi,'Lisensi Uji');
+  const photo=await (await import('sharp')).default({create:{width:10,height:10,channels:3,background:'red'}}).jpeg().toBuffer();
+  await call('owner','PATCH','/me/profile',200,{nama:'Owner Baru',foto:'data:image/jpeg;base64,'+photo.toString('base64')});
+  assert.match((await call('owner','GET','/me/profile',200)).profile.foto,/^data:image\/jpeg;base64,/);
+  await call('owner','PATCH','/me/profile',200,{foto:''});
+  assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
 });

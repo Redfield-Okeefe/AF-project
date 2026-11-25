@@ -8,6 +8,7 @@ import { authenticateWith } from './middleware/authenticate.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { mountAuth } from './routes/auth.routes.js';
 import { setupMedia } from './media.js';
+import { mountDashboard } from './routes/dashboard.routes.js';
 import { mountProfile } from './routes/profile.routes.js';
 import { mountAcademy } from './routes/academy.routes.js';
 import { mountRegistration } from './routes/registration.routes.js';
@@ -36,6 +37,7 @@ try {
   mountActivation(app,authenticate,pool,config);
   mountAcademy(app,authenticate,pool);
   mountProfile(app,authenticate,pool);
+  mountDashboard(app,authenticate,pool);
   setupMedia(app,authenticate,pool);
   app.use((req,res)=>res.status(404).json({ok:false,message:'Endpoint tidak ditemukan.'}));
   app.use(errorHandler);

@@ -4,6 +4,7 @@ import Reveal from '../../components/Reveal.jsx'
 import Avatar from '../../components/Avatar.jsx'
 import { kompresFoto } from '../../utils/image.js'
 import { fmtTanggal } from '../../utils/format.js'
+import {academy,academyApiEnabled} from '../../services/academy.js'
 import { statPemain, useDb } from '../../services/db.js'
 
 const JERSEY = ['XS', 'S', 'M', 'L', 'XL']
@@ -28,7 +29,10 @@ const Item = ({ label, value, full }) => (
 export default function Biodata() {
   useDb()
   const { profil, simpan } = useOutletContext()
-  const stat = statPemain(profil.email) // kehadiran dari absensi pelatih
+  const demoStat = statPemain(profil.email)
+  const [remoteStat,setRemoteStat]=useState(null)
+  useEffect(()=>{if(!academyApiEnabled)return;let live=true;academy.attendance().then(r=>{if(live){const a=r.items.filter(x=>['hadir','izin','sakit','alpa'].includes(x.status));setRemoteStat({pertemuan:a.length,persen:a.length?Math.round(a.filter(x=>x.status==='hadir').length/a.length*100):null})}}).catch(()=>{if(live)setRemoteStat(null)});return()=>{live=false}},[])
+  const stat=academyApiEnabled?(remoteStat||{pertemuan:'—',persen:null}):demoStat
   const [edit, setEdit] = useState(false)
   const [draft, setDraft] = useState(profil)
   const [saving, setSaving] = useState(false)

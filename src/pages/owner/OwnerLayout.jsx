@@ -1,4 +1,6 @@
-import {academyWorkspaceEnabled} from '../../services/academy.js'
+import {useEffect,useState} from 'react'
+import {readDashboard} from '../academy/OperationalDashboard.jsx'
+import {academyApiEnabled,academyWorkspaceEnabled} from '../../services/academy.js'
 import PortalLayout from '../../components/PortalLayout.jsx'
 import { daftarPelatih, daftarPemain, useDb } from '../../services/db.js'
 
@@ -14,8 +16,10 @@ const menu = [
 
 export default function OwnerLayout() {
   useDb()
-  const menunggu = daftarPelatih().filter((p) => p.status === 'menunggu').length
-  const baru = daftarPemain().filter((p) => p.status === 'baru').length
+  const [counts,setCounts]=useState(null)
+  useEffect(()=>{if(!academyApiEnabled)return;let live=true;const refresh=()=>readDashboard().then(d=>{if(live)setCounts(d.accounts)}).catch(()=>{if(live)setCounts(null)});refresh();const timer=setInterval(refresh,30000);return()=>{live=false;clearInterval(timer)}},[])
+  const menunggu = academyApiEnabled?(counts?.pending_coaches||0):daftarPelatih().filter((p) => p.status === 'menunggu').length
+  const baru = academyApiEnabled?(counts?.pending_registrations||0):daftarPemain().filter((p) => p.status === 'baru').length
   return (
     <PortalLayout
       roleLabel="Owner"
