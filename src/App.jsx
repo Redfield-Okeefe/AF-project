@@ -12,6 +12,7 @@ import RoleRoute from './components/RoleRoute.jsx'
 import Gallery from './pages/Gallery.jsx'
 import Contact from './pages/Contact.jsx'
 import Login from './pages/Login.jsx'
+import ForgotPassword from './pages/ForgotPassword.jsx'
 import LoginPortal from './pages/LoginPortal.jsx'
 import RegisterAkun from './pages/RegisterAkun.jsx'
 import DashboardLayout from './pages/dashboard/DashboardLayout.jsx'
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="contact" element={<Contact />} />
           <Route path="login/:peran" element={<Login />} />
+          <Route path="lupa-password/:peran" element={<ForgotPassword />} />
           <Route path="daftar-akun" element={<RegisterAkun />} />
         </Route>
 

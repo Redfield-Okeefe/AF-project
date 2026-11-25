@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { clearSession } from '../utils/auth.js'
+import { accountApiEnabled, logoutAccount } from '../services/accountSecurity.js'
+import ChangePassword from './ChangePassword.jsx'
 import { SITE } from '../data/config.js'
 import Avatar from './Avatar.jsx'
 import BrandLogo from './BrandLogo.jsx'
@@ -14,6 +16,8 @@ import OwnerHeaderActions from './OwnerHeaderActions.jsx'
 // menu: [{ to, icon, label, title, sub, badge? }]
 export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
   const [open, setOpen] = useState(false)
+  const [security,setSecurity]=useState(false)
+  const [logoutBusy,setLogoutBusy]=useState(false)
   const { pathname } = useLocation()
   const nav = useNavigate()
   const { setTheme, theme } = useTheme()
@@ -39,11 +43,12 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
 
   const current = menu.find((m) => pathname.endsWith(m.to)) || menu[0]
 
-  const logout = () => {
-    if (window.confirm('Yakin ingin keluar?')) {
-      clearSession()
-      nav('/')
-    }
+  const finishLogout=()=>{clearSession();nav('/login')}
+  const logout = async () => {
+    if (logoutBusy || !window.confirm(accountApiEnabled?'Keluar dari semua sesi akun?':'Yakin ingin keluar?')) return
+    setLogoutBusy(true)
+    if(accountApiEnabled){try{await logoutAccount()}catch(e){if(e.status!==401)window.alert('Server tidak dapat mencabut seluruh sesi. Sesi browser ini akan diakhiri.')}}
+    clearSession();nav('/')
   }
 
   return (
@@ -61,7 +66,8 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
           ))}
         </nav>
         <div className="sidebar-bottom"><span className="sidebar-version">{SITE.name} Academy · Portal</span>
-        <button className="item logout" onClick={logout}><span className="menu-icon"><OwnerIcon name="logout" size={19} /></span><span className="menu-label">Keluar</span></button></div>
+        {accountApiEnabled && <button type="button" className="item" onClick={()=>{setSecurity(x=>!x);setOpen(false)}}><span className="menu-icon"><OwnerIcon name="lock" size={19}/></span><span className="menu-label">Ubah Password</span></button>}
+        <button disabled={logoutBusy} className="item logout" onClick={logout}><span className="menu-icon"><OwnerIcon name="logout" size={19} /></span><span className="menu-label">Keluar</span></button></div>
       </aside>
       <div className={`overlay${open ? ' show' : ''}`} onClick={() => setOpen(false)} aria-hidden="true" />
 
@@ -80,6 +86,7 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
         {/* Bar atas selebar konten; halaman portal tetap punya padding tersendiri. */}
         <div className="portal-main-content">
           {/* key = pathname supaya animasi masuk ulang tiap pindah menu */}
+          {security&&<ChangePassword onComplete={finishLogout} onClose={()=>setSecurity(false)}/>}
           <Outlet key={pathname} context={{ profil, simpan }} />
         </div>
       </main>

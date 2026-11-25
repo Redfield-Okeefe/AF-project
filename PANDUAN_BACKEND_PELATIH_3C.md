@@ -34,3 +34,5 @@ Dari terminal kedua server-contoh setelah migrasi dan npm start:
 powershell -NoProfile -File .\scripts\test-coach-registration.ps1
 ```
 Masukkan password Owner dummy dan OTP dari Mailpit. Script menggunakan .test, menguji cooldown, konfirmasi password, pendaftaran, token terbatas, replay, penolakan/persetujuan, penonaktifan/aktivasi dan otorisasi. Tidak mencetak kredensial. Akun uji dan audit tetap tersimpan.
+
+**Kandidat Fase 3D:** jika package.json sudah v1.6.0-dev.1, jalankan juga migrasi 003d-account-security.sql sebelum npm start. Token lama wajib login ulang. Token coach lama setelah nonaktif kini ditolak 401 (bukan 403). Lihat ROADMAP_BACKEND_FRONTEND.md.

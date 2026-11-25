@@ -4,6 +4,7 @@ import PortalLayout from '../../components/PortalLayout.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
 import { ambilAkun, useDb } from '../../services/db.js'
 import { clearSession, getUser, setSession } from '../../utils/auth.js'
+import { logoutAccount } from '../../services/accountSecurity.js'
 import { coachApiEnabled, coachStatus } from '../../services/coach.js'
 
 const menu = [
@@ -49,7 +50,7 @@ export default function PelatihLayout() {
   if (akun?.status === 'aktif') return <PortalLayout roleLabel="Pelatih" menu={menu} />
 
   const [ikon, judul, isi] = akun ? PESAN[akun.status] || PESAN.menunggu : ['user', 'Akun tidak ditemukan', 'Silakan login ulang atau daftar sebagai pelatih.']
-  const keluar = () => { clearSession(); nav('/') }
+  const keluar = async () => { if(coachApiEnabled) {try{await logoutAccount()}catch(e){if(e.status!==401)window.alert('Server tidak dapat mencabut seluruh sesi. Sesi browser ini akan diakhiri.')}} clearSession(); nav('/') }
   return (
     <div className="wait-page">
       <div className="card">

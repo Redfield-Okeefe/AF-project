@@ -74,6 +74,7 @@ export default function Login() {
           onChange={(e) => setForm({ ...form, password: e.target.value })} /><button type="button" className="auth-password-toggle" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'} aria-pressed={showPassword}><OwnerIcon name={showPassword ? 'eye-off' : 'eye'} size={19}/></button></div>
         {error && <div className="alert err" role="alert">{error}</div>}
         <button className="btn big auth-login-submit" type="submit" disabled={loading}><OwnerIcon name="log-in" size={19}/>{loading ? 'Memproses...' : 'Masuk ke Portal'}</button>
+        {import.meta.env.VITE_API_URL && <p className="foot"><Link to={'/lupa-password/'+peran}>Lupa password?</Link></p>}
         {cfg.daftar && <p className="foot">{cfg.daftar.teks} <Link to={cfg.daftar.to}>{cfg.daftar.aksi}</Link></p>}
         <p className="foot auth-login-back"><Link to="/login"><OwnerIcon name="arrow-left" size={16}/> Pilih portal lain</Link></p>
       </Reveal>

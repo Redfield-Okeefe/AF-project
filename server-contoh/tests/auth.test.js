@@ -20,3 +20,5 @@ test('akun nonaktif ditolak termasuk token lama',async()=>{const row=rows[1];con
 test('pemain belum diterima tidak boleh login',async()=>{const row=rows[2];row.player_ready=false;try{await assert.rejects(auth.login({email:row.email,password,role:row.role}),{status:403});}finally{row.player_ready=true;}});
 test('token rusak ditolak',async()=>assert.rejects(auth.authenticate('not-a-token'),{status:401}));
 test('token kedaluwarsa ditolak',async()=>{const token=jwt.sign({role:'owner'},config.secret,{subject:rows[0].id,issuer:config.issuer,audience:config.audience,expiresIn:-1});await assert.rejects(auth.authenticate(token),{status:401});});
+
+test('session version increment revokes old token even after account active again',async()=>{const row=rows[0];const old=row.session_version;row.session_version=0;try{const r=await auth.login({email:row.email,password,role:row.role});row.session_version=1;await assert.rejects(auth.authenticate(r.token),{status:401});const fresh=await auth.login({email:row.email,password,role:row.role});assert.equal((await auth.authenticate(fresh.token)).id,row.id);}finally{row.session_version=old;}});
