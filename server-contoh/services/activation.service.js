@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 import {randomUUID} from 'node:crypto';
-import {ActivationError,PURPOSE,LIMITS,demoEmail,uuid,tokenHash,validateCode,proofKey} from './activation.crypto.js';
+import {ActivationError,PURPOSE,LIMITS,activationEmail,uuid,tokenHash,validateCode,proofKey} from './activation.crypto.js';
 const AUDIENCE='bnr-academy-email-verification';
 function bodyInput(body){
   if(!body||typeof body!=='object'||Array.isArray(body)||body.purpose!==PURPOSE)throw new ActivationError(400,'purpose harus activate_player pada Fase 3B.');
   tokenHash(body.invitation_token);
-  return {invitationToken:body.invitation_token,email:demoEmail(body.email)};
+  return {invitationToken:body.invitation_token,email:activationEmail(body.email)};
 }
 export function createActivationService(repo,config){
   return {
@@ -23,6 +23,6 @@ export function readVerificationProof(token,config){
   try {
     const p=jwt.verify(token,proofKey(config.secret),{algorithms:['HS256'],issuer:config.issuer,audience:AUDIENCE});
     if(typeof p!=='object'||p.purpose!==PURPOSE||typeof p.exp!=='number')throw Error('invalid');
-    return {challengeId:uuid(p.sub),invitationId:uuid(p.invitation_id),registrationId:uuid(p.registration_id),email:demoEmail(p.email)};
+    return {challengeId:uuid(p.sub),invitationId:uuid(p.invitation_id),registrationId:uuid(p.registration_id),email:activationEmail(p.email)};
   }catch{throw new ActivationError(401,'Bukti verifikasi tidak berlaku.');}
 }

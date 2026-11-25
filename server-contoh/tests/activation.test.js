@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomBytes} from 'node:crypto';
 import jwt from 'jsonwebtoken';
-import {inviteToken,tokenHash,otpCode,hashOtp,equalHash,demoEmail,validateCode,otpDecision,proofKey} from '../services/activation.crypto.js';
+import {inviteToken,tokenHash,otpCode,hashOtp,equalHash,demoEmail,activationEmail,validateCode,otpDecision,proofKey} from '../services/activation.crypto.js';
 import {createActivationService,readVerificationProof} from '../services/activation.service.js';
 import {createActivationRepository} from '../repositories/activation.repository.js';
 const id='00000000-0000-4000-8000-000000000031';
@@ -46,10 +46,10 @@ test('bukti OTP berbeda dari JWT login dan terikat undangan/email',async()=>{
   const expired=jwt.sign({purpose:'activate_player',email,invitation_id:i1,registration_id:r1},proofKey(secret),{subject:id,algorithm:'HS256',audience:'bnr-academy-email-verification',issuer:config.issuer,expiresIn:-1});
   assert.throws(()=>readVerificationProof(expired,config),{status:401});
 });
-test('purpose lain dan email sungguhan ditolak sebelum repository',()=>{
+test('purpose lain dan email non-Gmail/non-test ditolak sebelum repository',()=>{
   const svc=createActivationService({request(){throw Error('unexpected DB');}},config);
   assert.throws(()=>svc.request({purpose:'reset_password',email,invitation_token:token}),{status:400});
-  assert.throws(()=>svc.request({purpose:'activate_player',email:'real@gmail.com',invitation_token:token}),{status:400});
+  assert.throws(()=>svc.request({purpose:'activate_player',email:'real@example.com',invitation_token:token}),{status:400});
 });
 const result=(...rows)=>({rows,rowCount:rows.length});
 const reg={id:r1,registration_number:'REG-TEST',registration_status:'diterima',player_status:'aktif',user_id:null,contact_email:'family@bnr.test'};
@@ -104,3 +104,5 @@ test('SMTP gagal: undangan rollback, tidak mengirim token dalam response',async(
   const insert=db.calls.find(c=>c.sql.includes('INSERT INTO public.account_activation_tokens'));
   assert.equal(insert.params[1],tokenHash(raw));assert.notEqual(insert.params[1],raw);assert.equal(db.calls.at(-2).sql,'ROLLBACK');
 });
+
+test('Gmail activation email allowed with local Mailpit',()=>{assert.equal(activationEmail(' EXAMPLE@gmail.com '),'example@gmail.com');assert.equal(activationEmail(email),email);assert.throws(()=>activationEmail('other@example.com'),{status:400});assert.ok(hashOtp(secret,id,i1,'example@gmail.com',code).startsWith('v1:'));});

@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 import {coachEmail} from './coach-registration.validation.js';
-import {ActivationError,demoEmail} from './activation.crypto.js';
+import {ActivationError,activationEmail} from './activation.crypto.js';
 export function createMailer({mode=process.env.MAIL_MODE||'disabled',environment=process.env.NODE_ENV}={}){
   // Existing API remains available if mail testing has not been enabled.
   const enabled=mode==='mailpit'&&environment!=='production';
@@ -10,7 +10,7 @@ export function createMailer({mode=process.env.MAIL_MODE||'disabled',environment
   function ready(){if(!transport)throw new ActivationError(503,'Email lokal belum aktif. Jalankan Mailpit dan atur MAIL_MODE=mailpit.');}
   async function send(to,subject,text,coach=false){
     ready();
-    to=coach==='reset'?String(to).trim().toLowerCase():coach?coachEmail(to,{allowTest:true}):demoEmail(to);
+    to=coach==='reset'?String(to).trim().toLowerCase():coach?coachEmail(to,{allowTest:true}):activationEmail(to);
     if(!/^[a-z0-9._%+!-]+@[a-z0-9.-]+\.[a-z0-9]+$/.test(to)||to.length>255)throw new ActivationError(400,'Email tidak valid.');
     try {
       const result=await transport.sendMail({from:'BNR Development <no-reply@bnr.test>',to,subject,text,disableFileAccess:true,disableUrlAccess:true});

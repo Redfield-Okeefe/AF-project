@@ -1,5 +1,5 @@
 import {randomUUID} from 'node:crypto';
-import {ActivationError,PURPOSE,LIMITS,demoEmail,tokenHash,inviteToken,otpCode,hashOtp,scopePrefix,otpDecision} from '../services/activation.crypto.js';
+import {ActivationError,PURPOSE,LIMITS,activationEmail,tokenHash,inviteToken,otpCode,hashOtp,scopePrefix,otpDecision} from '../services/activation.crypto.js';
 export async function tx(pool,fn){
   const db=await pool.connect();
   try{await db.query('BEGIN');const result=await fn(db);await db.query('COMMIT');return result;}
@@ -34,7 +34,7 @@ export function createActivationRepository(pool,{secret,mailer}){
         const r=(await db.query("SELECT r.id,r.registration_number,r.status AS registration_status,p.id AS player_id,p.full_name,p.status AS player_status,p.user_id,p.contact_email FROM public.registrations r JOIN public.players p ON p.id=r.player_id WHERE r.id=$1 FOR UPDATE OF r,p",[registrationId])).rows[0];
         if(!r)throw new ActivationError(404,'Pendaftaran tidak ditemukan.');
         if(!eligible(r))throw invalidInvite();
-        const email=demoEmail(r.contact_email);
+        const email=activationEmail(r.contact_email);
         const recent=await db.query("SELECT 1 FROM public.account_activation_tokens WHERE registration_id=$1 AND created_at>clock_timestamp()-interval '60 seconds' LIMIT 1",[registrationId]);
         if(recent.rowCount)throw new ActivationError(429,'Tunggu 60 detik sebelum membuat undangan baru.');
         // used_at also represents invalidation of an older unused invitation.

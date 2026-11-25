@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import CodeSlots from '../components/CodeSlots.jsx'
-import { GMAIL_RE, OTP_LENGTH, normalizeEmail, requestOtp, verifyOtp } from '../services/otp.js'
+import { isOtpEmail, localOtpApi, otpApiEnabled, validInvitation, OTP_LENGTH, normalizeEmail, requestOtp, verifyOtp } from '../services/otp.js'
+import { otpSeconds } from '../services/otp-contract.js'
 import { homeFor, setSession } from '../utils/auth.js'
 
 const COOLDOWN = 60 // detik sebelum boleh kirim ulang
@@ -22,7 +23,8 @@ export default function RegisterAkun() {
   const [params] = useSearchParams()
   const pelatih = params.get('peran') === 'pelatih'
   const [step, setStep] = useState(1)
-  const [form, setForm] = useState({ nama: '', email: '', password: '', ulang: '', wa: '', lisensi: '' })
+  const [activated,setActivated]=useState(false)
+  const [form, setForm] = useState({ nama: '', email: '', password: '', ulang: '', wa: '', lisensi: '', invitation: '' })
   const [kode, setKode] = useState('')
   const [challengeId, setChallengeId] = useState('')
   const [otpKey, setOtpKey] = useState(0)
@@ -59,11 +61,11 @@ export default function RegisterAkun() {
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
 
   const kirimKode = async () => {
-    const res = await requestOtp({ email: form.email, nama: form.nama, peran: pelatih ? 'pelatih' : 'player' })
+    const res = await requestOtp({ email: form.email, nama: form.nama, peran: pelatih ? 'pelatih' : 'player', invitation_token: form.invitation.trim() })
     setChallengeId(res.challenge_id || '')
     setDemoCode(res.demoCode || '')
-    setKirimLagi(COOLDOWN)
-    setSisa(res.expiresIn || 300)
+    setKirimLagi(res.resend_after_seconds || COOLDOWN)
+    setSisa(otpSeconds(res))
     setKode('')
     setStatus('idle')
     setOtpKey((k) => k + 1)
@@ -75,7 +77,8 @@ export default function RegisterAkun() {
     const email = normalizeEmail(form.email)
     if (form.nama.trim().length < 3) return setError('Nama lengkap minimal 3 huruf.')
     if (pelatih && form.nama.trim().length > 120) return setError('Nama lengkap maksimal 120 karakter.')
-    if (!GMAIL_RE.test(email)) return setError('Gunakan alamat Gmail pribadi (contoh: nama@gmail.com).')
+    if (!isOtpEmail(email)) return setError(localOtpApi?'Gunakan Gmail atau email dummy .test.':'Gunakan alamat Gmail pribadi.')
+    if(otpApiEnabled&&!pelatih&&!validInvitation(form.invitation))return setError('Masukkan kode undangan aktivasi dari Owner (43 karakter).')
     if (form.password.length < 8 || !/[A-Za-z]/.test(form.password) || !/\d/.test(form.password))
       return setError('Password minimal 8 karakter dan mengandung huruf serta angka.')
     if (new TextEncoder().encode(form.password).length > 72 || form.password.includes('\0')) return setError('Password maksimal 72 byte UTF-8.')
@@ -95,7 +98,7 @@ export default function RegisterAkun() {
   }
 
   const verifikasi = async (code) => {
-    if (busy.current || status === 'success') return
+    if (busy.current || loading || status === 'success') return
     setError('')
     if (code.length !== OTP_LENGTH) return setError('Masukkan 6 angka kode OTP.')
     if (sisa === 0) {
@@ -106,7 +109,9 @@ export default function RegisterAkun() {
     busy.current = true
     setLoading(true)
     try {
-      const res = await verifyOtp({ email: form.email, code, nama: form.nama.trim(), password: form.password, password_confirmation: form.ulang, challenge_id: challengeId, peran: pelatih ? 'pelatih' : 'player', lisensi: form.lisensi.trim(), wa: form.wa.replace(/[\s-]/g, '') })
+      const res = await verifyOtp({ email: form.email, code, nama: form.nama.trim(), password: form.password, password_confirmation: form.ulang, challenge_id: challengeId, invitation_token: form.invitation.trim(), peran: pelatih ? 'pelatih' : 'player', lisensi: form.lisensi.trim(), wa: form.wa.replace(/[\s-]/g, '') })
+      if(res.requiresLogin){setActivated(true);setForm(f=>({...f,password:'',ulang:'',invitation:''}));setStatus('success');return}
+      if(!res.token)throw new Error('Sesi registrasi tidak diterima.')
       setSession(res.token, res.role, res.user || { email: form.email, nama: form.nama.trim() })
       setStatus('success')
       // beri waktu animasi centang sebelum pindah halaman
@@ -146,19 +151,21 @@ export default function RegisterAkun() {
     setDemoCode('')
   }
 
+  if(activated)return <div className="login akun"><Reveal anim="zoom" className="card"><h2>Akun pemain berhasil diaktifkan</h2><p className="sub">Silakan login menggunakan email dan password baru.</p><Link className="btn big" to="/login/pemain">Masuk ke Portal Pemain</Link></Reveal></div>
   if (step === 1) {
     return (
       <div className="login akun">
         <Reveal as="form" anim="zoom" className="card" onSubmit={submitData} noValidate>
           <h2>{pelatih ? 'Daftar Pelatih' : 'Buat Akun'}</h2>
           <p className="sub">
-            Daftar dengan Gmail pribadimu. Kami akan mengirim kode OTP 6 angka untuk memastikan email itu milikmu.
+            {localOtpApi?'Pengujian lokal: OTP dikirim ke Mailpit, bukan Gmail asli. Gunakan data fiktif.':'Daftar dengan Gmail pribadimu. Kami akan mengirim kode OTP 6 angka untuk memastikan email itu milikmu.'}
             {pelatih && ' Setelah itu akunmu menunggu persetujuan owner sebelum portal pelatih terbuka.'}
           </p>
+          {otpApiEnabled&&!pelatih&&<><p className="mut small">Pendaftaran akademi harus disetujui Owner. Nama akun mengikuti biodata terdaftar.</p><label>Kode undangan aktivasi<input value={form.invitation} onChange={set('invitation')} autoComplete="off" placeholder="Kode undangan dari email" required /></label><p className="foot"><Link to="/pendaftaran">Belum mendaftar akademi?</Link></p></>}
           <label>Nama lengkap
             <input value={form.nama} onChange={set('nama')} autoComplete="name" placeholder="Nama orang tua / pemain" />
           </label>
-          <label>Gmail
+          <label>{localOtpApi?'Email (Gmail / .test)':'Gmail'}
             <input type="email" value={form.email} onChange={set('email')} autoComplete="email" placeholder="nama@gmail.com" />
           </label>
           <label>Password
@@ -194,7 +201,7 @@ export default function RegisterAkun() {
     <div className="login akun">
       <Reveal as="form" anim="zoom" className="card" onSubmit={submitKode}>
         <h2>Verifikasi Email</h2>
-        <p className="sub">Masukkan 6 angka kode yang dikirim ke <b>{form.email}</b>. Cek juga folder Spam bila belum masuk.</p>
+        <p className="sub">Masukkan 6 angka kode yang dikirim ke <b>{form.email}</b>. {localOtpApi?<> Buka <a href="http://127.0.0.1:8025/" target="_blank" rel="noreferrer">Mailpit lokal</a> untuk mengambil kode.</>:' Cek juga folder Spam bila belum masuk.'}</p>
 
         {demoCode && (
           <div className="alert ok">
@@ -207,6 +214,7 @@ export default function RegisterAkun() {
             key={otpKey}
             length={OTP_LENGTH}
             status={status}
+            disabled={loading}
             autoFocus
             ariaLabel="Kode OTP 6 angka"
             onChange={(c) => {

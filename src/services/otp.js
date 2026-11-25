@@ -1,40 +1,20 @@
-/* Pendaftaran akun dengan verifikasi OTP lewat Gmail.
-   - VITE_API_URL kosong -> mode DEMO: kode dibuat di browser dan DITAMPILKAN di layar
-     (email tidak bisa dikirim tanpa server).
-   - VITE_API_URL terisi -> memakai backend:
-       POST /auth/otp/request  { email, nama }
-            -> { expiresIn: 300 }   (kirim kode 6 angka ke email)
-       POST /auth/otp/verify   { email, code, nama, password }
-            -> { token, role }      (buat akun + login)
-   Lihat folder server-contoh/ untuk contoh backend lengkap. */
-
 import { daftarAkun } from './db.js'
-import { coachOtpRequest, coachRegister } from './coach.js'
+import { createOtpApi, validOtpEmail, validInvitation, normalizeEmail } from './otp-contract.js'
+export { normalizeEmail, GMAIL_RE, validInvitation } from './otp-contract.js'
 
 const API_URL = import.meta.env.VITE_API_URL
+export const otpApiEnabled = Boolean(API_URL)
+export const localOtpApi = otpApiEnabled && import.meta.env.DEV
+export const isOtpEmail = email => validOtpEmail(email,localOtpApi)
+const api=API_URL?createOtpApi(API_URL):null
 const DEMO_KEY = 'af_demo_otp'
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
 export const OTP_LENGTH = 6
-export const GMAIL_RE = /^[a-z0-9._%+-]+@gmail\.com$/i
-export const normalizeEmail = (e) => String(e).trim().toLowerCase()
-
-async function post(path, body) {
-  const res = await fetch(`${API_URL}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  })
-  const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.message || 'Terjadi kesalahan, coba lagi.')
-  return data
-}
-
-export async function requestOtp({ email, nama, peran }) {
+export async function requestOtp({ email, nama, peran, invitation_token }) {
   email = normalizeEmail(email)
-  if (!GMAIL_RE.test(email)) throw new Error('Gunakan alamat Gmail pribadi (contoh: nama@gmail.com).')
-  if (API_URL && peran === 'pelatih') return coachOtpRequest(email)
-  if (API_URL) return post('/auth/otp/request', { email, nama })
+  if (!isOtpEmail(email)) throw new Error(localOtpApi?'Gunakan Gmail atau email dummy .test.':'Gunakan alamat Gmail pribadi.')
+  if(api){if(peran!=='pelatih'&&!validInvitation(invitation_token))throw new Error('Kode undangan wajib diisi (43 karakter).');return api.request({email,nama,peran,invitation_token})}
 
   await wait(700)
   const code = String(100000 + (crypto.getRandomValues(new Uint32Array(1))[0] % 900000))
@@ -42,11 +22,10 @@ export async function requestOtp({ email, nama, peran }) {
   return { ok: true, demo: true, demoCode: code, expiresIn: 300 }
 }
 
-export async function verifyOtp({ email, code, nama, password, password_confirmation, challenge_id, peran = 'player', lisensi = '', wa = '' }) {
+export async function verifyOtp({ email, code, nama, password, password_confirmation, challenge_id, invitation_token, peran = 'player', lisensi = '', wa = '' }) {
   email = normalizeEmail(email)
   if (!/^\d{6}$/.test(code)) throw new Error('Masukkan 6 angka kode OTP.')
-  if (API_URL && peran === 'pelatih') return coachRegister({ email, code, nama, password, password_confirmation, challenge_id, peran, lisensi, wa })
-  if (API_URL) return post('/auth/otp/verify', { email, code, nama, password, peran, lisensi, wa })
+  if(api)return api.verify({email,code,nama,password,password_confirmation,challenge_id,invitation_token,peran,lisensi,wa})
 
   await wait(600)
   let d

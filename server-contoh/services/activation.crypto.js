@@ -12,6 +12,11 @@ export function demoEmail(v){
   if(email.length>255||! /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.test$/.test(email))throw new ActivationError(400,'Gunakan alamat email dummy berakhiran .test untuk fase lokal.');
   return email;
 }
+export function activationEmail(value){
+ const email=typeof value==='string'?value.trim().toLowerCase():'';
+ if(email.length<=255&&/^[a-z0-9._%+-]+@gmail\.com$/.test(email))return email;
+ return demoEmail(value);
+}
 export function inviteToken(){return randomBytes(32).toString('base64url');}
 export function tokenHash(token){
   if(typeof token!=='string'||! /^[A-Za-z0-9_-]{43}$/.test(token))throw new ActivationError(400,'Format undangan tidak valid.');
@@ -25,7 +30,7 @@ export function validateCode(code){
 export function scopePrefix(invitationId){return 'v1:'+uuid(invitationId)+':';}
 function key(secret,context){return createHmac('sha256',secret).update('bnr-academy/'+context+'/v1').digest();}
 export function hashOtp(secret,challengeId,invitationId,email,code){
-  const value=JSON.stringify([PURPOSE,uuid(challengeId),uuid(invitationId),demoEmail(email),validateCode(code)]);
+  const value=JSON.stringify([PURPOSE,uuid(challengeId),uuid(invitationId),activationEmail(email),validateCode(code)]);
   return scopePrefix(invitationId)+createHmac('sha256',key(secret,'otp')).update(value).digest('hex');
 }
 export function equalHash(a,b){

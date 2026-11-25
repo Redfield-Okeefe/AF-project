@@ -31,6 +31,8 @@ jobs:
         run: npm test
       - name: Install frontend dependencies
         run: npm ci --no-audit --no-fund
+      - name: Frontend OTP contract tests
+        run: npm run test:otp
       - name: Frontend production build (Pages base)
         env:
           GITHUB_PAGES: 'true'
