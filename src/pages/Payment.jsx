@@ -4,6 +4,7 @@ import Reveal from '../components/Reveal.jsx'
 import PayLogo from '../components/PayLogo.jsx'
 import { PAYMENT_METHODS, PROGRAMS } from '../data/config.js'
 import { confirmPayment } from '../services/api.js'
+import { registrationsApiEnabled } from '../services/registrations.js'
 
 const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n)
@@ -21,6 +22,9 @@ export default function Payment() {
 
     // Kalau dibuka langsung tanpa mendaftar, kembalikan ke form pendaftaran
     if (!state?.nama) return <Navigate to="/pendaftaran" replace />
+
+    // Payment integration is deferred to Phase 8; never prompt transfers to demo accounts in API mode.
+    if(registrationsApiEnabled) return <div className="w"><div className="form"><Reveal anim="zoom" className="card done"><h2>Pendaftaran diterima sistem</h2><p className="sub">{state.nama} · {state.program}</p><p>Nomor pendaftaran: <b>{state.registration?.registration_number||'Tidak tersedia'}</b></p><div className="alert">Mode pengujian backend: pembayaran belum terintegrasi. Jangan melakukan transfer. Owner dapat meninjau pendaftaran dan mengirim undangan aktivasi melalui Mailpit.</div><Link className="btn lg" to="/daftar-akun">Buat akun setelah mendapat undangan</Link><p className="foot"><Link to="/">Kembali ke Beranda</Link></p></Reveal></div></div>
 
     const total = PROGRAMS.find((p) => p.title === state.program)?.fee ?? 0
     const list = PAYMENT_METHODS[tab]

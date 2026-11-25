@@ -157,6 +157,7 @@ export default function RegisterAkun() {
       <div className="login akun">
         <Reveal as="form" anim="zoom" className="card" onSubmit={submitData} noValidate>
           <h2>{pelatih ? 'Daftar Pelatih' : 'Buat Akun'}</h2>
+          {import.meta.env.DEV&&<p className="mut small" role="status">{otpApiEnabled?'Mode API lokal · Mailpit':'Mode demo · OTP tidak dikirim lewat email'}</p>}
           <p className="sub">
             {localOtpApi?'Pengujian lokal: OTP dikirim ke Mailpit, bukan Gmail asli. Gunakan data fiktif.':'Daftar dengan Gmail pribadimu. Kami akan mengirim kode OTP 6 angka untuk memastikan email itu milikmu.'}
             {pelatih && ' Setelah itu akunmu menunggu persetujuan owner sebelum portal pelatih terbuka.'}

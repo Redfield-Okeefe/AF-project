@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import { PROGRAMS } from '../data/config.js'
 import { registerPlayer } from '../services/api.js'
+import { registrationsApiEnabled, programs, submitRegistration } from '../services/registrations.js'
+import { isOtpEmail } from '../services/otp.js'
 
 const initial = {
   nama: '', jk: 'Laki-laki', tglLahir: '', tempatLahir: '', sekolah: '',
@@ -15,6 +17,9 @@ export default function Register() {
   const [form, setForm] = useState(initial)
   const [status, setStatus] = useState({ type: '', msg: '' })
   const [loading, setLoading] = useState(false)
+  const [remotePrograms,setRemotePrograms]=useState([])
+  const [programId,setProgramId]=useState('')
+  useEffect(()=>{if(!registrationsApiEnabled)return;let live=true;programs().then(r=>{if(live){setRemotePrograms(r.items);setProgramId(r.items[0]?.id||'');if(!r.items.length)setStatus({type:'err',msg:'Tidak ada program aktif pada database.'})}}).catch(e=>{if(live)setStatus({type:'err',msg:e.message})});return()=>{live=false}},[])
 
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -32,6 +37,14 @@ export default function Register() {
     setLoading(true)
     setStatus({ type: '', msg: '' })
     try {
+      if (registrationsApiEnabled) {
+        if(!isOtpEmail(form.email))throw new Error('Untuk aktivasi akun gunakan Gmail atau dummy .test pada development.')
+        if(!programId)throw new Error('Pilih program aktif dari database.')
+        const r=await submitRegistration(form,programId)
+        const selected=remotePrograms.find(p=>p.id===programId)
+        nav('/pembayaran',{state:{nama:form.nama,program:selected?.name,email:form.email,registration:r.registration,display_fee:selected?.display_fee}})
+        return
+      }
       await registerPlayer({ ...form, umur })
       // langsung pindah ke halaman pembayaran membawa data pendaftar
       nav('/pembayaran', { state: { nama: form.nama, program: form.program, email: form.email } })
@@ -78,9 +91,7 @@ export default function Register() {
             <h3><i>3</i>Program &amp; Perlengkapan</h3>
             <div className="row">
               <label>Program
-                <select name="program" value={form.program} onChange={set}>
-                  {PROGRAMS.map((p) => <option key={p.title}>{p.title}</option>)}
-                </select>
+                {registrationsApiEnabled ? <select value={programId} onChange={e=>setProgramId(e.target.value)} required><option value="">Pilih program aktif</option>{remotePrograms.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select> : <select name="program" value={form.program} onChange={set}>{PROGRAMS.map((p) => <option key={p.title}>{p.title}</option>)}</select>}
               </label>
               <label>Ukuran Jersey
                 <select name="jersey" value={form.jersey} onChange={set}>
@@ -92,7 +103,7 @@ export default function Register() {
           </Reveal>
 
           {status.msg && <div className={`alert ${status.type}`}>{status.msg}</div>}
-          <Reveal as="button" anim="zoom" className="btn big" type="submit" disabled={loading}>
+          <Reveal as="button" anim="zoom" className="btn big" type="submit" disabled={loading||(registrationsApiEnabled&&!programId)}>
             {loading ? 'Mengirim...' : 'Lanjut ke Pembayaran'}
           </Reveal>
         </form>

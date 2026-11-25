@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import RegistrasiApi from './RegistrasiApi.jsx'
+import { registrationsApiEnabled } from '../../services/registrations.js'
 import OwnerPageHeading from '../../components/OwnerPageHeading.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
 import { daftarPemain, listKelas, namaDari, setKelasPemain, setStatusAkun, statPemain, ambilKelas, useDb } from '../../services/db.js'
@@ -9,7 +11,9 @@ import { useToast } from '../../utils/useToast.jsx'
 
 const PILL = { aktif: 'ok', baru: 'warn', nonaktif: 'mut' }
 
-export default function Pemain() {
+export default function Pemain(){return registrationsApiEnabled?<RegistrasiApi/>:<PemainDemo/>}
+
+function PemainDemo() {
   useDb()
   const [q, setQ] = useState('')
   const [status, setStatus] = useState('')
