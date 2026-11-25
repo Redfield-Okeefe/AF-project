@@ -2,12 +2,7 @@ import { apiRequest } from './otp-contract.js'
 import { getToken, getUser, getRole, updateUser } from '../utils/auth.js'
 import { sinkronAkun } from './db.js'
 
-/* Profil pemain per akun.
-   - VITE_API_URL kosong -> disimpan di localStorage (mode DEMO, hanya di browser ini).
-   - VITE_API_URL terisi -> backend:
-       GET /profil   -> profil akun yang login
-       PUT /profil   -> simpan profil
-     (butuh header Authorization: Bearer <token>). localStorage tetap dipakai sebagai cache. */
+/* Profil tiga role. API aktif: GET/PATCH /api/v1/me/profile, tanpa fallback localStorage. Mode demo tetap lokal. */
 
 const API_URL = import.meta.env.VITE_API_URL
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -43,16 +38,6 @@ export function profilCepat() {
   const p = dasar()
   try { tulis(p) } catch { /* abaikan */ }
   return p
-}
-
-async function request(path, options = {}) {
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-  })
-  const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.message || 'Terjadi kesalahan, coba lagi.')
-  return data
 }
 
 export async function muatProfil() {

@@ -37,7 +37,11 @@ jobs:
           node-version: '22'
       - name: Install backend dependencies
         working-directory: server-contoh
-        run: npm install --no-audit --no-fund
+        run: |
+          npm install --no-audit --no-fund --include=optional
+          # Lockfile was generated on Windows; install the matching Linux native runtime in CI only.
+          npm install --no-save --package-lock=false --no-audit --no-fund @img/sharp-linux-x64@0.34.5 @img/sharp-libvips-linux-x64@1.2.4
+          node --input-type=module -e "import sharp from 'sharp'; console.log('sharp native runtime', sharp.versions.sharp)"
       - name: Backend regression tests
         working-directory: server-contoh
         run: npm test
