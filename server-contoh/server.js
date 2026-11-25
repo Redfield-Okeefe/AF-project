@@ -10,6 +10,7 @@ import { mountAuth } from './routes/auth.routes.js';
 import { setupMedia } from './media.js';
 import { mountRegistration } from './routes/registration.routes.js';
 import { mountActivation } from './routes/activation.routes.js';
+import { mountAccountSecurity } from './routes/account-security.routes.js';
 import { mountCoachRegistration } from './routes/coach-registration.routes.js';
 
 try {
@@ -27,6 +28,7 @@ try {
     catch { res.status(503).json({ok:false,status:'database_unavailable'}); }
   });
   mountCoachRegistration(app,authenticate,pool,config,auth);
+  mountAccountSecurity(app,authenticate,pool,config);
   mountAuth(app,auth,authenticate);
   mountRegistration(app,authenticate,pool);
   mountActivation(app,authenticate,pool,config);

@@ -3,7 +3,7 @@ import {tx,audit} from './activation.repository.js';
 import {ActivationError,otpCode,equalHash} from '../services/activation.crypto.js';
 import {coachOtpHash,canReview} from '../services/coach-registration.validation.js';
 
-const SELECT = "SELECT u.id,u.full_name AS nama,u.email,u.role,CASE WHEN u.status='aktif' THEN 'aktif' ELSE COALESCE(NULLIF(c.registration_review_status,'aktif'),u.status::text) END AS status,c.registration_whatsapp AS wa,c.license_name AS lisensi,c.registration_rejection_reason AS alasan,c.registration_created_at AS dibuat FROM public.users u JOIN public.coach_profiles c ON c.user_id=u.id WHERE u.role='pelatih' AND u.email_verified_at IS NOT NULL";
+const SELECT = "SELECT u.id,u.full_name AS nama,u.email,u.role,u.session_version,CASE WHEN u.status='aktif' THEN 'aktif' ELSE COALESCE(NULLIF(c.registration_review_status,'aktif'),u.status::text) END AS status,c.registration_whatsapp AS wa,c.license_name AS lisensi,c.registration_rejection_reason AS alasan,c.registration_created_at AS dibuat FROM public.users u JOIN public.coach_profiles c ON c.user_id=u.id WHERE u.role='pelatih' AND u.email_verified_at IS NOT NULL";
 const lockEmail=(db,email)=>db.query("SELECT pg_advisory_xact_lock(hashtextextended('bnr-account:' || $1::text,0))",[email]);
 const findExisting=(db,email)=>db.query('SELECT id FROM public.users WHERE lower(btrim(email))=$1 LIMIT 1',[email]);
 const duplicate=()=>new ActivationError(409,'Email sudah digunakan. Silakan login.');
@@ -57,7 +57,7 @@ export function createCoachRegistrationRepository(pool,{secret,mailer}){
         const row=(await db.query(SELECT+' AND u.id=$1 FOR UPDATE OF u,c',[id])).rows[0];
         if(!row)throw new ActivationError(404,'Pelatih tidak ditemukan.');
         if(!canReview(row.status,status))throw new ActivationError(409,'Perubahan status tidak diizinkan.');
-        await db.query(status==='aktif'?"UPDATE public.users SET status='aktif' WHERE id=$1":"UPDATE public.users SET status='nonaktif' WHERE id=$1",[id]); 
+        await db.query(status==='aktif'?"UPDATE public.users SET status='aktif' WHERE id=$1":"UPDATE public.users SET status='nonaktif',session_version=session_version+CASE WHEN status='aktif' THEN 1 ELSE 0 END WHERE id=$1",[id]); 
         await db.query('UPDATE public.coach_profiles SET registration_review_status=$2,registration_rejection_reason=$3 WHERE user_id=$1',[id,status,alasan||null]);
         await audit(db,actor,'coach.review.'+status,'users',id,{previous_status:row.status});
         return (await db.query(SELECT+' AND u.id=$1',[id])).rows[0];

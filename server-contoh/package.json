@@ -1,6 +1,6 @@
 {
   "name": "bnr-academy-backend",
-  "version": "1.5.1",
+  "version": "1.6.0-dev.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node server.js",
     "seed:dummy": "node scripts/seed-dummy.js --local-dev",
-    "test": "node --test tests/auth.test.js tests/registration.test.js tests/activation.test.js tests/player-activation.test.js tests/coach-registration.test.js",
+    "test": "node --test tests/auth.test.js tests/registration.test.js tests/activation.test.js tests/player-activation.test.js tests/coach-registration.test.js tests/account-security.test.js",
     "seed:programs": "node scripts/seed-programs.js --local-dev"
   },
   "dependencies": {

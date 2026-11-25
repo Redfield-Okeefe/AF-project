@@ -53,9 +53,8 @@ try{
     $null=Assert-Status GET '/api/v1/owner/coaches' $active $null 403
     $null=Assert-Status PATCH $path $active @{status='nonaktif'} 403
     $null=Assert-Status PATCH $path $owner @{status='nonaktif'} 200
-    $null=Assert-Status GET '/api/v1/auth/me' $active $null 403
-    $inactive=Assert-Status GET "$root/status" $active $null 200
-    if($inactive.user.status -ne 'nonaktif'){throw 'Expected inactive status'}
+    $null=Assert-Status GET '/api/v1/auth/me' $active $null 401
+    $null=Assert-Status GET "$root/status" $active $null 401
     $null=Assert-Status PATCH $path $owner @{status='aktif'} 200
     $null=Assert-Status POST '/api/v1/auth/login' $null @{email=$email;password=$password;role='pelatih'} 200
     Write-Host 'Semua pemeriksaan Fase 3C di atas lulus. Data fiktif dan audit dipertahankan.' -ForegroundColor Green

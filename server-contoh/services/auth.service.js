@@ -26,7 +26,7 @@ export function createAuthService({ repo, config }) {
   // Same bcrypt cost for nonexistent accounts to reduce obvious timing differences.
   const fallbackHash = bcrypt.hashSync(randomUUID(), 12);
   function sign(user) {
-    return jwt.sign({ role: user.role }, config.secret, { algorithm: 'HS256', subject: user.id, issuer: config.issuer, audience: config.audience, expiresIn: config.expiresIn, jwtid: randomUUID() });
+    return jwt.sign({ role: user.role, sv:Number(user.session_version??0) }, config.secret, { algorithm: 'HS256', subject: user.id, issuer: config.issuer, audience: config.audience, expiresIn: config.expiresIn, jwtid: randomUUID() });
   }
   function verify(token) {
     try {
@@ -45,13 +45,13 @@ export function createAuthService({ repo, config }) {
     // Repository rechecks role/status/password when writing last-login + audit.
     if (!await repo.recordLogin(row)) throw new ApiError(403, 'Status akun berubah. Silakan login kembali.');
     const user = publicUser(row);
-    return { ok: true, token: sign(user), token_type: 'Bearer', expires_in: 1800, role: user.role, user };
+    return { ok: true, token: sign(row), token_type: 'Bearer', expires_in: 1800, role: user.role, user };
   }
   async function authenticate(token) {
     const claims = verify(token);
     const row = await repo.findById(claims.sub);
-    if (!row || row.role !== claims.role) throw new ApiError(401, 'Sesi tidak berlaku. Silakan login kembali.');
-    return publicUser(checkAccount(row));
+    if (!row || row.role !== claims.role || claims.sv!==Number(row.session_version??0)) throw new ApiError(401, 'Sesi tidak berlaku. Silakan login kembali.');
+    return {...publicUser(checkAccount(row)),session_version:Number(row.session_version??0)};
   }
   return { login, authenticate };
 }

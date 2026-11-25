@@ -10,13 +10,14 @@ export function createMailer({mode=process.env.MAIL_MODE||'disabled',environment
   function ready(){if(!transport)throw new ActivationError(503,'Email lokal belum aktif. Jalankan Mailpit dan atur MAIL_MODE=mailpit.');}
   async function send(to,subject,text,coach=false){
     ready();
-    to=coach?coachEmail(to,{allowTest:true}):demoEmail(to);
+    to=coach==='reset'?String(to).trim().toLowerCase():coach?coachEmail(to,{allowTest:true}):demoEmail(to);
+    if(!/^[a-z0-9._%+!-]+@[a-z0-9.-]+\.[a-z0-9]+$/.test(to)||to.length>255)throw new ActivationError(400,'Email tidak valid.');
     try {
       const result=await transport.sendMail({from:'BNR Development <no-reply@bnr.test>',to,subject,text,disableFileAccess:true,disableUrlAccess:true});
       if(!result.accepted?.length)throw Error('SMTP rejected');
     } catch {throw new ActivationError(503,'Email lokal gagal dikirim. Periksa Mailpit port 1025.');}
   }
-  return {ready,enabled,coachOtp:({email,code})=>send(email,'[BNR DEV] OTP registrasi pelatih','PENGUJIAN LOKAL - kode OTP: '+code+'\nBerlaku 5 menit. Jangan bagikan.',true),invite:({email,number,token})=>send(email,'[BNR DEV] Undangan aktivasi '+number,
+  return {ready,enabled,resetOtp:({email,code})=>send(email,'[BNR DEV] OTP reset password','PENGUJIAN LOKAL - kode OTP: '+code+'\nBerlaku 5 menit. Jangan bagikan.','reset'),coachOtp:({email,code})=>send(email,'[BNR DEV] OTP registrasi pelatih','PENGUJIAN LOKAL - kode OTP: '+code+'\nBerlaku 5 menit. Jangan bagikan.',true),invite:({email,number,token})=>send(email,'[BNR DEV] Undangan aktivasi '+number,
     'PENGUJIAN LOKAL - bukan akun resmi.\nNomor pendaftaran: '+number+'\nKode undangan: '+token+'\nBerlaku 24 jam dan terikat pada pendaftaran ini. Jangan bagikan. Aktivasi akun tersedia pada Fase 3B.'),
     otp:({email,code,number})=>send(email,'[BNR DEV] OTP aktivasi '+number,
     'PENGUJIAN LOKAL - bukan akun resmi.\nNomor pendaftaran: '+number+'\nKode OTP: '+code+'\nBerlaku 5 menit. Jangan bagikan.')};
