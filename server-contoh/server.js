@@ -10,6 +10,7 @@ import { mountAuth } from './routes/auth.routes.js';
 import { setupMedia } from './media.js';
 import { mountRegistration } from './routes/registration.routes.js';
 import { mountActivation } from './routes/activation.routes.js';
+import { mountCoachRegistration } from './routes/coach-registration.routes.js';
 
 try {
   const { port, host, origins } = serverConfig();
@@ -25,13 +26,14 @@ try {
     try { await verifyDatabase(pool); res.json({ok:true,database:'bnr_academy',status:'ready'}); }
     catch { res.status(503).json({ok:false,status:'database_unavailable'}); }
   });
+  mountCoachRegistration(app,authenticate,pool,config,auth);
   mountAuth(app,auth,authenticate);
   mountRegistration(app,authenticate,pool);
   mountActivation(app,authenticate,pool,config);
   setupMedia(app,authenticate,pool);
   app.use((req,res)=>res.status(404).json({ok:false,message:'Endpoint tidak ditemukan.'}));
   app.use(errorHandler);
-  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 3B: login, media, pendaftaran, undangan, OTP, aktivasi Pemain`));
+  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 3C: autentikasi, aktivasi Pemain, registrasi dan persetujuan Pelatih`));
   server.on('error',async error=>{ console.error('Server gagal:',error.code || error.name); await closePool(); process.exitCode=1; });
   for (const signal of ['SIGINT','SIGTERM']) process.once(signal,()=>server.close(async()=>{await closePool();process.exit(0);}));
 } catch(error) {

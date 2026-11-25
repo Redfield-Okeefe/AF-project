@@ -9,6 +9,7 @@
    Lihat folder server-contoh/ untuk contoh backend lengkap. */
 
 import { daftarAkun } from './db.js'
+import { coachOtpRequest, coachRegister } from './coach.js'
 
 const API_URL = import.meta.env.VITE_API_URL
 const DEMO_KEY = 'af_demo_otp'
@@ -29,9 +30,10 @@ async function post(path, body) {
   return data
 }
 
-export async function requestOtp({ email, nama }) {
+export async function requestOtp({ email, nama, peran }) {
   email = normalizeEmail(email)
   if (!GMAIL_RE.test(email)) throw new Error('Gunakan alamat Gmail pribadi (contoh: nama@gmail.com).')
+  if (API_URL && peran === 'pelatih') return coachOtpRequest(email)
   if (API_URL) return post('/auth/otp/request', { email, nama })
 
   await wait(700)
@@ -40,9 +42,10 @@ export async function requestOtp({ email, nama }) {
   return { ok: true, demo: true, demoCode: code, expiresIn: 300 }
 }
 
-export async function verifyOtp({ email, code, nama, password, peran = 'player', lisensi = '', wa = '' }) {
+export async function verifyOtp({ email, code, nama, password, password_confirmation, challenge_id, peran = 'player', lisensi = '', wa = '' }) {
   email = normalizeEmail(email)
   if (!/^\d{6}$/.test(code)) throw new Error('Masukkan 6 angka kode OTP.')
+  if (API_URL && peran === 'pelatih') return coachRegister({ email, code, nama, password, password_confirmation, challenge_id, peran, lisensi, wa })
   if (API_URL) return post('/auth/otp/verify', { email, code, nama, password, peran, lisensi, wa })
 
   await wait(600)

@@ -1,4 +1,5 @@
 import { ambilAkun, daftarAkun, loginDemo, setStatusAkun } from './db.js'
+import { coachLogin } from './coach.js'
 // Jika VITE_API_URL kosong -> mode DEMO (berhasil tanpa server).
 const API_URL = import.meta.env.VITE_API_URL
 
@@ -39,5 +40,5 @@ async function post(path, body) {
 
 // Sesuaikan endpoint dengan backend Anda
 export const registerPlayer = (data) => post('/pendaftaran', data)
-export const loginUser = (data) => post('/login', data)
+export const loginUser = (data) => API_URL && data?.peran === 'pelatih' ? coachLogin(data) : post('/login', data)
 export const confirmPayment = (data) => post('/pembayaran', data)

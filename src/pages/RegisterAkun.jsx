@@ -24,6 +24,7 @@ export default function RegisterAkun() {
   const [step, setStep] = useState(1)
   const [form, setForm] = useState({ nama: '', email: '', password: '', ulang: '', wa: '', lisensi: '' })
   const [kode, setKode] = useState('')
+  const [challengeId, setChallengeId] = useState('')
   const [otpKey, setOtpKey] = useState(0)
   const [status, setStatus] = useState('idle') // status kotak OTP: idle | error | success
   const [ukuran, setUkuran] = useState(ukuranSlot)
@@ -58,7 +59,8 @@ export default function RegisterAkun() {
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
 
   const kirimKode = async () => {
-    const res = await requestOtp({ email: form.email, nama: form.nama })
+    const res = await requestOtp({ email: form.email, nama: form.nama, peran: pelatih ? 'pelatih' : 'player' })
+    setChallengeId(res.challenge_id || '')
     setDemoCode(res.demoCode || '')
     setKirimLagi(COOLDOWN)
     setSisa(res.expiresIn || 300)
@@ -102,7 +104,7 @@ export default function RegisterAkun() {
     busy.current = true
     setLoading(true)
     try {
-      const res = await verifyOtp({ email: form.email, code, nama: form.nama.trim(), password: form.password, peran: pelatih ? 'pelatih' : 'player', lisensi: form.lisensi.trim(), wa: form.wa.replace(/[\s-]/g, '') })
+      const res = await verifyOtp({ email: form.email, code, nama: form.nama.trim(), password: form.password, password_confirmation: form.ulang, challenge_id: challengeId, peran: pelatih ? 'pelatih' : 'player', lisensi: form.lisensi.trim(), wa: form.wa.replace(/[\s-]/g, '') })
       setSession(res.token, res.role, res.user || { email: form.email, nama: form.nama.trim() })
       setStatus('success')
       // beri waktu animasi centang sebelum pindah halaman

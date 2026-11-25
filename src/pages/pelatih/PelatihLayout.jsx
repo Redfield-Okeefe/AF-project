@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PortalLayout from '../../components/PortalLayout.jsx'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
 import { ambilAkun, useDb } from '../../services/db.js'
-import { clearSession, getUser } from '../../utils/auth.js'
+import { clearSession, getUser, setSession } from '../../utils/auth.js'
+import { coachApiEnabled, coachStatus } from '../../services/coach.js'
 
 const menu = [
   { to: 'beranda', ownerIcon:'overview', icon: '🏠', label: 'Dashboard', title: 'Dashboard Pelatih', sub: 'Ringkasan kelas dan jadwal terdekat' },
@@ -22,7 +24,27 @@ const PESAN = {
 export default function PelatihLayout() {
   useDb() // status berubah otomatis saat owner menyetujui
   const nav = useNavigate()
-  const akun = ambilAkun(getUser()?.email || '')
+  const [remote, setRemote] = useState(null)
+  const [remoteError, setRemoteError] = useState('')
+  useEffect(() => {
+    if (!coachApiEnabled) return
+    let live = true, busy = false
+    const refresh = async () => {
+      if (busy) return
+      busy = true
+      try {
+        const r = await coachStatus()
+        if (!live) return
+        if (r.token) setSession(r.token, 'pelatih', r.user)
+        setRemote(r.user); setRemoteError('')
+      } catch (e) { if (live) { setRemote(null); setRemoteError(e.message) } }
+      finally { busy = false }
+    }
+    refresh()
+    const timer = setInterval(refresh, 5000)
+    return () => { live = false; clearInterval(timer) }
+  }, [])
+  const akun = coachApiEnabled ? remote : ambilAkun(getUser()?.email || '')
 
   if (akun?.status === 'aktif') return <PortalLayout roleLabel="Pelatih" menu={menu} />
 
@@ -35,6 +57,7 @@ export default function PelatihLayout() {
         <h2>{judul}</h2>
         <p className="mut">{isi}</p>
         {akun?.status === 'ditolak' && akun.alasan && <div className="alert err">Alasan: {akun.alasan}</div>}
+        {coachApiEnabled && !akun && <p className="mut">{remoteError || 'Memeriksa status akun...'}</p>}
         {akun && <p className="mut small">Terdaftar sebagai <b>{akun.nama}</b> ({akun.email})</p>}
         <button type="button" className="abtn ghost" onClick={keluar}>Keluar</button>
       </div>

@@ -1,10 +1,9 @@
 import bcrypt from 'bcryptjs';
+import {validateCoachPassword} from './coach-registration.validation.js';
 import {ActivationError,demoEmail,tokenHash} from './activation.crypto.js';
 import {readVerificationProof} from './activation.service.js';
 export function validatePassword(password,confirmation){
-  if(typeof password!=='string'||[...password].length<12||Buffer.byteLength(password,'utf8')>72||!/\S/u.test(password)||password.includes('\0'))throw new ActivationError(400,'Password minimal 12 karakter, maksimal 72 byte UTF-8, bukan spasi saja.');
-  if(password!==confirmation)throw new ActivationError(400,'Konfirmasi password tidak sama.');
-  return password;
+  return validateCoachPassword(password,confirmation);
 }
 export function createPlayerActivationService(repo,config,mailer,{hashPassword=password=>bcrypt.hash(password,12)}={}){
   return {

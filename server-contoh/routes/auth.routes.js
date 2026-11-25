@@ -14,5 +14,5 @@ export function mountAuth(app, auth, authenticate) {
   }
   // Fail closed until persistent registration and OTP flows are implemented.
   const deferred = (req,res)=>res.status(501).json({ok:false,message:'Fitur ini belum diimplementasikan pada fase login PostgreSQL.'});
-  app.post(['/auth/otp/request','/auth/otp/verify','/api/v1/auth/coach/register','/api/v1/auth/forgot-password','/api/v1/auth/reset-password','/pendaftaran','/pembayaran','/api/v1/auth/logout'], deferred);
+  app.post(['/auth/otp/request','/auth/otp/verify','/api/v1/auth/forgot-password','/api/v1/auth/reset-password','/pendaftaran','/pembayaran','/api/v1/auth/logout'], deferred);
 }

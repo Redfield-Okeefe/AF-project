@@ -15,6 +15,7 @@ const body={invitation_token:token,verification_token:proof,password,password_co
 const mailer={ready(){}};
 test('password policy, confirmation and bcrypt byte limit',()=>{
   assert.equal(validatePassword(password,password),password);
+  assert.equal(validatePassword('Abc12345','Abc12345'),'Abc12345');
   for(const p of ['short',' '.repeat(12),'😀'.repeat(19),'a'.repeat(73),'longpassword\0'])assert.throws(()=>validatePassword(p,p),{status:400});
   assert.throws(()=>validatePassword(password,'mismatch'),{status:400});
 });
