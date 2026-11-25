@@ -82,3 +82,11 @@ Backend: kirim `peran` (`player`/`pelatih`/`owner`) di body `POST /login`, dan c
 
 ## Branch dan GitHub Pages
 Gunakan branch `main` untuk pengembangan frontend/backend. Pengaturan repository Settings > Pages > Build and deployment > Source harus **GitHub Actions**, bukan Deploy from a branch. Workflow `pages-preview.yml` membangun Vite dengan base `/AF-project/`, memeriksa aset hasil build dan memublikasikan hanya folder `dist`. Preview publik berjalan dalam mode demo (tanpa database asli). Untuk pengujian Fase 3C/3D gunakan backend PostgreSQL/Mailpit lokal sesuai `ROADMAP_BACKEND_FRONTEND.md`. Jangan memublikasikan `.env`, kredensial atau data asli.
+
+
+## GitHub Pages — dua preview, satu deployment
+Pada Settings > Pages, pilih **GitHub Actions** sebagai Source. Jangan pilih Deploy from a branch: file index.html di root adalah source Vite, bukan hasil build.
+Workflow main membangun kedua branch dan mempublikasikan satu artifact statis:
+- main: https://redfield-okeefe.github.io/AF-project/
+- frontend-design: https://redfield-okeefe.github.io/AF-project/frontend-design/#/design/akademi
+Perubahan main memicu deployment langsung; perubahan frontend-design memicu deployment setelah workflow Frontend design checks berhasil. Branch frontend-design tetap tidak memuat backend. Kedua preview publik memakai data demo; backend lokal dan npm run dev:api tidak berubah.

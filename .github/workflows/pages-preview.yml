@@ -2,60 +2,121 @@ name: Deploy React preview to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Frontend design checks"]
+    types: [completed]
+    branches: [frontend-design]
 
+# One artifact/site; a completed frontend-design check refreshes both previews.
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: github-pages-preview
   cancel-in-progress: true
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: frontend-design
+          path: design-source
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build for GitHub Pages
+      - name: Build main frontend (demo)
+        working-directory: main-source
         env:
           GITHUB_PAGES: 'true'
           VITE_API_URL: ''
-        run: npm run build
-      - name: Verify built JS and CSS asset paths
+          VITE_DESIGN_PREVIEW: 'false'
+        run: npm ci --no-audit --no-fund && npm run build
+      - name: Build frontend-design (isolated preview)
+        working-directory: design-source
+        env:
+          GITHUB_PAGES: 'true'
+          VITE_API_URL: ''
+        run: npm ci --no-audit --no-fund && npm run build
+      - name: Combine compiled sites only
+        run: |
+          mkdir -p site/frontend-design
+          cp -a main-source/dist/. site/
+          cp -a design-source/dist/. site/frontend-design/
+          cp site/index.html site/404.html
+          touch site/.nojekyll
+          test ! -d site/server-contoh
+          test ! -d site/frontend-design/server-contoh
+      - name: Validate entrypoints and built asset paths
         run: |
           node --input-type=module <<'JS'
           import fs from 'node:fs';
-          const html=fs.readFileSync('dist/index.html','utf8');
-          if(html.includes('/src/main.jsx')) throw Error('Unbuilt Vite source detected');
-          const assets=[...html.matchAll(/(?:src|href)="\/AF-project\/(assets\/[^"]+)"/g)].map(m=>m[1]);
-          if(!assets.some(p=>p.endsWith('.js'))) throw Error('Missing compiled JS entry');
-          if(!assets.some(p=>p.endsWith('.css'))) throw Error('Missing compiled CSS entry');
-          for(const p of assets) if(!fs.existsSync('dist/'+p)) throw Error('Missing asset '+p);
-          console.log('Validated built assets:',assets.join(', '));
+          import path from 'node:path';
+          for (const [dir,prefix] of [['site','/AF-project/'],['site/frontend-design','/AF-project/frontend-design/']]) {
+            const html=fs.readFileSync(dir+'/index.html','utf8');
+            if(html.includes('/src/main.jsx'))throw Error('Unbuilt Vite source: '+dir);
+            const refs=[...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m=>m[1]).filter(x=>x.includes('/assets/'));
+            if(!refs.some(p=>p.endsWith('.js'))||!refs.some(p=>p.endsWith('.css')))throw Error('Missing JS/CSS: '+dir);
+            for(const url of refs){
+              if(!url.startsWith(prefix+'assets/'))throw Error('Wrong asset base: '+url);
+              if(!fs.existsSync(path.join(dir,url.slice(prefix.length))))throw Error('Missing asset: '+url);
+            }
+            console.log('Validated',prefix,refs.join(', '));
+          }
           JS
-      - name: Support React Router paths on GitHub Pages
-        run: cp dist/index.html dist/404.html
-      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './site'
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
+      - uses: actions/configure-pages@v5
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published entrypoints
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import urllib.request, urllib.parse, time, re, os
+          base=os.environ['SITE_URL'].rstrip('/')+'/'
+          for suffix,prefix in [('', '/AF-project/'),('frontend-design/', '/AF-project/frontend-design/')]:
+              for attempt in range(6):
+                  try:
+                      request=urllib.request.Request(base+suffix+'?pages_check='+str(time.time_ns()),headers={'Cache-Control':'no-cache','User-Agent':'BNR-Pages-check'})
+                      with urllib.request.urlopen(request,timeout=15) as response:
+                          html=response.read().decode('utf-8')
+                      assert '/src/main.jsx' not in html, 'Raw JSX published; set Pages source to GitHub Actions'
+                      refs=re.findall(r'(?:src|href)="([^"]+)"',html)
+                      js=[r for r in refs if r.startswith(prefix+'assets/') and r.endswith('.js')]
+                      css=[r for r in refs if r.startswith(prefix+'assets/') and r.endswith('.css')]
+                      assert js and css, 'Wrong entrypoint base'
+                      for url in js+css:
+                          with urllib.request.urlopen(urllib.parse.urljoin(base,url),timeout=15) as res:
+                              assert res.status==200
+                              mime=res.headers.get('Content-Type','')
+                              assert 'text/html' not in mime, 'HTML returned instead of asset'
+                      print('Public entrypoint verified:',base+suffix)
+                      break
+                  except Exception as err:
+                      if attempt==5: raise
+                      print('Retry public verification:',err)
+                      time.sleep(5)
+          PY
