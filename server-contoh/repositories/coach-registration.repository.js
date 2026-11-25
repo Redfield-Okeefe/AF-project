@@ -15,13 +15,13 @@ export function createCoachRegistrationRepository(pool,{secret,mailer}){
       return tx(pool,async db=>{
         await lockEmail(db,email);
         if((await findExisting(db,email)).rowCount)throw duplicate();
-        const limits=(await db.query("SELECT count(*)::int AS n,COALESCE(bool_or(created_at>clock_timestamp()-interval '60 seconds'),false) AS cooldown FROM public.coach_registration_otp WHERE email=$1 AND created_at>clock_timestamp()-interval '1 hour'",[email])).rows[0];
+        const limits=(await db.query("SELECT count(*)::int AS n,COALESCE(bool_or(created_at>clock_timestamp()-interval '60 seconds'),false) AS cooldown FROM public.auth_challenges WHERE purpose='register_coach' AND lower(btrim(target_email))=$1 AND created_at>clock_timestamp()-interval '1 hour'",[email])).rows[0];
         if(limits.cooldown||limits.n>=5)throw new ActivationError(429,'Tunggu 60 detik; maksimal 5 OTP per jam.');
-        await db.query('UPDATE public.coach_registration_otp SET consumed_at=clock_timestamp() WHERE email=$1 AND consumed_at IS NULL',[email]);
+        await db.query("UPDATE public.auth_challenges SET consumed_at=clock_timestamp() WHERE purpose='register_coach' AND lower(btrim(target_email))=$1 AND consumed_at IS NULL",[email]);
         const id=randomUUID(),code=otpCode();
-        await db.query("INSERT INTO public.coach_registration_otp(id,email,code_hash,expires_at) VALUES($1,$2,$3,clock_timestamp()+interval '5 minutes')",[id,email,coachOtpHash(secret,id,email,code)]);
+        await db.query("INSERT INTO public.auth_challenges(id,target_email,purpose,code_hash,expires_at) VALUES($1,$2,'register_coach',$3,clock_timestamp()+interval '5 minutes')",[id,email,coachOtpHash(secret,id,email,code)]);
         await mailer.coachOtp({email,code});
-        await audit(db,null,'coach.otp.request','coach_registration_otp',id);
+        await audit(db,null,'coach.otp.request','auth_challenges',id);
         return {challenge_id:id,expiresIn:300,resend_after_seconds:60};
       });
     },
@@ -30,16 +30,16 @@ export function createCoachRegistrationRepository(pool,{secret,mailer}){
         const result=await tx(pool,async db=>{
           await lockEmail(db,email);
           if((await findExisting(db,email)).rowCount)throw duplicate();
-          const row=(await db.query("SELECT id,code_hash,attempts,consumed_at,expires_at>clock_timestamp() AS live FROM public.coach_registration_otp WHERE id=$1 AND email=$2 FOR UPDATE",[challengeId,email])).rows[0];
+          const row=(await db.query("SELECT id,code_hash,attempts,consumed_at,expires_at>clock_timestamp() AS live FROM public.auth_challenges WHERE id=$1 AND purpose='register_coach' AND lower(btrim(target_email))=$2 FOR UPDATE",[challengeId,email])).rows[0];
           if(!row||row.consumed_at||!row.live||row.attempts>=5)return {invalid:true};
           if(!equalHash(row.code_hash,coachOtpHash(secret,challengeId,email,code))){
-            await db.query('UPDATE public.coach_registration_otp SET attempts=attempts+1,consumed_at=CASE WHEN attempts+1>=5 THEN clock_timestamp() ELSE consumed_at END WHERE id=$1',[challengeId]);
+            await db.query('UPDATE public.auth_challenges SET attempts=attempts+1,consumed_at=CASE WHEN attempts+1>=5 THEN clock_timestamp() ELSE consumed_at END WHERE id=$1 AND purpose=\'register_coach\'',[challengeId]);
             return {invalid:true};
           }
           // Use the existing nonaktif account status until approved. Profile review status tracks pending/rejection separately.
           const account=(await db.query("INSERT INTO public.users(full_name,email,password_hash,role,status,email_verified_at) VALUES($1,$2,$3,'pelatih','nonaktif',clock_timestamp()) RETURNING id",[nama,email,passwordHash])).rows[0];
           await db.query("INSERT INTO public.coach_profiles(user_id,license_name,years_experience,biography,registration_whatsapp,registration_review_status) VALUES($1,$2,0,'',$3,'menunggu')",[account.id,lisensi,wa]);
-          await db.query('UPDATE public.coach_registration_otp SET consumed_at=clock_timestamp() WHERE id=$1',[challengeId]);
+          await db.query('UPDATE public.auth_challenges SET consumed_at=clock_timestamp() WHERE id=$1 AND purpose=\'register_coach\'',[challengeId]);
           await audit(db,account.id,'coach.registration.complete','users',account.id,{challenge_id:challengeId});
           return {user:(await db.query(SELECT+' AND u.id=$1',[account.id])).rows[0]};
         });

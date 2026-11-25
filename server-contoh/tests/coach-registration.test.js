@@ -50,9 +50,9 @@ function mock({wrong=false,auditFail=false,consumed=false}={}){
     calls.push({sql,params});
     if(['BEGIN','COMMIT','ROLLBACK'].includes(sql)||sql.includes('pg_advisory_xact_lock'))return result();
     if(sql.startsWith('SELECT id FROM public.users'))return result();
-    if(sql.includes('FROM public.coach_registration_otp WHERE id='))return result({id:challenge,code_hash:coachOtpHash(config.secret,challenge,email,wrong?'123456':'012345'),attempts:0,consumed_at:consumed?new Date():null,live:true});
+    if(sql.includes('FROM public.auth_challenges WHERE id='))return result({id:challenge,code_hash:coachOtpHash(config.secret,challenge,email,wrong?'123456':'012345'),attempts:0,consumed_at:consumed?new Date():null,live:true});
     if(sql.startsWith('INSERT INTO public.users'))return result({id});
-    if(sql.startsWith('INSERT INTO public.coach_profiles')||sql.startsWith('UPDATE public.coach_registration_otp'))return result();
+    if(sql.startsWith('INSERT INTO public.coach_profiles')||sql.startsWith('UPDATE public.auth_challenges'))return result();
     if(sql.startsWith('INSERT INTO public.audit_logs')){if(auditFail)throw Error('audit failed');return result();}
     if(sql.startsWith('SELECT u.id'))return result(user);
     throw Error('unexpected '+sql);
