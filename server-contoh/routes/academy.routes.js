@@ -1,0 +1,30 @@
+import express from 'express';
+import {authorize} from '../middleware/authorize.js';
+import {ApiError} from '../services/auth.service.js';
+import {createAcademyRepository} from '../repositories/academy.repository.js';
+import {id,classInput,programInput,assignmentInput,endInput,stateInput,sessionInput,attendanceInput} from '../services/academy.validation.js';
+export function mountAcademy(app,authenticate,pool){
+ const r=createAcademyRepository(pool),json=express.json({limit:'256kb'}),owner=[authenticate,authorize('owner')],coach=[authenticate,authorize('pelatih')],all=[authenticate,authorize('owner','pelatih','pemain')];
+ const handle=(fn,status=200)=>(req,res,next)=>Promise.resolve().then(async()=>{res.set('Cache-Control','no-store');res.status(status).json({ok:true,...await fn(req)});}).catch(e=>next(e instanceof ApiError?e:e?.status===400?new ApiError(400,e.message):e));
+ const O='/api/v1/owner',C='/api/v1/coach',M='/api/v1/me';
+ app.get(O+'/programs',...owner,handle(async q=>({items:await r.programs(q.user)})));
+ app.post(O+'/programs',...owner,json,handle(async q=>({program:await r.saveProgram(q.user,programInput(q.body))}),201));
+ app.put(O+'/programs/:id',...owner,json,handle(async q=>({program:await r.saveProgram(q.user,programInput(q.body),id(q.params.id))})));
+ app.patch(O+'/programs/:id/status',...owner,json,handle(async q=>({program:await r.programStatus(q.user,id(q.params.id),stateInput(q.body))})));
+ app.get(M+'/classes',...all,handle(async q=>({items:await r.classes(q.user)})));
+ app.get(O+'/classes/options',...owner,handle(q=>r.options(q.user)));
+ app.get(O+'/classes/:id/members',...owner,handle(q=>r.members(q.user,id(q.params.id))));
+ app.post(O+'/classes',...owner,json,handle(async q=>({class:await r.saveClass(q.user,classInput(q.body))}),201));
+ app.put(O+'/classes/:id',...owner,json,handle(async q=>({class:await r.saveClass(q.user,classInput(q.body),id(q.params.id))})));
+ app.patch(O+'/classes/:id/status',...owner,json,handle(async q=>({class:await r.classStatus(q.user,id(q.params.id),stateInput(q.body))})));
+ app.post(O+'/classes/:id/coaches',...owner,json,handle(async q=>({assignment:await r.assign(q.user,id(q.params.id),assignmentInput(q.body,true))}),201));
+ app.post(O+'/classes/:id/players',...owner,json,handle(async q=>({enrollment:await r.enroll(q.user,id(q.params.id),assignmentInput(q.body,false))}),201));
+ for(const [kind,isCoach] of [['coaches',true],['players',false]])app.patch(O+'/classes/:id/'+kind+'/:member/end',...owner,json,handle(async q=>({membership:await r.endMembership(q.user,id(q.params.id),id(q.params.member),endInput(q.body),isCoach)})));
+ app.get(M+'/sessions',...all,handle(async q=>({items:await r.sessions(q.user)})));
+ app.post(C+'/sessions',...coach,json,handle(async q=>({session:await r.saveSession(q.user,sessionInput(q.body))}),201));
+ app.put(C+'/sessions/:id',...coach,json,handle(async q=>({session:await r.saveSession(q.user,sessionInput(q.body),id(q.params.id))})));
+ app.post(C+'/sessions/:id/cancel',...coach,handle(async q=>({session:await r.cancelSession(q.user,id(q.params.id))})));
+ app.get(C+'/sessions/:id/attendance',...coach,handle(q=>r.attendanceRoster(q.user,id(q.params.id))));
+ app.put(C+'/sessions/:id/attendance',...coach,json,handle(async q=>({session:await r.saveAttendance(q.user,id(q.params.id),attendanceInput(q.body))})));
+ app.get(M+'/attendance',...all,handle(async q=>({items:await r.attendance(q.user)})));
+}

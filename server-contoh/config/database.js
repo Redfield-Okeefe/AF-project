@@ -11,6 +11,7 @@ export function getPool() {
 }
 export async function verifyDatabase(db = getPool()) {
   const r = await db.query(`SELECT current_database() AS name,
+    to_regclass('public.classes') IS NOT NULL AND to_regclass('public.coach_assignments') IS NOT NULL AND to_regclass('public.class_enrollments') IS NOT NULL AND to_regclass('public.training_sessions') IS NOT NULL AND to_regclass('public.attendance') IS NOT NULL AS academy_ready,
     to_regclass('public.users') IS NOT NULL AS users_ready,
     to_regclass('public.players') IS NOT NULL AS players_ready,
     to_regclass('public.coach_profiles') IS NOT NULL AS coaches_ready,
@@ -23,7 +24,7 @@ export async function verifyDatabase(db = getPool()) {
     EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='users' AND column_name='session_version') AS sessions_ready,
     EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='coach_profiles' AND column_name='registration_review_status') AS coach_review_ready`);
   const row = r.rows[0];
-  if (row.name !== 'bnr_academy' || !row.users_ready || !row.players_ready || !row.coaches_ready || !row.media_ready || !row.registrations_ready || !row.programs_ready || !row.challenges_ready || !row.activation_ready || !row.audit_ready || !row.sessions_ready || !row.coach_review_ready) {
+  if (row.name !== 'bnr_academy' || !row.academy_ready || !row.users_ready || !row.players_ready || !row.coaches_ready || !row.media_ready || !row.registrations_ready || !row.programs_ready || !row.challenges_ready || !row.activation_ready || !row.audit_ready || !row.sessions_ready || !row.coach_review_ready) {
     throw new Error('Database/skema belum sesuai. Jalankan migrasi revisi 003c dan 003d sesuai panduan.');
   }
   return row.name;
