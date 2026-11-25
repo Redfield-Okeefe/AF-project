@@ -31,12 +31,17 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await call('owner','POST','/owner/classes',409,klass);await call('coach','POST','/owner/classes',403,klass);
   const day=jakartaDate(),yesterday=new Date(Date.parse(day+'T00:00:00Z')-86400000).toISOString().slice(0,10),tomorrow=new Date(Date.parse(day+'T00:00:00Z')+86400000).toISOString().slice(0,10);
   const root='/owner/classes/'+cid;
+  await call('owner','POST',root+'/coaches',400,{coach_user_id:other.id,start_date:day,assignment_type:'asisten'});
   await call('owner','POST',root+'/coaches',201,{coach_user_id:coach.id,start_date:day});
   await call('owner','POST',root+'/coaches',409,{coach_user_id:other.id,start_date:day});
   await call('owner','POST',root+'/players',201,{player_id:playerId,start_date:day});
   await call('owner','POST',root+'/players',409,{player_id:outsiderId,start_date:day});
   await call('owner','POST','/owner/classes/'+cid2+'/players',409,{player_id:playerId,start_date:day});
   await call('owner','GET',root+'/members',200);
+  const summary=(await call('owner','GET','/me/classes',200)).items.find(c=>c.id===cid);assert.equal(summary.enrolled_count,1);assert.equal(summary.coach_name,'Coach');
+  // Legacy assistant must not gain access even if an old assignment remains.
+  await db.query("INSERT INTO coach_assignments(class_id,coach_user_id,assignment_type,start_date) VALUES($1,$2,'asisten',$3)",[cid,other.id,day]);
+  assert.equal((await call('owner','GET','/me/classes',200)).items.find(c=>c.id===cid).legacy_assistant_count,1);
   assert.deepEqual((await call('coach','GET','/me/classes',200)).items.map(c=>c.id),[cid]);
   assert.equal((await call('other','GET','/me/classes',200)).items.length,0);
   assert.deepEqual((await call('player','GET','/me/classes',200)).items.map(c=>c.id),[cid]);
