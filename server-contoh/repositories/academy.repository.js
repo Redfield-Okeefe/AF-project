@@ -101,8 +101,8 @@ export function createAcademyRepository(pool){
    const args=[v.class_id,v.session_type,v.title,v.session_date,v.start_time,v.end_time,v.venue,v.notes];
    const r=sid?await one(db,"UPDATE public.training_sessions SET class_id=$1,session_type=$2,title=$3,session_date=$4,start_time=$5,end_time=$6,venue=$7,notes=$8 WHERE id=$9 RETURNING id",[...args,sid]):await one(db,"INSERT INTO public.training_sessions(class_id,session_type,title,session_date,start_time,end_time,venue,notes,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id",[...args,u.id]);await audit(db,u.id,sid?'session.update':'session.create','training_sessions',r.id,{class_id:v.class_id});return r;
  });},
- cancelSession(u,sid){coach(u);return locked(pool,u,async db=>{
-   const s=await session(db,sid);await accessCoach(db,u,s.class_id,s.session_date);if(s.status!=='terjadwal')fail(409,'Sesi tidak dapat dibatalkan.');await noAttendance(db,sid);await db.query("UPDATE public.training_sessions SET status='dibatalkan' WHERE id=$1",[sid]);await audit(db,u.id,'session.cancel','training_sessions',sid);return {id:sid,status:'dibatalkan'};
+ cancelSession(u,sid){if(!['owner','pelatih'].includes(u.role))fail(403,'Tidak berwenang.');return locked(pool,u,async db=>{
+   const s=await session(db,sid);if(u.role==='pelatih')await accessCoach(db,u,s.class_id,s.session_date);if(s.status!=='terjadwal')fail(409,'Sesi tidak dapat dibatalkan.');await noAttendance(db,sid);await db.query("UPDATE public.training_sessions SET status='dibatalkan' WHERE id=$1",[sid]);await audit(db,u.id,'session.cancel','training_sessions',sid);return {id:sid,status:'dibatalkan'};
  });},
  async attendanceRoster(u,sid){coach(u);return tx(pool,async db=>{await actorCheck(db,u);const s=await session(db,sid);await accessCoach(db,u,s.class_id,s.session_date);return {session:s,items:await roster(db,s)};});},
  saveAttendance(u,sid,items){coach(u);return locked(pool,u,async db=>{

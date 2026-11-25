@@ -11,7 +11,8 @@
     "seed:dummy": "node scripts/seed-dummy.js --local-dev",
     "test": "node --test tests/auth.test.js tests/registration.test.js tests/activation.test.js tests/player-activation.test.js tests/coach-registration.test.js tests/account-security.test.js tests/player-status.test.js tests/academy.test.js",
     "seed:programs": "node scripts/seed-programs.js --local-dev",
-    "inspect:phase-456": "node scripts/inspect-phase-456.js"
+    "inspect:phase-456": "node scripts/inspect-phase-456.js",
+    "test:academy-db": "node --test tests/academy-postgres.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

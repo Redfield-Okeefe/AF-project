@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { coachApiEnabled, ownerCoaches, ownerReviewCoach } from '../../services/coach.js'
 import Reveal from '../../components/Reveal.jsx'
@@ -76,10 +77,11 @@ export default function Pelatih() {
             <div className="adm-info">
               <b>{p.nama} <span className={`pill ${PILL[p.status]}`}>{p.status}</span></b>
               <small className="mut">{p.email} · {p.wa || '–'} · Lisensi: {p.lisensi || '–'}</small>
-              <small className="mut">Kelas: {kls.length ? kls.map((k) => k.nama).join(', ') : coachApiEnabled ? 'belum terintegrasi' : 'belum ada (atur di Pengaturan)'}</small>
+              <small className="mut">Kelas: {kls.length ? kls.map((k) => k.nama).join(', ') : coachApiEnabled ? 'Lihat penugasan di Akademi & Kelas' : 'belum ada (atur di Pengaturan)'}</small>
               {p.status === 'ditolak' && p.alasan && <small className="mut">Alasan: {p.alasan}</small>}
             </div>
             <div className="adm-btns">
+              {coachApiEnabled&&p.status==='aktif'&&<Link className="abtn ghost" to="/owner/akademi">Atur penugasan</Link>}
               {p.status === 'aktif'
                 ? <button type="button" disabled={busy} className="abtn danger" onClick={() => ubah(p, 'nonaktif')}>Nonaktifkan</button>
                 : <button type="button" disabled={busy} className="abtn ghost" onClick={() => ubah(p, 'aktif')}>{p.status === 'ditolak' ? 'Setujui' : 'Aktifkan'}</button>}
