@@ -3,15 +3,7 @@ name: Deploy React preview to GitHub Pages
 on:
   push:
     branches:
-      - feature/ui-modern-dark-2026
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'index.html'
-      - 'vite.config.js'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/pages-preview.yml'
+      - main
   workflow_dispatch:
 
 permissions:
@@ -20,24 +12,38 @@ permissions:
   id-token: write
 
 concurrency:
-  group: mobile-preview-${{ github.ref }}
+  group: github-pages-preview
   cancel-in-progress: true
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
       - name: Build for GitHub Pages
         env:
           GITHUB_PAGES: 'true'
+          VITE_API_URL: ''
         run: npm run build
+      - name: Verify built JS and CSS asset paths
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const html=fs.readFileSync('dist/index.html','utf8');
+          if(html.includes('/src/main.jsx')) throw Error('Unbuilt Vite source detected');
+          const assets=[...html.matchAll(/(?:src|href)="\/AF-project\/(assets\/[^"]+)"/g)].map(m=>m[1]);
+          if(!assets.some(p=>p.endsWith('.js'))) throw Error('Missing compiled JS entry');
+          if(!assets.some(p=>p.endsWith('.css'))) throw Error('Missing compiled CSS entry');
+          for(const p of assets) if(!fs.existsSync('dist/'+p)) throw Error('Missing asset '+p);
+          console.log('Validated built assets:',assets.join(', '));
+          JS
       - name: Support React Router paths on GitHub Pages
         run: cp dist/index.html dist/404.html
       - uses: actions/configure-pages@v5

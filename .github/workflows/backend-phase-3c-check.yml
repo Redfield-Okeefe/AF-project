@@ -1,13 +1,18 @@
-name: Phase 3C checks (no deployment)
+name: Backend and frontend regression checks
 on:
   push:
-    branches: [feature/backend-phase-3c]
+    branches: [main]
   pull_request:
-    branches: [feature/ui-modern-dark-2026]
+    branches: [main]
     paths:
       - 'server-contoh/**'
       - 'src/**'
       - '.github/workflows/backend-phase-3c-check.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - 'index.html'
+      - 'public/**'
 permissions:
   contents: read
 jobs:
@@ -26,5 +31,8 @@ jobs:
         run: npm test
       - name: Install frontend dependencies
         run: npm ci --no-audit --no-fund
-      - name: Frontend production build
+      - name: Frontend production build (Pages base)
+        env:
+          GITHUB_PAGES: 'true'
+          VITE_API_URL: ''
         run: npm run build

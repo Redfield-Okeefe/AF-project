@@ -79,3 +79,6 @@ Backend: kirim `peran` (`player`/`pelatih`/`owner`) di body `POST /login`, dan c
 
 - Warna utama sekarang **oranye** (sesuai logo B.N.R Academy): ubah di `--ac` pada `src/styles/global.css` (mode gelap dan terang) dan `src/styles/dashboard.css`.
 - Logo ada di `public/logo.png` (dan ikon tab di `public/favicon.png`). Timpa file itu dengan gambar baru untuk mengganti logo; komponennya `src/components/BrandLogo.jsx`.
+
+## Branch dan GitHub Pages
+Gunakan branch `main` untuk pengembangan frontend/backend. Pengaturan repository Settings > Pages > Build and deployment > Source harus **GitHub Actions**, bukan Deploy from a branch. Workflow `pages-preview.yml` membangun Vite dengan base `/AF-project/`, memeriksa aset hasil build dan memublikasikan hanya folder `dist`. Preview publik berjalan dalam mode demo (tanpa database asli). Untuk pengujian Fase 3C/3D gunakan backend PostgreSQL/Mailpit lokal sesuai `ROADMAP_BACKEND_FRONTEND.md`. Jangan memublikasikan `.env`, kredensial atau data asli.

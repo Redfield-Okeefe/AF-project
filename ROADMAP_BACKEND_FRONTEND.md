@@ -1,5 +1,5 @@
 # Roadmap B.N.R Academy — satu branch development
-Branch tetap feature/backend-phase-3c, PR #2 draft. Jangan merge/deploy sebelum validasi database dan browser.
+Branch tunggal development: main. Riwayat branch frontend dan backend dipertahankan melalui fast-forward. GitHub Pages hanya preview frontend mode demo; deployment backend produksi tetap ditunda sampai validasi database dan browser.
 Tidak ada MFA/2FA; login email/password, OTP registrasi/aktivasi/reset saja.
 ## Status kandidat
 - v1.5.1: OTP pelatih pindah ke auth_challenges (purpose register_coach); pemain tetap activate_player. Logika bisnis keduanya tetap terpisah.
@@ -19,7 +19,7 @@ Tidak ada MFA/2FA; login email/password, OTP registrasi/aktivasi/reset saja.
 12: regresi, mobile/desktop, aksesibilitas, security, UAT.
 13: produksi, HTTPS, email sungguhan, backup/monitoring. Data demo dan kredensial tidak digunakan dalam produksi.
 ## Instalasi kandidat
-Backup DB dan .env lokal. Jangan reset paksa. git status; git fetch origin; git switch feature/backend-phase-3c; git merge --ff-only origin/feature/backend-phase-3c.
+Backup DB dan .env lokal. Jangan reset paksa. git status; git fetch origin; git switch main; git merge --ff-only origin/main.
 Jalankan revisi server-contoh/migrations/003c-coach.sql lalu 003d-account-security.sql di DBeaver (SQL script, auto-commit aktif). Jika ada constraint gabungan atau tipe domain tak dikenal, hentikan dan periksa DDL; schema v1 penuh belum ada di repo. Jika tabel OTP lama ada, migration salin semua baris lalu drop tabel lama tanpa CASCADE di transaksi; backup wajib.
 Backend npm install, npm test, npm start. Pertahankan JWT_SECRET dan MAIL_MODE=mailpit. Frontend .env VITE_API_URL=http://localhost:3001; npm install; npm run dev.
 Semua JWT sebelum session_version ditambahkan menjadi tidak valid. Login ulang. Logout mengakhiri seluruh sesi, termasuk sesi terbatas pelatih. Reset password hanya email verified, tidak otomatis mengaktifkan akun. Password baru minimal 8 huruf+angka, 72 byte maksimum; password lama yang sudah ada tetap dapat dipakai.
