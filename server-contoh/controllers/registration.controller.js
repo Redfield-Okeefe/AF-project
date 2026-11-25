@@ -12,6 +12,7 @@ export function registrationController(service){
     detail:handle(async(req,res)=>res.json({ok:true,registration:await service.registrationDetail(req.params.id)})),
     players:handle(async(req,res)=>res.json({ok:true,items:await service.listPlayers(req.query)})),
     player:handle(async(req,res)=>res.json({ok:true,player:await service.playerDetail(req.params.id)})),
+    playerStatus:handle(async(req,res)=>res.json({ok:true,player:await service.changePlayerStatus(req.params.id,req.body,req.user)})),
     approve:handle(async(req,res)=>res.json({ok:true,registration:await service.review(req.params.id,'diterima',req.body,req.user.id)})),
     reject:handle(async(req,res)=>res.json({ok:true,registration:await service.review(req.params.id,'ditolak',req.body,req.user.id)}))
   };

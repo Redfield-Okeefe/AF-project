@@ -1,8 +1,8 @@
 import {randomUUID} from 'node:crypto';
 import {RegistrationError,checkProgram} from '../validators/registration.validator.js';
-const registrationFields='r.id,r.registration_number,r.player_id,r.program_id,r.status,r.submitted_at,r.reviewed_by,r.reviewed_at,r.review_note,p.full_name,p.birth_date::text AS birth_date,p.gender,pr.name AS program_name,p.status AS player_status';
+const registrationFields='r.id,r.registration_number,r.player_id,r.program_id,r.status,r.submitted_at,r.reviewed_by,r.reviewed_at,r.review_note,p.full_name,p.birth_date::text AS birth_date,p.gender,pr.name AS program_name,p.status AS player_status,p.user_id IS NOT NULL AS account_created';
 const registrationFrom=' FROM public.registrations r JOIN public.players p ON p.id=r.player_id JOIN public.programs pr ON pr.id=r.program_id';
-const playerFields='p.id,p.student_code,p.user_id,p.full_name,p.gender,p.birth_date::text AS birth_date,p.status,p.created_at';
+const playerFields='p.id,p.student_code,p.user_id,p.full_name,p.gender,p.birth_date::text AS birth_date,p.status,p.created_at,p.contact_email';
 const details='p.birth_place,p.school_name,p.guardian_name,p.contact_email,p.contact_phone,p.address,p.jersey_size,p.notes';
 async function tx(pool,fn){
   const client=await pool.connect();

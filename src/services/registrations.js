@@ -10,3 +10,7 @@ export const registrations=(offset=0)=>get('/api/v1/owner/registrations?limit=25
 export const registrationDetail=id=>get('/api/v1/owner/registrations/'+encodeURIComponent(id),true)
 export const reviewRegistration=(id,decision,note)=>post('/api/v1/owner/registrations/'+encodeURIComponent(id)+'/'+decision,{review_note:note},true)
 export const invitePlayer=id=>post('/api/v1/owner/registrations/'+encodeURIComponent(id)+'/invite',{},true)
+
+export const ownerPlayers=(offset=0,status='')=>get('/api/v1/owner/players?limit=25&offset='+offset+(status?'&status='+encodeURIComponent(status):''),true)
+export const ownerPlayerDetail=id=>get('/api/v1/owner/players/'+encodeURIComponent(id),true)
+export const changePlayerStatus=(id,status)=>apiRequest(base,'/api/v1/owner/players/'+encodeURIComponent(id)+'/status',{method:'PATCH',body:{status},token:getToken()})
