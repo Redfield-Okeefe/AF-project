@@ -4,11 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --mode design-preview",
+    "build": "vite build --mode design-preview",
     "preview": "vite preview",
     "test:owner": "node --test tests/ownerDashboard.test.js",
-    "dev:api": "vite --mode local-api --host localhost --port 5173 --strictPort",
     "test:otp": "node --test tests/otp-contract.test.js",
     "dev:design": "vite --mode design-preview",
     "test:design": "node --test tests/academy-preview.test.js"
