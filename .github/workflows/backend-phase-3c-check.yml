@@ -50,12 +50,21 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Frontend OTP contract tests
         run: npm run test:otp
+      - name: Frontend design preview tests
+        run: npm run test:design
       - name: Verify Vite local API mode
         run: |
           node --input-type=module <<'JS'
           import {createServer} from 'vite';
           const server=await createServer({mode:'local-api',server:{middlewareMode:true,watch:null}});
           try {const r=await server.transformRequest('/src/services/otp.js');if(!r?.code.includes('http://127.0.0.1:3001'))throw Error('Local API URL not injected');console.log('Local API mode verified');} finally {await server.close();}
+          JS
+      - name: Verify isolated design preview mode
+        run: |
+          node --input-type=module <<'JS'
+          import {createServer} from 'vite';
+          const server=await createServer({mode:'design-preview',server:{middlewareMode:true,watch:null}});
+          try {const r=await server.transformRequest('/src/services/academy.js');if(!r?.code.includes('createAcademyPreview'))throw Error('Preview adapter missing'); console.log('Design preview module verified');} finally {await server.close();}
           JS
       - name: Frontend production build (Pages base)
         env:

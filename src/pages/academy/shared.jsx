@@ -4,9 +4,9 @@ export const STATUS=['hadir','izin','sakit','alpa']
 export const label=s=>s?s[0].toUpperCase()+s.slice(1):'–'
 export const number=v=>v===''||v==null?null:Number(v)
 export const pick=(o,keys)=>Object.fromEntries(keys.map(k=>[k,o[k]??'']))
-export function useLoad(loader,deps=[]){
+export function useLoad(loader,deps=[],keepData=false){
  const [state,setState]=useState({data:null,loading:true,error:''}),[rev,setRev]=useState(0)
- useEffect(()=>{let live=true;setState({data:null,loading:true,error:''});Promise.resolve().then(loader).then(data=>{if(live)setState({data,loading:false,error:''})}).catch(e=>{if(live)setState({data:null,loading:false,error:e.message})});return()=>{live=false}},[...deps,rev])
+ useEffect(()=>{let live=true;setState(prev=>({data:keepData?prev.data:null,loading:true,error:''}));Promise.resolve().then(loader).then(data=>{if(live)setState({data,loading:false,error:''})}).catch(e=>{if(live)setState({data:null,loading:false,error:e.message})});return()=>{live=false}},[...deps,rev])
  return {...state,reload:()=>setRev(r=>r+1)}
 }
 export function useAction(done){
