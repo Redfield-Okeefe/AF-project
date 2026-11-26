@@ -17,3 +17,5 @@
 @media(max-width:1050px){.academy-nav,.academy-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.academy-nav{gap:5px;padding:4px}.academy-nav-item{padding:10px 7px;gap:7px}.academy-nav-icon{width:30px;height:30px}.academy-nav-item small{display:none}.academy-stat{padding:12px;gap:8px}.academy-stat-icon{width:32px;height:32px}.academy-stat strong{font-size:1.35rem}.academy-filter{grid-template-columns:1fr 1fr}.academy-search{grid-column:1/-1}.academy-class-grid{grid-template-columns:1fr}.academy-class-card{padding:14px!important}}
 @media(prefers-reduced-motion:reduce){.academy-workspace *{transition:none!important}}
+
+.academy-membership-editor{display:grid;gap:12px}.academy-member-tabs{display:flex;gap:8px;flex-wrap:wrap}.academy-current-coach{flex-wrap:wrap}.academy-current-coach>div{flex:1;min-width:180px}.academy-current-coach p{font-size:.8rem}.academy-close-panel{padding:16px;border:1px solid rgba(249,115,22,.45);border-radius:12px;background:rgba(249,115,22,.05);scroll-margin:100px}.academy-close-panel .adm-actions{display:flex;gap:8px;flex-wrap:wrap}.academy-class-actions>.abtn:first-child{flex:0 1 auto}

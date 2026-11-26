@@ -11,8 +11,10 @@ export function summarize(classes,sessions,attendance,month,day){
  const periodSessions=sessions.filter(s=>s.session_date.startsWith(month)),a=attendance.filter(s=>s.session_date.startsWith(month));
  const count=Object.fromEntries(['hadir','izin','sakit','alpa'].map(k=>[k,a.filter(r=>r.status===k).length]));
  const recorded=Object.values(count).reduce((x,y)=>x+y,0);
+ const [year,mon]=month.split('-').map(Number),days=new Date(Date.UTC(year,mon,0)).getUTCDate();
+ const weeks=Array.from({length:Math.ceil(days/7)},(_,i)=>{const from=i*7+1,to=Math.min(from+6,days),inWeek=r=>Number(r.session_date.slice(8,10))>=from&&Number(r.session_date.slice(8,10))<=to;const s=periodSessions.filter(inWeek),at=a.filter(inWeek),valid=at.filter(r=>['hadir','izin','sakit','alpa'].includes(r.status));return {label:from+'–'+to,scheduled:s.filter(r=>r.status==='terjadwal').length,completed:s.filter(r=>r.status==='selesai').length,canceled:s.filter(r=>r.status==='dibatalkan').length,recorded:valid.length,hadir:valid.filter(r=>r.status==='hadir').length};});
  const upcoming=sessions.filter(s=>s.status==='terjadwal'&&s.session_date>=day).sort((a,b)=>(a.session_date+a.start_time).localeCompare(b.session_date+b.start_time));
- return {period:month,as_of:day,classes:classes.filter(c=>c.status==='aktif').map(c=>({id:c.id,name:c.name})),sessions:{total:periodSessions.length,scheduled:periodSessions.filter(s=>s.status==='terjadwal').length,completed:periodSessions.filter(s=>s.status==='selesai').length,canceled:periodSessions.filter(s=>s.status==='dibatalkan').length},attendance:{...count,recorded,unrecorded:a.length-recorded,percentage:recorded?Math.round(count.hadir/recorded*100):null},upcoming_count:upcoming.length,upcoming:upcoming.slice(0,5)};
+ return {period:month,as_of:day,weeks,classes:classes.filter(c=>c.status==='aktif').map(c=>({id:c.id,name:c.name})),sessions:{total:periodSessions.length,scheduled:periodSessions.filter(s=>s.status==='terjadwal').length,completed:periodSessions.filter(s=>s.status==='selesai').length,canceled:periodSessions.filter(s=>s.status==='dibatalkan').length},attendance:{...count,recorded,unrecorded:a.length-recorded,percentage:recorded?Math.round(count.hadir/recorded*100):null},upcoming_count:upcoming.length,upcoming:upcoming.slice(0,5)};
 }
 export function createDashboardService(pool){
  return {async read(u,month){

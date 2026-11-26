@@ -47,9 +47,9 @@ export function createProfileService(pool){
     const merged={...old,...v};
     await db.query("UPDATE public.players SET full_name=$2,contact_phone=$3,guardian_name=$4,address=$5,school_name=$6,birth_place=$7,jersey_size=$8 WHERE user_id=$1",[u.id,merged.nama,merged.wa||null,merged.ortu,merged.alamat||null,merged.sekolah||null,merged.tempatLahir||null,merged.jersey||null]);
    }
-   if(u.role==='pelatih'){
-    const merged={...old,...v};
-    await db.query("UPDATE public.coach_profiles SET phone=$2,registration_whatsapp=$2,license_name=$3 WHERE user_id=$1",[u.id,merged.wa||null,merged.lisensi||null]);
+   if(u.role==='pelatih'&&('wa'in v||'lisensi'in v)){
+    if('wa'in v)await db.query("UPDATE public.coach_profiles SET phone=$2::varchar(25),registration_whatsapp=$3::text WHERE user_id=$1",[u.id,v.wa||null,v.wa||null]);
+    if('lisensi'in v)await db.query("UPDATE public.coach_profiles SET license_name=$2::varchar(120) WHERE user_id=$1",[u.id,v.lisensi||null]);
    }
    await audit(db,u.id,'profile.update','users',u.id,{fields:Object.keys(v)});
    return get(db,u);
