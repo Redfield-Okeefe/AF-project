@@ -54,7 +54,7 @@ export default function PortalLayout({ menu, roleLabel, ownerMode = false }) {
   }
 
   return (
-    <div className={`dash ${ownerMode ? 'owner-portal' : 'workspace-portal'}`} data-theme={theme}>
+    <div className={`dash owner-portal${ownerMode ? '' : ' workspace-portal'}`} data-theme={theme}>
       <aside className={`sidebar${open ? ' open' : ''}`}>
         <div className="logo"><BrandLogo /><span className="portal-brand-text">B.N.R <b>ACADEMY</b></span></div>
         <button type="button" className="owner-close-sidebar" onClick={() => setOpen(false)} aria-label="Tutup menu portal"><OwnerIcon name="close" size={19}/></button>

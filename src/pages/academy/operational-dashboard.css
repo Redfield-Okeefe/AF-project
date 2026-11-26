@@ -18,3 +18,6 @@
 @media(max-width:1100px){.op-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.op-chart-grid,.op-bottom-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){.dash .operational-dashboard.view.active{gap:12px}.op-hero{padding:15px;align-items:flex-start;flex-direction:column;gap:8px}.op-toolbar,.op-panel{padding:13px}.op-controls{width:100%}.op-controls label{flex:1 1 100%}.op-controls .op-button{flex:1}.op-kpis{gap:8px}.op-kpi{padding:11px;gap:7px;min-height:84px}.op-icon{width:34px;height:34px}.op-kpi p{font-size:11px}.op-secondary{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}.op-bars{gap:6px}.op-heading{flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.op-bar-stack{transition:none}}
+
+/* Shared Owner tokens for all three portal roots. */
+.dash.owner-portal .operational-dashboard.view.active,:root[data-theme="dark"] .dash.owner-portal .operational-dashboard.view.active{--op-accent:var(--ac);--op-card:var(--card);--op-text:var(--tx);--op-muted:var(--mut);--op-line:var(--bd);--op-track:var(--owner-track);--op-hero:var(--owner-welcome-a)}

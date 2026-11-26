@@ -8,6 +8,7 @@ import { authenticateWith } from './middleware/authenticate.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { mountAuth } from './routes/auth.routes.js';
 import { setupMedia } from './media.js';
+import { mountContent } from './routes/content.routes.js';
 import { mountDashboard } from './routes/dashboard.routes.js';
 import { mountProfile } from './routes/profile.routes.js';
 import { mountAcademy } from './routes/academy.routes.js';
@@ -38,10 +39,11 @@ try {
   mountAcademy(app,authenticate,pool);
   mountProfile(app,authenticate,pool);
   mountDashboard(app,authenticate,pool);
+  mountContent(app,authenticate,pool);
   setupMedia(app,authenticate,pool);
   app.use((req,res)=>res.status(404).json({ok:false,message:'Endpoint tidak ditemukan.'}));
   app.use(errorHandler);
-  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 3D-3: profil; Fase 4–6: operasional akademi`));
+  const server=app.listen(port,host,()=>console.log(`Backend BNR aktif: http://${host}:${port}\nPostgreSQL: bnr_academy\nFase 7–9: penilaian, informasi dan dashboard operasional (kandidat)`));
   server.on('error',async error=>{ console.error('Server gagal:',error.code || error.name); await closePool(); process.exitCode=1; });
   for (const signal of ['SIGINT','SIGTERM']) process.once(signal,()=>server.close(async()=>{await closePool();process.exit(0);}));
 } catch(error) {

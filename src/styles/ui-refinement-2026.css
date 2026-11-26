@@ -79,17 +79,8 @@ body{background:var(--bg)!important}
 
 /* Portal Coach & Player — share the Owner's polished design language. */
 .dash.workspace-portal{
- --bg:#f7f9fc;--bg2:#edf2f8;--card:#fff;--tx:#273249;--mut:#6a778b;
- --bd:#e2e8f1;--ac:#e96f31;--ok:#198466;--warn:#b47a21;--info:#3976b9;
- --portal-side:#fff;--portal-active:#fff1e6;--portal-field:#fff;
- --portal-shadow:0 10px 32px rgba(20,40,66,.06);
- --side:262px;background:var(--bg);color:var(--tx);color-scheme:light
-}
-.dash.workspace-portal[data-theme='dark']{
- --bg:#0f1724;--bg2:#162337;--card:#1b2a3c;--tx:#f2f6fc;--mut:#b2bed0;
- --bd:#35475c;--ac:#ff9b61;--ok:#65d8a8;--warn:#f5c47a;--info:#91bffa;
- --portal-side:#121e2d;--portal-active:#3a2e2a;--portal-field:#172637;
- --portal-shadow:0 12px 34px rgba(0,0,0,.24);color-scheme:dark
+ --portal-side:var(--owner-sidebar);--portal-active:var(--owner-active);--portal-field:var(--owner-field);--portal-shadow:var(--owner-shadow);
+ background:var(--bg);color:var(--tx)
 }
 .dash.workspace-portal .main{background:var(--bg);color:var(--tx);max-width:none;min-height:100vh;min-width:0;padding:clamp(18px,2.4vw,34px) clamp(18px,3vw,48px) 60px}
 .dash.workspace-portal .sidebar{background:var(--portal-side)!important;border:0;border-right:1px solid var(--bd);box-shadow:none;color:var(--tx);padding:26px 15px 20px}

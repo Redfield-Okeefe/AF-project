@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {assessmentInput,announcementInput,newsInput} from '../services/content.service.js';
+const id='12345678-1234-4234-8234-123456789012',v={player_id:id,class_id:id,month:'2026-11',technique:8,physical:7,tactical:9,discipline:8};
+test('assessment schema 1–10 and month validation',()=>{assert.equal(assessmentInput(v,'2026-11-26').month,'2026-11-01');for(const x of [{technique:0},{physical:11},{discipline:1.5},{month:'2026-12'},{assessed_by:id}])assert.throws(()=>assessmentInput({...v,...x},'2026-11-26'),{status:400})});
+test('announcement audience schema',()=>{const b={target_class_id:null,category:'Info',title:'Judul',body:'Isi',audience:'orang_tua'};assert.equal(announcementInput(b).audience,'orang_tua');assert.throws(()=>announcementInput({...b,audience:'coach'}),{status:400})});
+test('news schema status and date',()=>{const b={title:'Berita',category:'Info',summary:'Ringkasan',content:'Isi',status:'draft',date:'2026-11-26'};assert.equal(newsInput(b,'2026-11-26').status,'draft');assert.throws(()=>newsInput({...b,status:'published'},'2026-11-26'),{status:400})});
