@@ -1,9 +1,6 @@
-import {useEffect,useState} from 'react'
-import {content} from '../../services/content.js'
 import {academyApiEnabled} from '../../services/academy.js'
 import PortalLayout from '../../components/PortalLayout.jsx'
-import { jumlahInfoBaru, useDb } from '../../services/db.js'
-import { getUser } from '../../utils/auth.js'
+import { useDb } from '../../services/db.js'
 
 const menu = [
   { to:'ringkasan', ownerIcon:'overview', label:'Dashboard', title:'Dashboard Pemain', sub:'Aktivitas dan informasi akademi' },
@@ -15,8 +12,5 @@ const menu = [
 
 export default function DashboardLayout() {
   useDb()
-  const [unread,setUnread]=useState(0)
-  useEffect(()=>{if(!academyApiEnabled)return;let live=true;const refresh=()=>content.announcements().then(r=>{if(live)setUnread(r.items.filter(a=>!a.read_at).length)}).catch(()=>{});refresh();const timer=setInterval(refresh,15000);return()=>{live=false;clearInterval(timer)}},[])
-  const baru=academyApiEnabled?unread:jumlahInfoBaru(getUser()?.email||'')
-  return <PortalLayout roleLabel="Pemain" menu={(academyApiEnabled?[...menu.slice(0,3),{to:'kehadiran',ownerIcon:'calendar',label:'Kehadiran',title:'Kehadiran',sub:'Riwayat absensi pribadi'},{to:'penilaian',ownerIcon:'trend',label:'Perkembangan',title:'Perkembangan Pemain',sub:'Riwayat penilaian pribadi'},...menu.slice(3)]:menu).map((m) => (m.to === 'pengumuman' ? { ...m, badge: baru } : m))} />
+  return <PortalLayout roleLabel="Pemain" menu={(academyApiEnabled?[...menu.slice(0,3),{to:'kehadiran',ownerIcon:'calendar',label:'Kehadiran',title:'Kehadiran',sub:'Riwayat absensi pribadi'},{to:'penilaian',ownerIcon:'trend',label:'Perkembangan',title:'Perkembangan Pemain',sub:'Riwayat penilaian pribadi'},...menu.slice(3)]:menu)} />
 }

@@ -73,7 +73,7 @@ const mapNews=b=>({id:b.id,slug:b.slug,judul:b.title,kategori:b.category,tanggal
 export async function listNews(owner=false) {
   if (API_URL) return (await remote(owner?'/owner/news':'/public/news')).items.map(mapNews)
   await wait()
-  return readLocal().slice().sort(byTanggal)
+  return readLocal().map(b=>({...b,status:b.status??'terbit'})).filter(b=>owner||b.status==='terbit').sort(byTanggal)
 }
 
 export async function getNews(slug) {
@@ -81,12 +81,12 @@ export async function getNews(slug) {
     try { return mapNews((await remote('/public/news/'+encodeURIComponent(slug))).item) } catch(e) { if(e.status===404)return null;throw e }
   }
   await wait(150)
-  return readLocal().find((b) => b.slug === slug) || null
+  return readLocal().find((b) => b.slug === slug&&(b.status??'terbit')==='terbit') || null
 }
 
 export async function saveNews(item) {
   if (API_URL) {
-    const b={title:item.judul,category:item.kategori,summary:item.ringkas,content:paragraf(item.isi).join('\n'),cover_path:item.gambar||'',date:item.tanggal,status:item.status||'terbit'}
+    const b={title:item.judul,category:item.kategori,summary:item.ringkas,content:paragraf(item.isi).join('\n'),cover_path:item.gambar||'',date:item.tanggal,status:item.status||'belum_terbit'}
     return remote('/owner/news'+(item.id?'/'+item.id:''),item.id?'PUT':'POST',b)
   }
   await wait(300)
@@ -110,5 +110,5 @@ export async function saveNews(item) {
 export async function deleteNews(id) {
   if (API_URL) return remote('/owner/news/'+id,'DELETE')
   await wait(200)
-  writeLocal(readLocal().filter((b) => b.id !== id))
+  writeLocal(readLocal().map(b=>b.id===id?{...b,status:'belum_terbit'}:b))
 }

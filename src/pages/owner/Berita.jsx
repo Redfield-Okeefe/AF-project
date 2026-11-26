@@ -8,7 +8,7 @@ import OwnerIcon from '../../components/OwnerIcon.jsx'
 import OwnerPageHeading from '../../components/OwnerPageHeading.jsx'
 
 const kosong = () => ({
-  status:'terbit', judul: '', kategori: KATEGORI_BERITA[0], tanggal: iso(),
+  status:'belum_terbit', judul: '', kategori: KATEGORI_BERITA[0], tanggal: iso(),
   ringkas: '', isi: '', emoji: '📰', warna: WARNA_BERITA[0].value, gambar: '',
 })
 
@@ -91,7 +91,7 @@ export default function KelolaBerita() {
     try {
       await saveNews({ ...form, judul: form.judul.trim(), ringkas: form.ringkas.trim(), isi: form.isi.trim() })
       await muat()
-      info(form.id ? 'Berita diperbarui ✓' : newsApiEnabled&&form.status!=='terbit'?'Berita disimpan ✓':'Berita diterbitkan ✓')
+      info(form.id ? 'Berita diperbarui ✓' : form.status!=='terbit'?'Berita disimpan ✓':'Berita diterbitkan ✓')
       setForm(null)
     } catch (err) {
       setError(err.message)
@@ -101,11 +101,11 @@ export default function KelolaBerita() {
   }
 
   const hapus = async (b) => {
-    if (!window.confirm(`${newsApiEnabled?'Arsipkan':'Hapus'} berita "${b.judul}"?`)) return
+    if (!window.confirm(`Tarik berita "${b.judul}" dari publikasi?`)) return
     try {
       await deleteNews(b.id)
-      if(newsApiEnabled)await muat();else setDaftar((d) => d.filter((x) => x.id !== b.id))
-      info(newsApiEnabled?'Berita diarsipkan':'Berita dihapus')
+      await muat()
+      info('Berita menjadi belum terbit')
     } catch (err) {
       setError(err.message)
     }
@@ -135,7 +135,7 @@ export default function KelolaBerita() {
             </label>
           </div>
 
-          {newsApiEnabled&&<label>Status<select value={form.status} onChange={set('status')}><option value="draft">Draft</option><option value="terbit">Terbit</option><option value="arsip">Arsip</option></select></label>}
+          {<label>Status<select value={form.status} onChange={set('status')}><option value="belum_terbit">Belum terbit</option><option value="terbit">Terbit</option></select></label>}
           <label>Ringkasan (tampil di daftar berita)
             <textarea rows={2} value={form.ringkas} onChange={set('ringkas')} maxLength={220} />
           </label>
@@ -167,7 +167,7 @@ export default function KelolaBerita() {
           {form.gambar && <button type="button" className="abtn ghost" onClick={() => setForm((f) => ({ ...f, gambar: '' }))}>Hapus gambar</button>}
 
           <div className="adm-actions">
-            <button type="submit" className="abtn" disabled={saving}>{saving ? 'Menyimpan...' : form.id ? 'Simpan Perubahan' : newsApiEnabled&&form.status!=='terbit'?'Simpan':'Terbitkan'}</button>
+            <button type="submit" className="abtn" disabled={saving}>{saving ? 'Menyimpan...' : form.id ? 'Simpan Perubahan' : form.status!=='terbit'?'Simpan':'Terbitkan'}</button>
             <button type="button" className="abtn ghost" onClick={() => setForm(null)} disabled={saving}>Batal</button>
           </div>
         </form>
@@ -190,12 +190,12 @@ export default function KelolaBerita() {
           <div className="ncover adm-thumb" style={coverStyle(b)}>{!b.gambar && b.emoji}</div>
           <div className="adm-info">
             <b>{b.judul}</b>
-            <small className="mut">{b.kategori} · {fmtTanggal(b.tanggal)} {newsApiEnabled?' · '+b.status:''}</small>
+            <small className="mut">{b.kategori} · {fmtTanggal(b.tanggal)}  · {b.status==='terbit'?'Terbit':'Belum terbit'}</small>
           </div>
           <div className="adm-btns">
-            {(!newsApiEnabled||b.status==='terbit')&&<Link className="abtn ghost" to={`/berita/${b.slug}`} target="_blank">Lihat</Link>}
+            {b.status==='terbit'&&<Link className="abtn ghost" to={`/berita/${b.slug}`} target="_blank">Lihat</Link>}
             <button type="button" className="abtn ghost" onClick={() => bukaForm(b)}>Ubah</button>
-            <button type="button" className="abtn danger" onClick={() => hapus(b)}>{newsApiEnabled?'Arsipkan':'Hapus'}</button>
+            {b.status==='terbit'&&<button type="button" className="abtn ghost" onClick={() => hapus(b)}>Tarik publikasi</button>}
           </div>
         </div>
       ))}
