@@ -1,3 +1,4 @@
+import {apiRequest} from './otp-contract.js'
 import { BERITA } from '../data/config.js'
 import { getToken } from '../utils/auth.js'
 
@@ -66,15 +67,18 @@ async function request(path, options = {}) {
 }
 
 /* ---------- Fungsi publik ---------- */
-export async function listNews() {
-  if (API_URL) return (await request('/berita')).slice().sort(byTanggal)
+const remote=(path,method='GET',body)=>apiRequest(API_URL,'/api/v1'+path,{method,body,token:getToken()})
+export const newsApiEnabled=Boolean(API_URL)
+const mapNews=b=>({id:b.id,slug:b.slug,judul:b.title,kategori:b.category,tanggal:b.date,ringkas:b.summary||'',isi:b.content,gambar:b.cover_path||'',status:b.status,emoji:'📰',warna:'#e86b29,#7c3f17'})
+export async function listNews(owner=false) {
+  if (API_URL) return (await remote(owner?'/owner/news':'/public/news')).items.map(mapNews)
   await wait()
   return readLocal().slice().sort(byTanggal)
 }
 
 export async function getNews(slug) {
   if (API_URL) {
-    try { return await request(`/berita/${encodeURIComponent(slug)}`) } catch { return null }
+    try { return mapNews((await remote('/public/news/'+encodeURIComponent(slug))).item) } catch(e) { if(e.status===404)return null;throw e }
   }
   await wait(150)
   return readLocal().find((b) => b.slug === slug) || null
@@ -82,9 +86,8 @@ export async function getNews(slug) {
 
 export async function saveNews(item) {
   if (API_URL) {
-    return item.id
-      ? request(`/berita/${item.id}`, { method: 'PUT', body: JSON.stringify(item) })
-      : request('/berita', { method: 'POST', body: JSON.stringify(item) })
+    const b={title:item.judul,category:item.kategori,summary:item.ringkas,content:paragraf(item.isi).join('\n'),cover_path:item.gambar||'',date:item.tanggal,status:item.status||'terbit'}
+    return remote('/owner/news'+(item.id?'/'+item.id:''),item.id?'PUT':'POST',b)
   }
   await wait(300)
   const data = readLocal()
@@ -105,7 +108,7 @@ export async function saveNews(item) {
 }
 
 export async function deleteNews(id) {
-  if (API_URL) return request(`/berita/${id}`, { method: 'DELETE' })
+  if (API_URL) return remote('/owner/news/'+id,'DELETE')
   await wait(200)
   writeLocal(readLocal().filter((b) => b.id !== id))
 }

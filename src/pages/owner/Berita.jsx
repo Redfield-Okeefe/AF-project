@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { KATEGORI_BERITA, WARNA_BERITA } from '../../data/config.js'
-import { deleteNews, listNews, saveNews } from '../../services/news.js'
+import { deleteNews, listNews, saveNews, newsApiEnabled } from '../../services/news.js'
 import { coverStyle, fmtTanggal } from '../../utils/format.js'
 import { iso } from '../../services/db.js'
 import OwnerIcon from '../../components/OwnerIcon.jsx'
 import OwnerPageHeading from '../../components/OwnerPageHeading.jsx'
 
 const kosong = () => ({
-  judul: '', kategori: KATEGORI_BERITA[0], tanggal: iso(),
+  status:'terbit', judul: '', kategori: KATEGORI_BERITA[0], tanggal: iso(),
   ringkas: '', isi: '', emoji: '📰', warna: WARNA_BERITA[0].value, gambar: '',
 })
 
@@ -45,7 +45,7 @@ export default function KelolaBerita() {
   const timer = useRef(null)
 
   const muat = () =>
-    listNews().then(setDaftar).catch((e) => setError(e.message)).finally(() => setLoading(false))
+    listNews(true).then(setDaftar).catch((e) => setError(e.message)).finally(() => setLoading(false))
 
   useEffect(() => { muat(); return () => clearTimeout(timer.current) }, [])
 
@@ -91,7 +91,7 @@ export default function KelolaBerita() {
     try {
       await saveNews({ ...form, judul: form.judul.trim(), ringkas: form.ringkas.trim(), isi: form.isi.trim() })
       await muat()
-      info(form.id ? 'Berita diperbarui ✓' : 'Berita diterbitkan ✓')
+      info(form.id ? 'Berita diperbarui ✓' : newsApiEnabled&&form.status!=='terbit'?'Berita disimpan ✓':'Berita diterbitkan ✓')
       setForm(null)
     } catch (err) {
       setError(err.message)
@@ -101,11 +101,11 @@ export default function KelolaBerita() {
   }
 
   const hapus = async (b) => {
-    if (!window.confirm(`Hapus berita "${b.judul}"?`)) return
+    if (!window.confirm(`${newsApiEnabled?'Arsipkan':'Hapus'} berita "${b.judul}"?`)) return
     try {
       await deleteNews(b.id)
-      setDaftar((d) => d.filter((x) => x.id !== b.id))
-      info('Berita dihapus')
+      if(newsApiEnabled)await muat();else setDaftar((d) => d.filter((x) => x.id !== b.id))
+      info(newsApiEnabled?'Berita diarsipkan':'Berita dihapus')
     } catch (err) {
       setError(err.message)
     }
@@ -135,6 +135,7 @@ export default function KelolaBerita() {
             </label>
           </div>
 
+          {newsApiEnabled&&<label>Status<select value={form.status} onChange={set('status')}><option value="draft">Draft</option><option value="terbit">Terbit</option><option value="arsip">Arsip</option></select></label>}
           <label>Ringkasan (tampil di daftar berita)
             <textarea rows={2} value={form.ringkas} onChange={set('ringkas')} maxLength={220} />
           </label>
@@ -150,7 +151,7 @@ export default function KelolaBerita() {
             <input value={form.gambar.startsWith('data:') ? '' : form.gambar} onChange={set('gambar')} placeholder="https://..." />
           </label>
 
-          <div className="adm-2">
+          {!newsApiEnabled&&<div className="adm-2">
             <label>Emoji sampul (jika tanpa gambar)
               <input value={form.emoji} onChange={set('emoji')} maxLength={4} />
             </label>
@@ -159,14 +160,14 @@ export default function KelolaBerita() {
                 {WARNA_BERITA.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
               </select>
             </label>
-          </div>
+          </div>}
 
           <p className="mut adm-prev-label">Pratinjau sampul</p>
           <div className="ncover adm-prev" style={coverStyle(form)}>{!form.gambar && form.emoji}</div>
           {form.gambar && <button type="button" className="abtn ghost" onClick={() => setForm((f) => ({ ...f, gambar: '' }))}>Hapus gambar</button>}
 
           <div className="adm-actions">
-            <button type="submit" className="abtn" disabled={saving}>{saving ? 'Menyimpan...' : form.id ? 'Simpan Perubahan' : 'Terbitkan'}</button>
+            <button type="submit" className="abtn" disabled={saving}>{saving ? 'Menyimpan...' : form.id ? 'Simpan Perubahan' : newsApiEnabled&&form.status!=='terbit'?'Simpan':'Terbitkan'}</button>
             <button type="button" className="abtn ghost" onClick={() => setForm(null)} disabled={saving}>Batal</button>
           </div>
         </form>
@@ -189,12 +190,12 @@ export default function KelolaBerita() {
           <div className="ncover adm-thumb" style={coverStyle(b)}>{!b.gambar && b.emoji}</div>
           <div className="adm-info">
             <b>{b.judul}</b>
-            <small className="mut">{b.kategori} · {fmtTanggal(b.tanggal)}</small>
+            <small className="mut">{b.kategori} · {fmtTanggal(b.tanggal)} {newsApiEnabled?' · '+b.status:''}</small>
           </div>
           <div className="adm-btns">
-            <Link className="abtn ghost" to={`/berita/${b.slug}`} target="_blank">Lihat</Link>
+            {(!newsApiEnabled||b.status==='terbit')&&<Link className="abtn ghost" to={`/berita/${b.slug}`} target="_blank">Lihat</Link>}
             <button type="button" className="abtn ghost" onClick={() => bukaForm(b)}>Ubah</button>
-            <button type="button" className="abtn danger" onClick={() => hapus(b)}>Hapus</button>
+            <button type="button" className="abtn danger" onClick={() => hapus(b)}>{newsApiEnabled?'Arsipkan':'Hapus'}</button>
           </div>
         </div>
       ))}

@@ -1,3 +1,5 @@
+import {Announcements} from '../academy/Content.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { useState } from 'react'
 import { buatInfo, hapusInfo, ambilKelas, listInfo } from '../../services/db.js'
 import { fmtTanggal } from '../../utils/format.js'
@@ -6,7 +8,8 @@ import { useSaya } from './useSaya.js'
 
 const CLS = { Penting: 'warn', Info: 'info', Event: 'ok' }
 
-export default function Pengumuman() {
+export default function Pengumuman(){return academyApiEnabled?<Announcements role="pelatih"/>:<Demo/>}
+function Demo() {
   const { email, akun, kelas } = useSaya()
   const kosong = { tag: 'Info', judul: '', isi: '', target: kelas[0]?.id || '', untuk: 'semua' }
   const [form, setForm] = useState(kosong)

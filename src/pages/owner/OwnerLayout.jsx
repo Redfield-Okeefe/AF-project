@@ -18,13 +18,14 @@ export default function OwnerLayout() {
   useDb()
   const [counts,setCounts]=useState(null)
   useEffect(()=>{if(!academyApiEnabled)return;let live=true;const refresh=()=>readDashboard().then(d=>{if(live)setCounts(d.accounts)}).catch(()=>{if(live)setCounts(null)});refresh();const timer=setInterval(refresh,30000);return()=>{live=false;clearInterval(timer)}},[])
+  const extra=academyApiEnabled?[{to:'penilaian',ownerIcon:'trend',label:'Penilaian',title:'Penilaian Pemain',sub:'Monitoring perkembangan'},{to:'pengumuman',ownerIcon:'news',label:'Pengumuman',title:'Pengumuman',sub:'Informasi internal akademi'}]:[]
   const menunggu = academyApiEnabled?(counts?.pending_coaches||0):daftarPelatih().filter((p) => p.status === 'menunggu').length
   const baru = academyApiEnabled?(counts?.pending_registrations||0):daftarPemain().filter((p) => p.status === 'baru').length
   return (
     <PortalLayout
       roleLabel="Owner"
       ownerMode
-      menu={(academyWorkspaceEnabled?[...menu.slice(0,3),{to:'akademi',ownerIcon:'players',label:'Akademi & Kelas',title:'Akademi & Kelas',sub:'Program, kelas, jadwal dan absensi'},...menu.slice(3)]:menu).map((m) => (m.to === 'pelatih' ? { ...m, badge: menunggu } : m.to === 'pemain' ? { ...m, badge: baru } : m))}
+      menu={(academyWorkspaceEnabled?[...menu.slice(0,3),{to:'akademi',ownerIcon:'players',label:'Akademi & Kelas',title:'Akademi & Kelas',sub:'Program, kelas, jadwal dan absensi'},...extra,...menu.slice(3)]:menu).map((m) => (m.to === 'pelatih' ? { ...m, badge: menunggu } : m.to === 'pemain' ? { ...m, badge: baru } : m))}
     />
   )
 }

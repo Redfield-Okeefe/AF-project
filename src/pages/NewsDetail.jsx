@@ -8,11 +8,12 @@ export default function NewsDetail() {
   const { slug } = useParams()
   const [berita, setBerita] = useState(undefined) // undefined = memuat, null = tidak ada
   const [lain, setLain] = useState([])
+  const [error,setError]=useState('')
 
   useEffect(() => {
     let batal = false
-    setBerita(undefined)
-    getNews(slug).then((b) => { if (!batal) setBerita(b) })
+    setBerita(undefined);setError('')
+    getNews(slug).then((b) => { if (!batal) setBerita(b) }).catch(e=>{if(!batal)setError(e.message)})
     listNews().then((l) => { if (!batal) setLain(l) }).catch(() => {})
     return () => { batal = true }
   }, [slug])
@@ -22,6 +23,7 @@ export default function NewsDetail() {
     return () => { document.title = 'ArenaFutsal Academy' }
   }, [berita])
 
+  if(error)return <div className="w" role="alert">{error}</div>
   if (berita === undefined) return <div className="w"><p className="sub">Memuat berita...</p></div>
 
   if (berita === null) {

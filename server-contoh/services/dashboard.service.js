@@ -1,3 +1,4 @@
+import {createContentService} from './content.service.js';
 import {ApiError} from './auth.service.js';
 import {createAcademyRepository} from '../repositories/academy.repository.js';
 import {jakartaDate} from '../validators/registration.validator.js';
@@ -30,6 +31,9 @@ export function createDashboardService(pool){
    }else if(u.role==='pelatih'){
     data.active_players=(await db.query("SELECT count(DISTINCT p.id)::int AS n FROM public.class_enrollments e JOIN public.players p ON p.id=e.player_id WHERE e.class_id=ANY($1::uuid[]) AND p.status='aktif' AND e.start_date<=$2::date AND (e.end_date IS NULL OR e.end_date>=$2::date)",[data.classes.map(c=>c.id),day])).rows[0].n;
    }
+   const content=createContentService(db),assessments=(await content.assessments(u)).filter(a=>a.month===period),announcements=await content.announcements(u);
+   data.assessments={count:assessments.length,average:assessments.length?Math.round(10*assessments.reduce((n,a)=>n+(a.technique+a.physical+a.tactical+a.discipline)/4,0)/assessments.length)/10:null};
+   data.announcements={unread:announcements.filter(a=>!a.read_at).length,latest:announcements.slice(0,3).map(a=>({id:a.id,title:a.title,category:a.category,read_at:a.read_at}))};
    return data;
   });
  }};

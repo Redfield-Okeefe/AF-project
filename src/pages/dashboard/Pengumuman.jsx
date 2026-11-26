@@ -1,3 +1,5 @@
+import {Announcements} from '../academy/Content.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import Reveal from '../../components/Reveal.jsx'
@@ -6,7 +8,8 @@ import { fmtTanggal } from '../../utils/format.js'
 
 const CLS = { Penting: 'warn', Info: 'info', Event: 'ok' }
 
-export default function Pengumuman() {
+export default function Pengumuman(){return academyApiEnabled?<Announcements role="pemain"/>:<Demo/>}
+function Demo() {
   useDb()
   const { profil } = useOutletContext()
   const list = infoUntuk(profil.email)

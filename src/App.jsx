@@ -37,6 +37,7 @@ import OwnerBerita from './pages/owner/Berita.jsx'
 import OwnerPengaturan from './pages/owner/Pengaturan.jsx'
 import OwnerMedia from './pages/owner/Media.jsx'
 import {OwnerOperations} from './pages/academy/Operations.jsx'
+import {Assessments,Announcements} from './pages/academy/Content.jsx'
 import {AttendancePage} from './pages/academy/Sessions.jsx'
 import {academyApiEnabled,academyDesignEnabled,academyWorkspaceEnabled} from './services/academy.js'
 import {setSession} from './utils/auth.js'
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="jadwal" element={<Jadwal />} />
           <Route path="pengumuman" element={<Pengumuman />} />
           <Route path="bayar" element={<Bayar />} />
+          {academyApiEnabled&&<Route path="penilaian" element={<Assessments role="pemain"/>}/>}
           {academyApiEnabled&&<Route path="kehadiran" element={<AttendancePage/>}/>}
         </Route>
 
@@ -110,6 +112,7 @@ export default function App() {
           <Route path="pemain" element={<OwnerPemain />} />
           <Route path="keuangan" element={<OwnerKeuangan />} />
           <Route path="berita" element={<OwnerBerita />} />
+          {academyApiEnabled&&<><Route path="penilaian" element={<Assessments role="owner"/>}/><Route path="pengumuman" element={<Announcements role="owner"/>}/></>}
           <Route path="media" element={<OwnerMedia />} />
           <Route path="pengaturan" element={<OwnerPengaturan />} />
           {academyWorkspaceEnabled&&<Route path="akademi" element={<OwnerOperations/>}/>}

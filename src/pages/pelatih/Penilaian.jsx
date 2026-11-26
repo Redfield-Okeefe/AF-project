@@ -1,3 +1,5 @@
+import {Assessments} from '../academy/Content.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { useState } from 'react'
 import { ambilAkun, bulanIni, listNilai, pemainDiKelas, simpanNilai } from '../../services/db.js'
 import { useToast } from '../../utils/useToast.jsx'
@@ -7,7 +9,8 @@ const ASPEK = [['teknik', 'Teknik'], ['fisik', 'Fisik'], ['taktik', 'Taktik'], [
 const rata = (n) => ((n.teknik + n.fisik + n.taktik + n.disiplin) / 4).toFixed(1)
 const bulanTeks = (p) => new Date(`${p}-01`).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })
 
-export default function Penilaian() {
+export default function Penilaian(){return academyApiEnabled?<Assessments role="pelatih"/>:<Demo/>}
+function Demo() {
   const { email, kelas } = useSaya()
   const [kelasId, setKelasId] = useState('')
   const [form, setForm] = useState(null)
