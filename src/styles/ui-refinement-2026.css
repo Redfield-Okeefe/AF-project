@@ -117,7 +117,7 @@ body{background:var(--bg)!important}
 .dash.workspace-portal .pill.warn{color:var(--warn)}
 .dash.workspace-portal .pill.info{color:var(--info)}
 .dash.workspace-portal .rowline,.dash.workspace-portal .sidebar-bottom{border-color:var(--bd)}
-.dash.workspace-portal .abtn,.dash.workspace-portal .btn{background:var(--ac);color:#24150d;border-color:var(--ac);font-weight:770}
+.dash.workspace-portal .abtn,.dash.workspace-portal .btn{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:770}
 .dash.workspace-portal .abtn.ghost{background:var(--card);color:var(--tx);border-color:var(--bd)}
 .dash.workspace-portal .seg button{background:var(--card);color:var(--tx)}
 .dash.workspace-portal .seg button.on{background:var(--portal-active);color:var(--ac)}

@@ -12,6 +12,7 @@ export function getPool() {
 export async function verifyDatabase(db = getPool()) {
   const r = await db.query(`SELECT current_database() AS name,
     to_regclass('public.classes') IS NOT NULL AND to_regclass('public.coach_assignments') IS NOT NULL AND to_regclass('public.class_enrollments') IS NOT NULL AND to_regclass('public.training_sessions') IS NOT NULL AND to_regclass('public.attendance') IS NOT NULL AS academy_ready,
+    to_regclass('public.assessments') IS NOT NULL AND to_regclass('public.announcements') IS NOT NULL AND to_regclass('public.announcement_reads') IS NOT NULL AND to_regclass('public.news') IS NOT NULL AS content_ready,
     to_regclass('public.users') IS NOT NULL AS users_ready,
     to_regclass('public.players') IS NOT NULL AS players_ready,
     to_regclass('public.coach_profiles') IS NOT NULL AS coaches_ready,
@@ -29,6 +30,7 @@ export async function verifyDatabase(db = getPool()) {
     throw new Error('Database/skema belum sesuai. Jalankan migrasi revisi 003c dan 003d sesuai panduan.');
   }
   if(!row.profile_ready)throw new Error('Migrasi profil belum dijalankan. Jalankan migrations/003d-profile-photo.sql pada bnr_academy.');
+  if(!row.content_ready)throw new Error('Skema Fase 7–9 belum lengkap. Periksa tabel assessments, announcements, announcement_reads dan news.');
   return row.name;
 }
 export async function closePool() { if (pool) { const current = pool; pool = undefined; await current.end(); } }

@@ -78,6 +78,8 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await call('coach','PUT','/coach/assessments',200,score);
   await call('coach','PUT','/coach/assessments',200,{...score,technique:9});
   assert.equal((await call('player','GET','/me/assessments',200)).items[0].technique,9);
+  assert.equal((await call('player','GET','/me/assessments',200)).items[0].can_edit,false);
+  assert.equal((await call('coach','GET','/me/assessments',200)).items[0].can_edit,true);
   assert.equal((await call('outsider','GET','/me/assessments',200)).items.length,0);
   assert.equal((await call('owner','GET','/me/assessments',200)).items.length,1);
   const notice={target_class_id:cid,category:'Info',title:'Latihan uji',body:'Informasi',audience:'semua'};
@@ -86,6 +88,9 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const aid=(await call('coach','POST','/announcements',201,notice)).announcement.id;
   assert.equal((await call('player','GET','/me/announcements',200)).items.length,1);
   assert.equal((await call('outsider','GET','/me/announcements',200)).items.length,0);
+  assert.equal((await call('coach','GET','/me/announcements',200)).items[0].can_delete,true);
+  assert.equal((await call('player','GET','/me/announcements',200)).items[0].can_delete,false);
+  const ds=(await call('player','GET','/me/dashboard?month='+score.month,200)).dashboard;assert.equal(ds.assessments.count,1);assert.equal(ds.assessments.average,8.3);assert.equal(ds.announcements.unread,1);
   await call('outsider','POST','/me/announcements/'+aid+'/read',404);
   await call('player','POST','/me/announcements/'+aid+'/read',200);
   await call('player','POST','/me/announcements/'+aid+'/read',200);
@@ -98,6 +103,9 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   assert.equal((await call('player','GET','/public/news/'+article.slug,200)).item.title,news.title);
   await call('owner','DELETE','/owner/news/'+article.id,200);
   assert.equal((await call('player','GET','/public/news',200)).items.length,0);
+  await call('other','DELETE','/announcements/'+aid,403);
+  await call('coach','DELETE','/announcements/'+aid,200);
+  assert.equal((await call('player','GET','/me/announcements',200)).items.length,0);
   await call('owner','PATCH',root+'/status',409,{status:'arsip'});
   const member=(await call('owner','GET',root+'/members',200)).players[0];
   await call('owner','PATCH',root+'/players/'+member.id+'/end',200,{end_date:day});
