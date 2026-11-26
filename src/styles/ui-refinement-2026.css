@@ -246,3 +246,7 @@ body{background:var(--bg)!important}
  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
  .dash.owner-portal [data-anim],.dash.workspace-portal [data-anim]{opacity:1!important;transform:none!important}
 }
+
+/* Use the actual Owner sidebar dark background, which theme-system sets to bg2. */
+:root[data-theme='dark'] .dash.owner-portal .sidebar,:root[data-theme='dark'] .dash.owner-portal.workspace-portal .sidebar{background:var(--bg2)!important}
+:root[data-theme='light'] .dash.owner-portal .sidebar,:root[data-theme='light'] .dash.owner-portal.workspace-portal .sidebar{background:var(--owner-sidebar)!important}

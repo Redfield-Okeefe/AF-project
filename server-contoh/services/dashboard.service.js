@@ -33,7 +33,7 @@ export function createDashboardService(pool){
    }
    const content=createContentService(db),assessments=(await content.assessments(u)).filter(a=>a.month===period),announcements=await content.announcements(u);
    data.assessments={count:assessments.length,average:assessments.length?Math.round(10*assessments.reduce((n,a)=>n+(a.technique+a.physical+a.tactical+a.discipline)/4,0)/assessments.length)/10:null};
-   data.announcements={unread:announcements.filter(a=>!a.read_at).length,latest:announcements.slice(0,3).map(a=>({id:a.id,title:a.title,category:a.category,read_at:a.read_at}))};
+   const activeAnnouncements=announcements.filter(a=>a.is_active);data.announcements={active:activeAnnouncements.length,latest:activeAnnouncements.slice(0,3).map(a=>({id:a.id,title:a.title,category:a.category,expires_at:a.expires_at}))};
    return data;
   });
  }};

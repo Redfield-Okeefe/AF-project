@@ -10,7 +10,6 @@ export function mountContent(app,authenticate,pool){
  app.get('/api/v1/coach/assessments/roster/:id',...coach,h(async q=>({items:await s.roster(q.user,id(q.params.id),q.query.month)})));
  app.put('/api/v1/coach/assessments',...coach,json,h(async q=>({assessment:await s.saveAssessment(q.user,q.body)})));
  app.get('/api/v1/me/announcements',...all,h(async q=>({items:await s.announcements(q.user)})));
- app.post('/api/v1/me/announcements/:id/read',...all,h(async q=>({read:await s.readAnnouncement(q.user,id(q.params.id))})));
  app.post('/api/v1/announcements',...writers,json,h(async q=>({announcement:await s.createAnnouncement(q.user,q.body)}),201));
  app.delete('/api/v1/announcements/:id',...writers,h(async q=>({announcement:await s.removeAnnouncement(q.user,id(q.params.id))})));
  app.get('/api/v1/public/news',h(async()=>({items:await s.news()})));
@@ -18,5 +17,5 @@ export function mountContent(app,authenticate,pool){
  app.get('/api/v1/owner/news',...owner,h(async q=>({items:await s.news(q.user)})));
  app.post('/api/v1/owner/news',...owner,newsJson,h(async q=>({item:await s.saveNews(q.user,q.body)}),201));
  app.put('/api/v1/owner/news/:id',...owner,newsJson,h(async q=>({item:await s.saveNews(q.user,q.body,id(q.params.id))})));
- app.delete('/api/v1/owner/news/:id',...owner,h(async q=>({item:await s.archiveNews(q.user,id(q.params.id))})));
+ app.delete('/api/v1/owner/news/:id',...owner,h(async q=>({item:await s.unpublishNews(q.user,id(q.params.id))})));
 }
