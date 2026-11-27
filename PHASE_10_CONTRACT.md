@@ -38,3 +38,6 @@ Snapshot nama pada invoice_items.description; tagihan lama memakai deskripsi lam
 
 ## Revisi 10D: periode berulang
 Bulanan unik per pemain/fee/bulan dan mingguan unik per pemain/fee/Senin. Jenis berbeda diizinkan; bulanan dan mingguan adalah jenis terpisah (Owner bertanggung jawab tidak mengenakan iuran ganda secara bisnis). Migrasi 011 mempertahankan riwayat. Riwayat menampilkan tagihan periode terpilih dan semua transaksi terkait, bukan jurnal berdasarkan paid_at; penerimaan paid_at tetap di grafik/CSV. Tagihan bulan berjalan otomatis difilter WIB; tunggakan lama tetap bisa dibayar/diverifikasi. Tidak ada job reset/penghapusan. Biaya tambahan tetap individual.
+
+## Koreksi v1.10.0-dev.5
+Biaya tambahan tidak lagi individual-only: 1–500 pemain, checkbox dan pencarian. Satu invoice per pemain, bukan satu invoice kolektif. Idempotensi untuk retry batch dengan request_id dan daftar pemain yang sama; penerbitan baru disengaja tetap diperbolehkan. Tidak mengubah aturan bulanan/mingguan maupun histori.

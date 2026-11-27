@@ -224,6 +224,11 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const financeHistory=(await call('owner','GET','/me/finance?month='+previous,200)).finance;assert.ok(financeHistory.invoices.some(i=>i.id===historic));assert.ok((await call('player','GET','/me/finance',200)).finance.invoices.some(i=>i.id===historic));
   await call('player','POST','/me/finance/invoices/'+historic+'/transfer',201,transfer);
   assert.ok((await call('owner','GET','/me/finance?month='+bill.month,200)).finance.pending_invoices.some(i=>i.id===historic));
+  const batchAdditional={...bill,invoice_type:'lainnya',fee_type_id:fee2,title:'Jersey batch',request_id:crypto.randomUUID()};
+  const batchAdded=(await call('owner','POST','/owner/finance/invoices',201,batchAdditional)).result;assert.equal(batchAdded.created.length,2);assert.equal(new Set(batchAdded.created).size,2);
+  const batchRetry=(await call('owner','POST','/owner/finance/invoices',201,{...batchAdditional,player_ids:[...batchAdditional.player_ids].reverse()})).result;assert.equal(batchRetry.created.length,0);assert.deepEqual(new Set(batchRetry.skipped),new Set(batchAdded.created));
+  const ownerBatch=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance.invoices.filter(i=>batchAdded.created.includes(i.id));assert.equal(ownerBatch.length,2);assert.ok(ownerBatch.every(i=>i.title==='Jersey batch'&&i.total_amount==='50000'));assert.equal(new Set(ownerBatch.map(i=>i.invoice_number)).size,2);
+  for(const [role,pid] of [['player',playerId],['outsider',outsiderId]]){const personal=(await call(role,'GET','/me/finance',200)).finance.invoices.filter(i=>batchAdded.created.includes(i.id));assert.equal(personal.length,1);assert.equal(personal[0].player_id,pid);}
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
 });
