@@ -221,7 +221,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const prev=new Date(bill.month+'-01T00:00:00Z');prev.setUTCMonth(prev.getUTCMonth()-1);const previous=prev.toISOString().slice(0,7);
   const historic=(await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],month:previous,request_id:crypto.randomUUID()})).result.created[0];
   const current=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.ok(!current.invoices.some(i=>i.id===historic));assert.ok(current.invoices.some(i=>i.id===w1.created[0]&&i.week_start===weekly.week_start));
-  const history=(await call('owner','GET','/me/finance?month='+previous,200)).finance;assert.ok(history.invoices.some(i=>i.id===historic));assert.ok((await call('player','GET','/me/finance',200)).finance.invoices.some(i=>i.id===historic));
+  const financeHistory=(await call('owner','GET','/me/finance?month='+previous,200)).finance;assert.ok(financeHistory.invoices.some(i=>i.id===historic));assert.ok((await call('player','GET','/me/finance',200)).finance.invoices.some(i=>i.id===historic));
   await call('player','POST','/me/finance/invoices/'+historic+'/transfer',201,transfer);
   assert.ok((await call('owner','GET','/me/finance?month='+bill.month,200)).finance.pending_invoices.some(i=>i.id===historic));
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
