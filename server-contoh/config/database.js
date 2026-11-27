@@ -15,6 +15,7 @@ export async function verifyDatabase(db = getPool()) {
     to_regclass('public.assessments') IS NOT NULL AND to_regclass('public.announcements') IS NOT NULL AND to_regclass('public.announcement_reads') IS NOT NULL AND to_regclass('public.news') IS NOT NULL AS content_ready,
     EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='announcements' AND column_name='expires_at' AND data_type='timestamp with time zone') AS announcement_duration_ready,
     to_regclass('public.fee_types') IS NOT NULL AND to_regclass('public.invoices') IS NOT NULL AND to_regclass('public.invoice_items') IS NOT NULL AND to_regclass('public.payment_accounts') IS NOT NULL AND EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='payments' AND column_name='proof_jpeg' AND data_type='bytea') AS finance_ready,
+    to_regclass('public.uq_bnr_monthly_invoice_fee') IS NOT NULL AND to_regclass('public.uq_bnr_weekly_invoice_fee') IS NOT NULL AND EXISTS(SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='invoices' AND column_name='week_start') AS recurring_ready,
     to_regclass('public.users') IS NOT NULL AS users_ready,
     to_regclass('public.players') IS NOT NULL AS players_ready,
     to_regclass('public.coach_profiles') IS NOT NULL AS coaches_ready,
@@ -35,6 +36,7 @@ export async function verifyDatabase(db = getPool()) {
   if(!row.content_ready)throw new Error('Skema Fase 7–9 belum lengkap. Periksa tabel assessments, announcements, announcement_reads dan news.');
   if(!row.announcement_duration_ready)throw new Error('Jalankan migrations/008-announcement-duration.sql pada bnr_academy.');
   if(!row.finance_ready)throw new Error('Skema keuangan belum lengkap. Jalankan migrations/010-private-payment-proof.sql pada bnr_academy.');
+  if(!row.recurring_ready)throw new Error('Jalankan migrations/011-recurring-invoice-periods.sql pada bnr_academy.');
   return row.name;
 }
 export async function closePool() { if (pool) { const current = pool; pool = undefined; await current.end(); } }

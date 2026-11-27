@@ -209,6 +209,21 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
    const got=(await call('player','GET','/me/finance',200)).finance.invoices.find(i=>i.id===created);assert.equal(got.status,'lunas');assert.equal(got.title,'Biaya '+provider_name);assert.equal(got.payments[0].payment_method,'ewallet');
   }
   const finalReport=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.equal(finalReport.summary.receipts,'700000');assert.equal(finalReport.pending_invoices.length,0);assert.deepEqual(finalReport.receipts_by_method,[{payment_method:'ewallet',amount:'400000'},{payment_method:'transfer_bank',amount:'150000'},{payment_method:'tunai',amount:'150000'}]);
+  const fee2=(await call('owner','POST','/owner/finance/fees',201,{...fee,code:'FASILITAS',name:'Fasilitas',default_amount:50000})).item.id;
+  const diff=(await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],fee_type_id:fee2,request_id:crypto.randomUUID()})).result;assert.equal(diff.created.length,1);
+  assert.equal((await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],fee_type_id:fee2,request_id:crypto.randomUUID(),title:'Nama lain'})).result.skipped.length,1);
+  const monday=new Date(bill.month+'-01T00:00:00Z');monday.setUTCDate(1+(8-monday.getUTCDay())%7);
+  const next=new Date(monday);next.setUTCDate(next.getUTCDate()+7);
+  const weekly={...bill,player_ids:[playerId],invoice_type:'mingguan',week_start:monday.toISOString().slice(0,10),request_id:crypto.randomUUID()};
+  const w1=(await call('owner','POST','/owner/finance/invoices',201,weekly)).result;assert.equal(w1.created.length,1);
+  assert.equal((await call('owner','POST','/owner/finance/invoices',201,weekly)).result.skipped.length,1);
+  const w2=(await call('owner','POST','/owner/finance/invoices',201,{...weekly,week_start:next.toISOString().slice(0,10),request_id:crypto.randomUUID()})).result;assert.equal(w2.created.length,1);
+  const prev=new Date(bill.month+'-01T00:00:00Z');prev.setUTCMonth(prev.getUTCMonth()-1);const previous=prev.toISOString().slice(0,7);
+  const historic=(await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],month:previous,request_id:crypto.randomUUID()})).result.created[0];
+  const current=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.ok(!current.invoices.some(i=>i.id===historic));assert.ok(current.invoices.some(i=>i.id===w1.created[0]&&i.week_start===weekly.week_start));
+  const history=(await call('owner','GET','/me/finance?month='+previous,200)).finance;assert.ok(history.invoices.some(i=>i.id===historic));assert.ok((await call('player','GET','/me/finance',200)).finance.invoices.some(i=>i.id===historic));
+  await call('player','POST','/me/finance/invoices/'+historic+'/transfer',201,transfer);
+  assert.ok((await call('owner','GET','/me/finance?month='+bill.month,200)).finance.pending_invoices.some(i=>i.id===historic));
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
 });

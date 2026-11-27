@@ -33,3 +33,20 @@ CREATE UNIQUE INDEX uq_bnr_registration_invoice ON invoices(registration_id) WHE
 CREATE TABLE public.invoice_items(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),invoice_id uuid NOT NULL REFERENCES invoices(id) ON DELETE RESTRICT,fee_type_id uuid REFERENCES fee_types(id) ON DELETE RESTRICT,training_session_id uuid REFERENCES training_sessions(id) ON DELETE RESTRICT,description varchar(200) NOT NULL,quantity integer NOT NULL DEFAULT 1 CHECK(quantity>0),unit_price bigint NOT NULL CHECK(unit_price>=0),line_total bigint GENERATED ALWAYS AS (quantity::bigint*unit_price) STORED,created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE public.payment_accounts(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),method_type varchar(12) NOT NULL CHECK(method_type IN('bank','ewallet','qris')),provider_name varchar(100) NOT NULL,account_number varchar(80),account_holder varchar(120),qris_image_path text,active boolean NOT NULL DEFAULT true,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE public.payments(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),invoice_id uuid NOT NULL REFERENCES invoices(id) ON DELETE RESTRICT,payment_account_id uuid REFERENCES payment_accounts(id) ON DELETE RESTRICT,amount bigint NOT NULL CHECK(amount>0),payment_method varchar(16) NOT NULL CHECK(payment_method IN('transfer_bank','ewallet','qris','tunai')),proof_file_path text,proof_jpeg bytea CHECK(octet_length(proof_jpeg)<=1048576),payment_reference varchar(120) UNIQUE,status varchar(16) NOT NULL DEFAULT 'menunggu' CHECK(status IN('menunggu','terverifikasi','ditolak')),submitted_at timestamptz NOT NULL DEFAULT now(),paid_at timestamptz,verified_by uuid REFERENCES users(id) ON DELETE SET NULL,verified_at timestamptz,rejection_reason text,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now(),CHECK(status<>'ditolak' OR NULLIF(btrim(rejection_reason),'') IS NOT NULL),CHECK(status<>'terverifikasi' OR verified_at IS NOT NULL));
+
+-- Apply recurring invoice migration in CI fixture.
+ALTER TABLE public.invoices ADD COLUMN IF NOT EXISTS recurring_fee_type_id uuid REFERENCES public.fee_types(id) ON DELETE RESTRICT;
+ALTER TABLE public.invoices ADD COLUMN IF NOT EXISTS week_start date;
+UPDATE public.invoices i SET recurring_fee_type_id=x.fee_id
+FROM (SELECT invoice_id,min(fee_type_id::text)::uuid AS fee_id FROM public.invoice_items GROUP BY invoice_id HAVING count(DISTINCT fee_type_id)=1 AND count(fee_type_id)=count(*)) x
+WHERE i.id=x.invoice_id AND i.invoice_type='bulanan' AND i.recurring_fee_type_id IS NULL;
+ALTER TABLE public.invoices DROP CONSTRAINT IF EXISTS invoices_invoice_type_check;
+ALTER TABLE public.invoices ADD CONSTRAINT invoices_invoice_type_check CHECK(invoice_type IN ('pendaftaran','bulanan','mingguan','per_latihan','lainnya'));
+ALTER TABLE public.invoices DROP CONSTRAINT IF EXISTS ck_bnr_invoice_week;
+ALTER TABLE public.invoices ADD CONSTRAINT ck_bnr_invoice_week CHECK(
+ (invoice_type='mingguan' AND week_start IS NOT NULL AND recurring_fee_type_id IS NOT NULL AND period_month IS NOT NULL
+  AND extract(isodow FROM week_start)=1 AND period_month=date_trunc('month',week_start::timestamp)::date)
+ OR (invoice_type<>'mingguan' AND week_start IS NULL));
+DROP INDEX IF EXISTS public.uq_bnr_monthly_invoice;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_bnr_monthly_invoice_fee ON public.invoices(player_id,period_month,recurring_fee_type_id) NULLS NOT DISTINCT WHERE invoice_type='bulanan' AND status<>'dibatalkan';
+CREATE UNIQUE INDEX IF NOT EXISTS uq_bnr_weekly_invoice_fee ON public.invoices(player_id,week_start,recurring_fee_type_id) WHERE invoice_type='mingguan' AND status<>'dibatalkan';
