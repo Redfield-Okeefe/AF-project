@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import pg from 'pg';
 import express from 'express';
+import {mountFinance} from '../routes/finance.routes.js';
 import {mountContent} from '../routes/content.routes.js';
 import {mountProfile} from '../routes/profile.routes.js';
 import {mountDashboard} from '../routes/dashboard.routes.js';
@@ -21,7 +22,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await db.query(await readFile(new URL('./academy-fixture.sql',import.meta.url),'utf8'));
   async function user(role,name){const {rows:[u]}=await db.query("INSERT INTO users(full_name,email,role,status,email_verified_at) VALUES($1,$2,$3,'aktif',now()) RETURNING id,role,session_version",[name,name+'@bnr.test',role]);if(role==='pelatih')await db.query("INSERT INTO coach_profiles(user_id,registration_review_status) VALUES($1,'aktif')",[u.id]);return u;}
   const owner=await user('owner','Owner'),coach=await user('pelatih','Coach'),other=await user('pelatih','Other'),player=await user('pemain','Player'),outsider=await user('pemain','Outsider');
-  const tokens={owner,coach,other,player,outsider};const app=express();const auth=(q,s,n)=>{const u=tokens[q.get('Authorization')];if(!u)return n(new ApiError(401,'Login'));q.user=u;n();};mountAcademy(app,auth,db);mountProfile(app,auth,db);mountDashboard(app,auth,db);mountContent(app,auth,db);app.use(errorHandler);
+  const tokens={owner,coach,other,player,outsider};const app=express();const auth=(q,s,n)=>{const u=tokens[q.get('Authorization')];if(!u)return n(new ApiError(401,'Login'));q.user=u;n();};mountAcademy(app,auth,db);mountProfile(app,auth,db);mountDashboard(app,auth,db);mountContent(app,auth,db);mountFinance(app,auth,db);app.use(errorHandler);
   server=await new Promise(resolve=>{const s=app.listen(0,'127.0.0.1',()=>resolve(s))});
   const base='http://127.0.0.1:'+server.address().port+'/api/v1';
   async function call(role,method,path,status,body){const r=await fetch(base+path,{method,headers:{Authorization:role,...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});const data=await r.json();assert.equal(r.status,status,method+' '+path+' '+JSON.stringify(data));return data;}
@@ -156,6 +157,41 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await call('owner','PATCH','/me/profile',200,{nama:'Owner Baru',foto:'data:image/jpeg;base64,'+photo.toString('base64')});
   assert.match((await call('owner','GET','/me/profile',200)).profile.foto,/^data:image\/jpeg;base64,/);
   await call('owner','PATCH','/me/profile',200,{foto:''});
+  await call('coach','GET','/me/finance',403);
+  const fee={code:'IURAN',name:'Iuran uji',default_amount:150000,active:true};
+  const fid=(await call('owner','POST','/owner/finance/fees',201,fee)).item.id;
+  const aidFinance=(await call('owner','POST','/owner/finance/accounts',201,{provider_name:'Bank Uji',account_number:'0000000000',account_holder:'Fiktif'})).item.id;
+  const bill={player_ids:[playerId,outsiderId],fee_type_id:fid,invoice_type:'bulanan',month:day.slice(0,7),due_on:tomorrow,request_id:crypto.randomUUID()};
+  const made=(await call('owner','POST','/owner/finance/invoices',201,bill)).result;assert.equal(made.created.length,2);
+  assert.equal((await call('owner','POST','/owner/finance/invoices',201,bill)).result.skipped.length,2);
+  const inv=(await call('player','GET','/me/finance',200)).finance.invoices;assert.equal(inv.length,1);assert.equal(inv[0].total_amount,'150000');assert.equal(inv[0].items[0].line_total,'150000');
+  const iid=inv[0].id;
+  await call('owner','PUT','/owner/finance/fees/'+fid,200,{...fee,default_amount:200000});
+  assert.equal((await call('player','GET','/me/finance',200)).finance.invoices[0].total_amount,'150000');
+  const transfer={payment_account_id:aidFinance,proof:'data:image/jpeg;base64,'+photo.toString('base64')};
+  await call('outsider','POST','/me/finance/invoices/'+iid+'/transfer',404,transfer);
+  await call('player','POST','/me/finance/invoices/'+iid+'/transfer',400,{...transfer,amount:1});
+  const results=await Promise.all([1,2].map(()=>fetch(base+'/me/finance/invoices/'+iid+'/transfer',{method:'POST',headers:{Authorization:'player','Content-Type':'application/json'},body:JSON.stringify(transfer)})));
+  assert.deepEqual(results.map(r=>r.status).sort(),[201,409]);
+  const pmt=(await results.find(r=>r.status===201).json()).item.id;
+  await call('outsider','GET','/me/finance/payments/'+pmt+'/proof',404);
+  assert.match((await call('owner','GET','/me/finance/payments/'+pmt+'/proof',200)).image,/^data:image\/jpeg;base64,/);
+  await call('owner','POST','/owner/finance/invoices/'+iid+'/cancel',409);
+  await call('owner','PATCH','/owner/finance/payments/'+pmt,400,{status:'ditolak',rejection_reason:''});
+  await call('owner','PATCH','/owner/finance/payments/'+pmt,200,{status:'ditolak',rejection_reason:'Bukti tidak cocok'});
+  await call('owner','PATCH','/owner/finance/accounts/'+aidFinance,200,{active:false});
+  await call('player','POST','/me/finance/invoices/'+iid+'/transfer',409,transfer);
+  await call('owner','PATCH','/owner/finance/accounts/'+aidFinance,200,{active:true});
+  const second=(await call('player','POST','/me/finance/invoices/'+iid+'/transfer',201,transfer)).item.id;
+  const approval={status:'terverifikasi',payment_reference:'TEST-REF-1',paid_on:day};
+  await call('player','PATCH','/owner/finance/payments/'+second,403,approval);
+  await call('owner','PATCH','/owner/finance/payments/'+second,200,approval);
+  await call('owner','PATCH','/owner/finance/payments/'+second,409,approval);
+  const otherInvoice=(await call('outsider','GET','/me/finance',200)).finance.invoices[0].id;
+  await call('owner','POST','/owner/finance/invoices/'+otherInvoice+'/cash',201,{paid_on:day});
+  const report=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;
+  assert.deepEqual(report.summary,{billed:'300000',verified:'300000',outstanding:'0',pending:0,receipts:'300000'});
+  assert.equal((await call('player','GET','/me/finance',200)).finance.invoices[0].status,'lunas');
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
 });
