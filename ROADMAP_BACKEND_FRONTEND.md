@@ -69,3 +69,6 @@ Grafik keuangan Owner: penerimaan enam bulan sesuai paid_at WIB dan realisasi ta
 
 ## v1.10.0-dev.2 — penyempurnaan 10D dan 10E
 Grafik penerimaan: skala, garis bantu, bulan interaktif, nilai nol tanpa batang palsu, rincian metode menurut tanggal bayar; realisasi donat. Catat tunai langsung di kartu tagihan Owner, nominal penuh dari server, tidak boleh jika pending/lunas. GoPay dan DANA manual melalui payment_accounts.method_type=ewallet, payment_method=ewallet, bukti private dan verifikasi Owner. Nomor HP Indonesia 08/628, rekening BTN tetap didukung. Tidak ada migrasi tambahan jika 010 sudah diterapkan. QRIS otomatis ditunda ke Fase 12 setelah staging. UAT lokal diperlukan; gunakan data fiktif.
+
+## v1.10.0-dev.3 — daftar tagihan dan konfirmasi
+Nama tagihan opsional disimpan sebagai snapshot description invoice_items (default nama jenis biaya); kelompok UI berdasarkan nama, jenis, periode dan jatuh tempo, bukan ID batch baru. Sesudah pembuatan otomatis buka daftar periode yang sesuai, reset filter, tampilkan jumlah dibuat/dilewati. Antrean konfirmasi manual lintas periode Owner; ringkasan/CSV tetap sesuai periode. Pemain tetap hanya data sendiri. Refresh saat fokus dan 20 detik selama tab tagihan aktif. Tidak ada migrasi tambahan. Penyebab kasus lokal perlu dicek via hasil penerbitan dan data aktual. UAT lokal diperlukan.

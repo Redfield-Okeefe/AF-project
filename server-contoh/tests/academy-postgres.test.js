@@ -162,7 +162,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const fid=(await call('owner','POST','/owner/finance/fees',201,fee)).item.id;
   const aidFinance=(await call('owner','POST','/owner/finance/accounts',201,{provider_name:'Bank Uji',account_number:'0000000000',account_holder:'Fiktif'})).item.id;
   const bill={player_ids:[playerId,outsiderId],fee_type_id:fid,invoice_type:'bulanan',month:day.slice(0,7),due_on:tomorrow,request_id:crypto.randomUUID()};
-  const made=(await call('owner','POST','/owner/finance/invoices',201,bill)).result;assert.equal(made.created.length,2);
+  const made=(await call('owner','POST','/owner/finance/invoices',201,bill)).result;assert.equal(made.created.length,2);assert.equal(made.period,bill.month);const newly=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.equal(newly.invoices.length,2);assert.ok(newly.invoices.every(i=>i.title==='Iuran uji'));assert.equal(newly.pending_invoices.length,0);
   assert.equal((await call('owner','POST','/owner/finance/invoices',201,bill)).result.skipped.length,2);
   const inv=(await call('player','GET','/me/finance',200)).finance.invoices;assert.equal(inv.length,1);assert.equal(inv[0].total_amount,'150000');assert.equal(inv[0].items[0].line_total,'150000');
   const iid=inv[0].id;
@@ -174,6 +174,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const results=await Promise.all([1,2].map(()=>fetch(base+'/me/finance/invoices/'+iid+'/transfer',{method:'POST',headers:{Authorization:'player','Content-Type':'application/json'},body:JSON.stringify(transfer)})));
   assert.deepEqual(results.map(r=>r.status).sort(),[201,409]);
   const pmt=(await results.find(r=>r.status===201).json()).item.id;
+  const alternateMonth=bill.month==='2026-01'?'2026-02':'2026-01';const pendingReport=(await call('owner','GET','/me/finance?month='+alternateMonth,200)).finance;assert.equal(pendingReport.invoices.length,0);assert.equal(pendingReport.summary.pending,0);assert.equal(pendingReport.pending_invoices[0].id,iid);assert.ok(!(await call('player','GET','/me/finance',200)).finance.pending_invoices);
   await call('outsider','GET','/me/finance/payments/'+pmt+'/proof',404);
   assert.match((await call('owner','GET','/me/finance/payments/'+pmt+'/proof',200)).image,/^data:image\/jpeg;base64,/);
   await call('owner','POST','/owner/finance/invoices/'+iid+'/cancel',409);
@@ -197,7 +198,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const walletIds=[];
   for(const provider_name of ['GoPay','DANA']){
    const wallet=(await call('owner','POST','/owner/finance/accounts',201,{method_type:'ewallet',provider_name,account_number:'081234567890',account_holder:'Fiktif'})).item.id;walletIds.push(wallet);
-   const created=(await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],invoice_type:'lainnya',request_id:crypto.randomUUID()})).result.created[0];
+   const created=(await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],invoice_type:'lainnya',request_id:crypto.randomUUID(),title:'Biaya '+provider_name})).result.created[0];
    await call('player','POST','/owner/finance/invoices/'+created+'/cash',403,{paid_on:day});
    await call('owner','PATCH','/owner/finance/accounts/'+wallet,200,{active:false});
    await call('player','POST','/me/finance/invoices/'+created+'/transfer',409,{...transfer,payment_account_id:wallet});
@@ -205,9 +206,9 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
    const w=(await call('player','POST','/me/finance/invoices/'+created+'/transfer',201,{...transfer,payment_account_id:wallet})).item.id;
    await call('owner','POST','/owner/finance/invoices/'+created+'/cash',409,{paid_on:day});
    await call('owner','PATCH','/owner/finance/payments/'+w,200,{status:'terverifikasi',payment_reference:'TEST-WALLET-'+provider_name,paid_on:day});
-   const got=(await call('player','GET','/me/finance',200)).finance.invoices.find(i=>i.id===created);assert.equal(got.status,'lunas');assert.equal(got.payments[0].payment_method,'ewallet');
+   const got=(await call('player','GET','/me/finance',200)).finance.invoices.find(i=>i.id===created);assert.equal(got.status,'lunas');assert.equal(got.title,'Biaya '+provider_name);assert.equal(got.payments[0].payment_method,'ewallet');
   }
-  const finalReport=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.equal(finalReport.summary.receipts,'700000');assert.deepEqual(finalReport.receipts_by_method,[{payment_method:'ewallet',amount:'400000'},{payment_method:'transfer_bank',amount:'150000'},{payment_method:'tunai',amount:'150000'}]);
+  const finalReport=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.equal(finalReport.summary.receipts,'700000');assert.equal(finalReport.pending_invoices.length,0);assert.deepEqual(finalReport.receipts_by_method,[{payment_method:'ewallet',amount:'400000'},{payment_method:'transfer_bank',amount:'150000'},{payment_method:'tunai',amount:'150000'}]);
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
 });

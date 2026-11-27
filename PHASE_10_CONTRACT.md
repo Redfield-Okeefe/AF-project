@@ -32,3 +32,6 @@ Inspeksi selesai. SQL/API memakai status dan indeks asli. Proof JPEG private byt
 
 ## 10E — E-Wallet manual
 Bank BTN (bank), GoPay/DANA (ewallet), dan tunai (Owner). Metode transaksi ditentukan dari rekening server, bukan request Pemain. Referensi tetap unik secara global; pembayaran diverifikasi manual. QRIS dan payment gateway belum aktif. Tidak perlu migrasi baru. Diagram dan laporan metode mengikuti transaksi terverifikasi berdasarkan tanggal bayar WIB.
+
+## Revisi daftar tagihan v1.10.0-dev.3
+Snapshot nama pada invoice_items.description; tagihan lama memakai deskripsi lama. Konfirmasi berarti bukti transfer/E-Wallet pernah diajukan; menunggu berbeda dari lunas. Antrean Owner lintas periode untuk pending manual, kelompok pada antrean hanya menampilkan konfirmasi yang tersedia di data antrean/periode laporan, tidak mengubah total laporan. Tidak melonggarkan unique index bulanan.
