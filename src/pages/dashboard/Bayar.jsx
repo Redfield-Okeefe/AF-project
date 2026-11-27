@@ -1,4 +1,4 @@
-import FinancePending from '../academy/FinancePending.jsx'
+import Finance from '../academy/Finance.jsx'
 import {academyApiEnabled} from '../../services/academy.js'
 import { useRef, useState } from 'react'
 import Reveal from '../../components/Reveal.jsx'
@@ -16,7 +16,7 @@ const riwayat = [
   { bulan: 'Juli 2026', tgl: 'Dibayar 2 Jul' },
 ]
 
-export default function Bayar(){return academyApiEnabled?<FinancePending owner={false}/>:<BayarDemo/>}
+export default function Bayar(){return academyApiEnabled?<Finance owner={false}/>:<BayarDemo/>}
 function BayarDemo() {
   const [method, setMethod] = useState('Transfer Bank BCA')
   const [file, setFile] = useState(null)

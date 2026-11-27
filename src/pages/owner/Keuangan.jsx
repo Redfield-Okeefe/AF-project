@@ -1,4 +1,4 @@
-import FinancePending from '../academy/FinancePending.jsx'
+import Finance from '../academy/Finance.jsx'
 import {academyApiEnabled} from '../../services/academy.js'
 import { useState } from 'react'
 import OwnerPageHeading from '../../components/OwnerPageHeading.jsx'
@@ -8,7 +8,7 @@ import { unduhCsv } from '../../utils/csv.js'
 import { bulanTeks, fmtTanggal, rupiah } from '../../utils/format.js'
 import { useToast } from '../../utils/useToast.jsx'
 
-export default function Keuangan(){return academyApiEnabled?<FinancePending owner={true}/>:<KeuanganDemo/>}
+export default function Keuangan(){return academyApiEnabled?<Finance owner={true}/>:<KeuanganDemo/>}
 function KeuanganDemo() {
   useDb()
   const [bulan, setBulan] = useState(bulanIni())

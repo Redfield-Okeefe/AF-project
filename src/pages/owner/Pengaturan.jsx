@@ -6,7 +6,7 @@ import OwnerIcon from '../../components/OwnerIcon.jsx'
 import { daftarPelatih, getSetelan, hapusKelas, listKelas, resetDemo, simpanBanyakKelas, simpanSetelan } from '../../services/db.js'
 import { useToast } from '../../utils/useToast.jsx'
 
-export default function Pengaturan(){return academyApiEnabled?<div className="view active adm owner-admin-page"><OwnerPageHeading icon="settings" title="Pengaturan" description="Pengaturan akademi yang terhubung ke PostgreSQL."/><div className="card"><h3>Kelas &amp; program</h3><p className="mut">Kelola kelas, program dan penugasan melalui menu Akademi &amp; Kelas.</p><Link className="abtn" to="/owner/akademi">Buka Akademi &amp; Kelas</Link></div><div className="card"><h3>Harga &amp; rekening pembayaran</h3><p className="mut">Integrasi rekening dan pembayaran dijadwalkan pada Fase 10. Data demo tidak dapat diubah dari mode API.</p></div></div>:<PengaturanDemo/>}
+export default function Pengaturan(){return academyApiEnabled?<div className="view active adm owner-admin-page"><OwnerPageHeading icon="settings" title="Pengaturan" description="Pengaturan akademi yang terhubung ke PostgreSQL."/><div className="card"><h3>Kelas &amp; program</h3><p className="mut">Kelola kelas, program dan penugasan melalui menu Akademi &amp; Kelas.</p><Link className="abtn" to="/owner/akademi">Buka Akademi &amp; Kelas</Link></div><div className="card"><h3>Harga &amp; rekening pembayaran</h3><p className="mut">Kelola jenis biaya dan rekening pembayaran melalui menu Keuangan.</p><Link className="abtn" to="/owner/keuangan">Buka Keuangan</Link></div></div>:<PengaturanDemo/>}
 function PengaturanDemo() {
   const [kls, setKls] = useState(() => listKelas())
   const [st, setSt] = useState(() => getSetelan())
