@@ -190,7 +190,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const otherInvoice=(await call('outsider','GET','/me/finance',200)).finance.invoices[0].id;
   await call('owner','POST','/owner/finance/invoices/'+otherInvoice+'/cash',201,{paid_on:day});
   const report=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;
-  assert.deepEqual(report.summary,{billed:'300000',verified:'300000',outstanding:'0',pending:0,receipts:'300000'});
+  assert.deepEqual(report.summary,{billed:'300000',verified:'300000',outstanding:'0',pending:0,receipts:'300000'});assert.equal(report.receipts_trend.length,6);assert.deepEqual(report.receipts_trend.at(-1),{month:bill.month,amount:'300000'});
   assert.equal((await call('player','GET','/me/finance',200)).finance.invoices[0].status,'lunas');
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
