@@ -35,3 +35,6 @@ Bank BTN (bank), GoPay/DANA (ewallet), dan tunai (Owner). Metode transaksi diten
 
 ## Revisi daftar tagihan v1.10.0-dev.3
 Snapshot nama pada invoice_items.description; tagihan lama memakai deskripsi lama. Konfirmasi berarti bukti transfer/E-Wallet pernah diajukan; menunggu berbeda dari lunas. Antrean Owner lintas periode untuk pending manual, kelompok pada antrean hanya menampilkan konfirmasi yang tersedia di data antrean/periode laporan, tidak mengubah total laporan. Tidak melonggarkan unique index bulanan.
+
+## Revisi 10D: periode berulang
+Bulanan unik per pemain/fee/bulan dan mingguan unik per pemain/fee/Senin. Jenis berbeda diizinkan; bulanan dan mingguan adalah jenis terpisah (Owner bertanggung jawab tidak mengenakan iuran ganda secara bisnis). Migrasi 011 mempertahankan riwayat. Riwayat menampilkan tagihan periode terpilih dan semua transaksi terkait, bukan jurnal berdasarkan paid_at; penerimaan paid_at tetap di grafik/CSV. Tagihan bulan berjalan otomatis difilter WIB; tunggakan lama tetap bisa dibayar/diverifikasi. Tidak ada job reset/penghapusan. Biaya tambahan tetap individual.
