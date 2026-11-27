@@ -29,3 +29,6 @@ Jalankan `npm run inspect:phase-10` dari server-contoh dan periksa hasil columns
 
 ## Implementasi kandidat 1.10.0-dev.1
 Inspeksi selesai. SQL/API memakai status dan indeks asli. Proof JPEG private bytea; legacy proof_file_path tidak dibuka otomatis. Maksimum unggah JPG/PNG 2 MiB dan 24 MP, hasil <=1 MiB, tanpa crop/metadata. Tarif positif maks Rp 1 miliar, batch maks 500 pemain. Rekening bank tidak diedit nomor/pemilik, hanya buat dan toggle aktif untuk menjaga histori. Owner verifikasi dengan tanggal pembayaran dan referensi mutasi unik; pembayaran tunai dicatat Owner tanpa upload. Tagihan tambahan memakai request UUID, tagihan bulanan deduplikasi per pemain/bulan. Data lama parsial tidak menerima pembayaran baru. Laporan periode tagihan, penerimaan menurut paid_at WIB, CSV escape formula. Belum ada pembayaran pendaftaran publik, QRIS/e-wallet atau cicilan. UAT lokal dan backup wajib; review data lama/rekonsiliasi sebelum produksi.
+
+## 10E — E-Wallet manual
+Bank BTN (bank), GoPay/DANA (ewallet), dan tunai (Owner). Metode transaksi ditentukan dari rekening server, bukan request Pemain. Referensi tetap unik secara global; pembayaran diverifikasi manual. QRIS dan payment gateway belum aktif. Tidak perlu migrasi baru. Diagram dan laporan metode mengikuti transaksi terverifikasi berdasarkan tanggal bayar WIB.

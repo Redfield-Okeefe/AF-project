@@ -192,6 +192,22 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   const report=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;
   assert.deepEqual(report.summary,{billed:'300000',verified:'300000',outstanding:'0',pending:0,receipts:'300000'});assert.equal(report.receipts_trend.length,6);assert.deepEqual(report.receipts_trend.at(-1),{month:bill.month,amount:'300000'});
   assert.equal((await call('player','GET','/me/finance',200)).finance.invoices[0].status,'lunas');
+  assert.deepEqual(report.receipts_by_method,[{payment_method:'transfer_bank',amount:'150000'},{payment_method:'tunai',amount:'150000'}]);
+  await call('owner','POST','/owner/finance/invoices/'+otherInvoice+'/cash',409,{paid_on:day});
+  const walletIds=[];
+  for(const provider_name of ['GoPay','DANA']){
+   const wallet=(await call('owner','POST','/owner/finance/accounts',201,{method_type:'ewallet',provider_name,account_number:'081234567890',account_holder:'Fiktif'})).item.id;walletIds.push(wallet);
+   const created=(await call('owner','POST','/owner/finance/invoices',201,{...bill,player_ids:[playerId],invoice_type:'lainnya',request_id:crypto.randomUUID()})).result.created[0];
+   await call('player','POST','/owner/finance/invoices/'+created+'/cash',403,{paid_on:day});
+   await call('owner','PATCH','/owner/finance/accounts/'+wallet,200,{active:false});
+   await call('player','POST','/me/finance/invoices/'+created+'/transfer',409,{...transfer,payment_account_id:wallet});
+   await call('owner','PATCH','/owner/finance/accounts/'+wallet,200,{active:true});
+   const w=(await call('player','POST','/me/finance/invoices/'+created+'/transfer',201,{...transfer,payment_account_id:wallet})).item.id;
+   await call('owner','POST','/owner/finance/invoices/'+created+'/cash',409,{paid_on:day});
+   await call('owner','PATCH','/owner/finance/payments/'+w,200,{status:'terverifikasi',payment_reference:'TEST-WALLET-'+provider_name,paid_on:day});
+   const got=(await call('player','GET','/me/finance',200)).finance.invoices.find(i=>i.id===created);assert.equal(got.status,'lunas');assert.equal(got.payments[0].payment_method,'ewallet');
+  }
+  const finalReport=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.equal(finalReport.summary.receipts,'700000');assert.deepEqual(finalReport.receipts_by_method,[{payment_method:'ewallet',amount:'400000'},{payment_method:'transfer_bank',amount:'150000'},{payment_method:'tunai',amount:'150000'}]);
   assert.equal((await call('owner','GET','/me/profile',200)).profile.foto,'');
  }finally{if(server)await new Promise(resolve=>server.close(resolve));await db.end();}
 });
