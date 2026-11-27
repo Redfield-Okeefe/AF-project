@@ -1,10 +1,12 @@
+import FinancePending from '../academy/FinancePending.jsx'
+import {academyApiEnabled} from '../../services/academy.js'
 import { useRef, useState } from 'react'
 import Reveal from '../../components/Reveal.jsx'
 
 const rekening = {
-  'Transfer Bank BCA': 'BCA 1234567890 a.n. ArenaFutsal Academy',
-  'Transfer Bank Mandiri': 'Mandiri 0987654321 a.n. ArenaFutsal Academy',
-  QRIS: 'Scan QRIS yang dikirim admin via WhatsApp',
+  'Transfer Bank BCA': 'Rekening contoh — tidak tersedia untuk transfer',
+  'Transfer Bank Mandiri': 'Rekening contoh — tidak tersedia untuk transfer',
+  QRIS: 'Simulasi QRIS — tidak menerima pembayaran',
 }
 
 // TODO: ganti dengan data dari API
@@ -14,7 +16,8 @@ const riwayat = [
   { bulan: 'Juli 2026', tgl: 'Dibayar 2 Jul' },
 ]
 
-export default function Bayar() {
+export default function Bayar(){return academyApiEnabled?<FinancePending owner={false}/>:<BayarDemo/>}
+function BayarDemo() {
   const [method, setMethod] = useState('Transfer Bank BCA')
   const [file, setFile] = useState(null)
   const [msg, setMsg] = useState('')
@@ -30,13 +33,14 @@ export default function Bayar() {
   const kirim = () => {
     if (!file) return toast('Pilih file bukti transfer dulu')
     // TODO: upload `file` ke backend (FormData)
-    toast('Bukti terkirim, menunggu verifikasi admin ✔')
+    toast('Simulasi bukti selesai. Tidak ada file atau transaksi yang dikirim.')
     setFile(null)
     if (fileRef.current) fileRef.current.value = ''
   }
 
   return (
     <div className="view active">
+      <div className="alert" role="status">MODE DEMO — Tagihan dan riwayat hanya contoh. Jangan melakukan transfer atau memilih dokumen keuangan asli.</div>
       <div className="pay">
         <Reveal anim="left" className="card bill">
           <span className="pill warn">Belum Dibayar</span>

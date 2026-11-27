@@ -13,7 +13,8 @@
     "seed:programs": "node scripts/seed-programs.js --local-dev",
     "inspect:phase-456": "node scripts/inspect-phase-456.js",
     "test:academy-db": "node --test tests/academy-postgres.test.js",
-    "inspect:phase-789": "node scripts/inspect-phase-789.js"
+    "inspect:phase-789": "node scripts/inspect-phase-789.js",
+    "inspect:phase-10": "node scripts/inspect-phase-10.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
