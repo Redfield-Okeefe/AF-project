@@ -184,7 +184,7 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
   await call('player','POST','/me/finance/invoices/'+iid+'/transfer',409,transfer);
   await call('owner','PATCH','/owner/finance/accounts/'+aidFinance,200,{active:true});
   const second=(await call('player','POST','/me/finance/invoices/'+iid+'/transfer',201,transfer)).item.id;
-  const approval={status:'terverifikasi',payment_reference:'TEST-REF-1',paid_on:day};
+  const approval={status:'terverifikasi',paid_on:day};
   await call('player','PATCH','/owner/finance/payments/'+second,403,approval);
   await call('owner','PATCH','/owner/finance/payments/'+second,200,approval);
   await call('owner','PATCH','/owner/finance/payments/'+second,409,approval);
@@ -205,8 +205,8 @@ test('Fase 4–6 real PostgreSQL: owner/coach/player HTTP, transactions, conflic
    await call('owner','PATCH','/owner/finance/accounts/'+wallet,200,{active:true});
    const w=(await call('player','POST','/me/finance/invoices/'+created+'/transfer',201,{...transfer,payment_account_id:wallet})).item.id;
    await call('owner','POST','/owner/finance/invoices/'+created+'/cash',409,{paid_on:day});
-   await call('owner','PATCH','/owner/finance/payments/'+w,200,{status:'terverifikasi',payment_reference:'TEST-WALLET-'+provider_name,paid_on:day});
-   const got=(await call('player','GET','/me/finance',200)).finance.invoices.find(i=>i.id===created);assert.equal(got.status,'lunas');assert.equal(got.title,'Biaya '+provider_name);assert.equal(got.payments[0].payment_method,'ewallet');
+   await call('owner','PATCH','/owner/finance/payments/'+w,200,{status:'terverifikasi',paid_on:day});
+   const got=(await call('player','GET','/me/finance',200)).finance.invoices.find(i=>i.id===created);assert.equal(got.status,'lunas');assert.equal(got.title,'Biaya '+provider_name);assert.equal(got.payments[0].payment_method,'ewallet');assert.equal(got.payments[0].payment_reference,null);
   }
   const finalReport=(await call('owner','GET','/me/finance?month='+bill.month,200)).finance;assert.equal(finalReport.summary.receipts,'700000');assert.equal(finalReport.pending_invoices.length,0);assert.deepEqual(finalReport.receipts_by_method,[{payment_method:'ewallet',amount:'400000'},{payment_method:'transfer_bank',amount:'150000'},{payment_method:'tunai',amount:'150000'}]);
   const fee2=(await call('owner','POST','/owner/finance/fees',201,{...fee,code:'FASILITAS',name:'Fasilitas',default_amount:50000})).item.id;
