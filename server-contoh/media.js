@@ -2,7 +2,6 @@
  * current-account JWT authorization replace the old in-memory auth adapter.
  * Existing upload directory and singleton Home UUID are unchanged. */
 import { randomUUID } from 'node:crypto';
-import { mkdir, writeFile, unlink } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
@@ -10,6 +9,7 @@ import multer from 'multer';
 import sharp from 'sharp';
 import { authorize } from './middleware/authorize.js';
 import { ApiError } from './services/auth.service.js';
+import { createMediaStorage } from './services/media-storage.js';
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'media-uploads');
 const homeId = '00000000-0000-4000-8000-000000000001';
 const uuidRE = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
@@ -19,18 +19,14 @@ const upload = multer({storage:multer.memoryStorage(), limits:{fileSize:8*1024*1
 }}).single('photo');
 const handleUpload = (req,res,next)=>upload(req,res,error=>error ? next(error instanceof ApiError ? error : new ApiError(400,'Unggahan tidak valid. Foto maksimal 8 MB.')) : next());
 const wrap = fn => (req,res,next)=>Promise.resolve(fn(req,res,next)).catch(next);
-const removeFile = async name=>{ if(name) await unlink(path.join(dir,path.basename(name))).catch(error=>{if(error.code!=='ENOENT') console.error('Pembersihan foto gagal:',error.code);}); };
-const toMedia = row=>row ? {id:row.id,title:row.title,description:row.description,img:`/media/files/${row.file_name}`,width:row.width,height:row.height,createdAt:row.created_at} : null;
-async function encode(file){
+async function encode(file,storage,scope){
   let data,info;
   try {
     const meta=await sharp(file.buffer,{limitInputPixels:25000000}).metadata();
     if(!['jpeg','png','webp'].includes(meta.format)) throw new Error('format');
     ({data,info}=await sharp(file.buffer,{limitInputPixels:25000000}).rotate().resize({width:1600,height:1600,fit:'inside',withoutEnlargement:true}).jpeg({quality:82,mozjpeg:true}).toBuffer({resolveWithObject:true}));
   } catch { throw new ApiError(400,'Foto rusak atau format/ukuran gambar tidak didukung.'); }
-  await mkdir(dir,{recursive:true});
-  const name=`${randomUUID()}.jpg`;
-  await writeFile(path.join(dir,name),data,{flag:'wx'});
+  const name=await storage.save(data,scope);
   return {file_name:name,width:info.width,height:info.height};
 }
 async function transaction(pool, fn){
@@ -39,9 +35,11 @@ async function transaction(pool, fn){
   catch(error){await client.query('ROLLBACK').catch(()=>{});throw error;}
   finally{client.release();}
 }
-export function setupMedia(app,authenticate,pool){
+export function setupMedia(app,authenticate,pool,{storage=createMediaStorage({directory:dir})}={}){
+  const removeFile=async name=>{if(name)await storage.remove(name).catch(()=>console.error('Pembersihan media gagal; periksa penyimpanan.'));};
+  const toMedia=row=>row?{id:row.id,title:row.title,description:row.description,img:storage.url(row.file_name),width:row.width,height:row.height,createdAt:row.created_at}:null;
   const owner=[authenticate,authorize('owner')];
-  app.use('/media/files',express.static(dir,{fallthrough:false,etag:true,maxAge:'7d',index:false,dotfiles:'deny',setHeaders(res){res.setHeader('X-Content-Type-Options','nosniff');}}));
+  if(storage.mode==='local')app.use('/media/files',express.static(dir,{fallthrough:false,etag:true,maxAge:'7d',index:false,dotfiles:'deny',setHeaders(res){res.setHeader('X-Content-Type-Options','nosniff');}}));
   app.get('/media/gallery',wrap(async(req,res)=>{
     const r=await pool.query("SELECT * FROM public.public_media WHERE scope='gallery' ORDER BY created_at DESC LIMIT 80");
     res.json({items:r.rows.map(toMedia)});
@@ -53,7 +51,7 @@ export function setupMedia(app,authenticate,pool){
   app.post('/media/gallery',...owner,handleUpload,wrap(async(req,res)=>{
     if(!req.file) throw new ApiError(400,'Pilih foto sebelum mengunggah.');
     const title=String(req.body.title||'Kegiatan Akademi').trim().slice(0,100)||'Kegiatan Akademi';
-    const saved=await encode(req.file);
+    const saved=await encode(req.file,storage,'gallery');
     let row;
     try {
       row=await transaction(pool,async db=>{
@@ -74,7 +72,7 @@ export function setupMedia(app,authenticate,pool){
   app.put('/media/home',...owner,handleUpload,wrap(async(req,res)=>{
     const title=String(req.body.title||'Sorotan Akademi').trim().slice(0,100)||'Sorotan Akademi';
     const description=String(req.body.description||'').trim().slice(0,200);
-    const saved=req.file ? await encode(req.file) : null;
+    const saved=req.file ? await encode(req.file,storage,'home') : null;
     let result;
     try {
       result=await transaction(pool,async db=>{
